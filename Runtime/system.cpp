@@ -4289,7 +4289,7 @@ long CallE(EXPROUTINE exproutine, CRunObject* obj, PyObject* pParams, PyObject*&
 long CallSysE(SYSEXPROUTINE exproutine, PyObject* pParams, PyObject*& pythonret)
 {
 	// Call the action
-	ExpStore ret;
+	ExpStorePy ret;
 	
 	// Params
 	int size = 1;
@@ -4309,6 +4309,7 @@ long CallSysE(SYSEXPROUTINE exproutine, PyObject* pParams, PyObject*& pythonret)
 
 	if(pythonret == Py_None)
 		Py_INCREF( Py_None );
+	ret.PreventHeapCorruptionHack();
 	return returnval;
 }
 
