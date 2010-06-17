@@ -73,6 +73,16 @@ ExtObject::~ExtObject()
 // Return 1 (do not call again) or 0 (continue calling)
 BOOL ExtObject::OnFrame()
 {
+	return 1; //Do not call again
+}
+
+// Called every frame, after the events and before drawing, for you to update your object if necessary
+// Return 1 (do not call again) or 0 (continue calling)
+// It is not safe to destroy objects in OnFrame2().  If you have to do this, use OnFrame().
+// If you are storing any pointers to CRunObjects, check the info.destroying flag here.  If it is true,
+// you must reset the pointer to NULL as it is no longer valid.
+BOOL ExtObject::OnFrame2()
+{
 	for(int i = 0; i < 4; i++)
 	{
 		CXBOXController* player = Player[i];
@@ -96,16 +106,6 @@ BOOL ExtObject::OnFrame()
 	}
 
 	return 0;	
-}
-
-// Called every frame, after the events and before drawing, for you to update your object if necessary
-// Return 1 (do not call again) or 0 (continue calling)
-// It is not safe to destroy objects in OnFrame2().  If you have to do this, use OnFrame().
-// If you are storing any pointers to CRunObjects, check the info.destroying flag here.  If it is true,
-// you must reset the pointer to NULL as it is no longer valid.
-BOOL ExtObject::OnFrame2()
-{
-	return 1;	// Do not call again
 }
 
 // WindowProc:  called when a window message, or WM_COMMAND specifying your window,

@@ -710,9 +710,6 @@ void CRuntime::PostFrame(bool present)
 	for ( ; f != frames_end; f++)
 		(*f)->currentClock = (timer * 1000.0) - (*f)->startClock;	
 
-	// Process the built in keyboard control states
-	ProcessControlState();
-
 
 	///////////////////
 	// ONFRAME CALLS //
@@ -751,6 +748,9 @@ void CRuntime::PostFrame(bool present)
 		onFrameCallees.insert(onFrameCallees.end(), calleeBuffer.begin(), calleeBuffer.end());
 		calleeBuffer.resize(0);
 	}
+
+	// Process the built in keyboard control states
+	ProcessControlState();
 
 	////////////////////
 	// RUN EVENT LIST //
