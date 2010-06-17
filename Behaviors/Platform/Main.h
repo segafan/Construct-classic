@@ -142,8 +142,12 @@ public:
 	void MoveWithMovingPlatform();
 	void LookForMovingPlatformBelow();
 	void MovePlayerHorizontally();
+
+	void StopFalling();
 	void LimitFallSpeed();
 	void ApplyMovingPlatformSpeed();
+
+	bool IsMovingUpwards();
 	////////////////////////////////////////////////////
 	// Data members
 

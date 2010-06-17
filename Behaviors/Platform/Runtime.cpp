@@ -96,6 +96,29 @@ ExtObject::~ExtObject()
 {
 }
 
+void ExtObject::StopFalling() 
+{
+	switch (grav_dir) 
+	{
+	case GRAV_UP:
+		if(dy < 0)
+			dy = 0;
+		break;
+	case GRAV_DOWN:
+		if(dy > 0)
+			dy = 0;
+		break;	
+	case GRAV_LEFT:
+		if(dx < 0)
+			dx = 0;
+		break;
+	case GRAV_RIGHT:
+		if(dx > 0)
+			dx = 0;
+		break;	
+	}
+}
+
 // Check if on floor by checking for overlap 1px below
 bool ExtObject::IsOnFloor( bool use_p_stand_on_moving_too )
 {
@@ -243,10 +266,15 @@ bool ExtObject::OverlapTest(CRunObject* pObj)
 
 	int w = 2, h = 2;
 
-	float offx1 = -0.5f + 512 * FLT_EPSILON;
+/*	float offx1 = -0.5f + 512 * FLT_EPSILON;
 	float offx2 = 0.5f -  512 * FLT_EPSILON;
 	float offy1 = -0.5f + 512 * FLT_EPSILON;
-	float offy2 = 0.5f - 512 * FLT_EPSILON;
+	float offy2 = 0.5f - 512 * FLT_EPSILON;*/
+
+	float offx1 = 0;
+	float offx2 = 1;
+	float offy1 = 0;
+	float offy2 = 1;
 
 	if(pLink->info.x == floor(pLink->info.x) )
 	{
@@ -291,11 +319,18 @@ bool ExtObject::IsOverlapping( bool solids_only )
 
 
 	int w = 2, h = 2;
-	
+
+/*
 	float offx1 = -0.2f + 2048 * FLT_EPSILON;
 	float offx2 = 0.2f -  2048 * FLT_EPSILON;
 	float offy1 = -0.2f + 2048 * FLT_EPSILON;
-	float offy2 = 0.2f - 2048 * FLT_EPSILON;
+	float offy2 = 0.2f - 2048 * FLT_EPSILON;*/
+
+	float offx1 = 0;
+	float offx2 = 1;
+	float offy1 = 0;
+	float offy2 = 1;
+
 
 	if(pLink->info.x == floor(pLink->info.x) )
 	{
@@ -392,11 +427,7 @@ void ExtObject::CheckForPlatformsInside()
 
 bool sameSign(float a, float b)
 {
-	if(a < 0 && b < 0)
-		return true;
-	if(b >= 0 && b >= 0)
-		return true;
-	return false;
+	return (a < 0 && b < 0) || (a >= 0 && b >= 0);
 }
 
 int signOf(float a)
@@ -484,6 +515,21 @@ void ExtObject::PushOutOfPlatformsUpwards()
 		pLink->info.x = startX;
 		pLink->info.y = startY;
 	}
+}
+
+bool ExtObject::IsMovingUpwards()
+{
+	switch (grav_dir) {
+	case GRAV_UP:
+		return dy > 0;
+	case GRAV_DOWN:
+		return dy < 0;
+	case GRAV_LEFT:
+		return dx > 0;
+	case GRAV_RIGHT:
+		return dx < 0;
+	}
+	return false;
 }
 
 void ExtObject::MovePlayerVertically()
@@ -713,12 +759,18 @@ void ExtObject::MovePlayerHorizontally()
 
 					}
 					else
+					{
 						vertical_pixels_moved -= 2;
+						StopFalling();
+					}
 				}
 				else
+				{
 					vertical_pixels_moved -= 1;
+					StopFalling();
+				}
 			}
-			else if(wasonfloor)
+			else if(wasonfloor && !IsMovingUpwards())
 			{
 				// okay we are't overlapping, but the previous step we were on the floor so lets see if we can go down the slope
 				pLink->info.y += singa;
@@ -886,8 +938,8 @@ BOOL ExtObject::OnFrame()
 	oldjump = curjump;
 
 	if (GetFocus() != pRuntime->GetFrameHwnd(pLink->pLayout)) {
-		leftright = 0;
-		jump = false;
+	//	leftright = 0;
+	//	jump = false;
 	}
 
 
@@ -966,28 +1018,32 @@ BOOL ExtObject::OnFrame()
 		dec = abs(speedh);
 	}
 
-	// Handle left/right movement
-	if( sameDirection && isAccelerating)
+	// We are going in the opposite direction
+	if( isAccelerating )
 	{
+		if ( !sameDirection )
+		{
+			acc = max(acc, dec);
+		}	
 		if( leftright < 0) // left
 		{
 			acc *= -1; //accelerate to the left
 		}
+		else
+		{
+			acc = acc;
+
+		}
 	}
 	else
 	{
-		// We are going in the opposite direction
-		if( isAccelerating )
-		{
-			acc = max(acc, dec);
-		}
-		else
-			acc = dec;
+		acc = dec;
 
-		// now make the acceleration be in the opposite direction
 		if(speedh >= 0) // right
-			acc *= -1; //accelerate opposite		
+			acc *= -1; //accelerate opposite	
 	}
+	
+	
 
 	//-----------------------------------------------------------------------
 	//     Okay awesome
@@ -1018,6 +1074,7 @@ BOOL ExtObject::OnFrame()
 			dx = -jump_strength * cosga;
 
 		lastjump = pRuntime->GetLayoutClock(pLayout);
+		vertical_pixels_moved = 0; // when we jump, we don't want to include the falling velocity added by moving platforms and slopes
 
 	}
 
