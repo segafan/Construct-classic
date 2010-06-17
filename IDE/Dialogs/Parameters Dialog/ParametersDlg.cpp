@@ -427,8 +427,8 @@ bool CParametersDlg::OnFinish()
 	//dlgMan.Save();
 
 	// Delete image list
-	m_ObjectImages.DeleteImageList();
-
+	ReleaseMFCStuff();
+	
 	// Exit
 	CExtResizableDialog::OnOK();
 
@@ -453,8 +453,16 @@ void CParametersDlg::OnSize(UINT nType, int cx, int cy)
 	dlgAnchor.OnSize();
 }
 
+void CParametersDlg::ReleaseMFCStuff()
+{
+	m_ObjectImages.DeleteImageList();
+	m_ObjectImagesLarge.DeleteImageList();
+	imageList.DeleteImageList();
+}
+
 void CParametersDlg::OnCancel() 
 {
+	ReleaseMFCStuff();
 	//dlgMan.Save();
 	CExtResizableDialog::OnCancel();
 }

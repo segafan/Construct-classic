@@ -169,6 +169,7 @@ public:
 	afx_msg void OnEditchangeAce();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+	void ReleaseMFCStuff();
 public:
 };
 

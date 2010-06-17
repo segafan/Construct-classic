@@ -436,6 +436,8 @@ void CEventWizardDlg::OnDestroy()
 	
 	if (m_aceType != EXPRESSION)
 		dlgMan.Save();	
+
+	m_ObjectImages.DeleteImageList();
 }
 
 
