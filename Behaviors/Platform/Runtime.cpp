@@ -938,8 +938,8 @@ BOOL ExtObject::OnFrame()
 	oldjump = curjump;
 
 	if (GetFocus() != pRuntime->GetFrameHwnd(pLink->pLayout)) {
-	//	leftright = 0;
-	//	jump = false;
+		leftright = 0;
+		jump = false;
 	}
 
 
