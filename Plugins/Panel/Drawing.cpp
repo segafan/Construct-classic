@@ -106,7 +106,7 @@ private:
 		cr::rect uv(_uv->left, _uv->top, _uv->right, _uv->bottom);
 		uv *= uv_scale;
 
-		renderer->Quad_xywh(x, y, w, h,cr::to_radians(a), cr::point(0,0), opaque_white, &uv, 0,0, colors, 0); 
+		renderer->Quad_xywh(x, y, w, h, a, cr::point(0,0), opaque_white, &uv, 0,0, colors, 0); 
 	}
 };
 
