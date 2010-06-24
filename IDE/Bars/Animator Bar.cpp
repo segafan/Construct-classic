@@ -886,6 +886,8 @@ LRESULT AnimatorBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 
 	LRESULT lResult = 0;
 
+	bool isCopying = (GetKeyState(VK_CONTROL) >> 4);
+
 	if (pMsg)
 	{
 		if (pData)
@@ -895,7 +897,13 @@ LRESULT AnimatorBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 			CAnimation New = *pAnimation;
 
 			// Find it and remove it from wherever it is
-			application->resources.DeleteAnimationFromNumber(pAnimation->m_FixedID);
+			if(isCopying)
+			{
+				New.DuplicateAllTheImages();
+				New.m_FixedID = application->m_AnimationFixID++;
+			}
+			else
+				application->resources.DeleteAnimationFromNumber(pAnimation->m_FixedID);
 
 			// Now find a parent
 			HTREEITEM Parent = pData->hNewParent;
@@ -924,8 +932,14 @@ LRESULT AnimatorBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 
 			if (Parent != TVI_ROOT)
 				animations.Expand(Parent, TVE_EXPAND);
-
 			AnimationHasChanged();
+			if(isCopying)
+			{
+				UpdateAnimations(NULL, NULL, NULL, -2);
+				lResult = 1;
+			}
+
+			
 		}
 	}
 

@@ -93,6 +93,6 @@ public:
 	void GetImagesToSave(map<int, CObj*>& images);
 
 	bool supportsFrames();
-
+	void DuplicateAllTheImages();
 	HTREEITEM m_Tree;
 };

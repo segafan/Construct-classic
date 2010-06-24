@@ -30,7 +30,7 @@ public:
 	void Mirror();
 	void Flip();
 
-protected:
+public:
 
 	void UpdateThumbnails();
 

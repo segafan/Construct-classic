@@ -31,6 +31,28 @@ CAnimation::CAnimation()
 	m_Expanded = true;
 }
 
+void CAnimation::DuplicateAllTheImages()
+{
+	for( int i = 0; i < m_Images.size(); i++)
+	{
+		CImageResource* res = application->resources.FindImageResourceFromNumber(m_Images[i]);
+		application->resources.images.push_back(*res);
+		CImageResource& replaced = application->resources.images.back();
+
+
+		m_Images[i] = application->m_ImageFixID;
+		replaced.large_thumbnail_data = 0;
+		replaced.small_thumbnail_data = 0;
+
+		replaced.bitmap = CxImage(replaced.bitmap);
+		replaced.m_Collision = CxImage(replaced.m_Collision);
+
+		replaced.m_FixedID = application->m_ImageFixID++;
+		
+
+	}
+}
+
 void CAnimation::SerializeFromOtherApplicationStep(CApplication* app)
 {
 		application = app;
