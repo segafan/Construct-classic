@@ -379,7 +379,7 @@ void CXRibbonBar::Init()
 	Construct.AddItemToGroup(1, ID_VIEW_SIDEBAR, BAR_PROJECT, ID_PROJECTBAR, true, false );
 	Construct.AddItemToGroup(1, ID_VIEW_PROPERTIESBAR, BAR_PROPERTIES, ID_PROPERTYBAR, true, false );
 	Construct.AddSeparatorToGroup(1);
-	//Construct.AddItemToGroup(1, ID_VIEW_RESOURCEBAR, BAR_RESOURCES, ID_RESOURCEBAR, true, false );
+	Construct.AddItemToGroup(1, ID_VIEW_OBJECTBAR, BAR_OBJECTS, ID_RESOURCEBAR, true, false );
 	Construct.AddItemToGroup(1, ID_VIEW_ANIMBAR, BAR_ANIMATOR, ID_RESOURCEBAR, true, false );
 
 	Construct.AddGroup(RIBBON_ONLINE);

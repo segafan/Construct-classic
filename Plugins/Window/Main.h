@@ -79,7 +79,8 @@ public:
 	long eGetClientY			(LPVAL theParams, ExpReturn& ret);
 	long eGetClientWidth		(LPVAL theParams, ExpReturn& ret);
 	long eGetClientHeight		(LPVAL theParams, ExpReturn& ret);
-
+	long aRestoreWindow(LPVAL theParams);
+	long aUnmaximizeWindow(LPVAL theParams);
 	vector<ExpStore> Array;
 	ExpStore xyRet[2];	// Position & size
 

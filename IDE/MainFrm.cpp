@@ -82,6 +82,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWnd)
 	ON_COMMAND(ID_FILE_OPEN, OnFileOpen)
 	ON_COMMAND(ID_FILE_NEW_TEMPLATE, OnFileTemplate)
 	ON_COMMAND(ID_VIEW_LAYERBAR, OnLayerBar)
+	ON_COMMAND(ID_VIEW_OBJECTBAR, OnObjectBar)
 	ON_COMMAND(ID_VIEW_SIDEBAR, OnProjectBar)
 	ON_COMMAND(ID_VIEW_PROPERTIESBAR, OnPropertiesBar)
 	ON_COMMAND(ID_VIEW_ANIMBAR, OnAnimationBar)
@@ -717,6 +718,13 @@ void CMainFrame::OnPropertiesBar()
 {
 	BOOL bShow = m_PropertiesBar.IsVisible();
 	ShowControlBar(&m_PropertiesBar, !bShow, FALSE);
+}
+
+void CMainFrame::OnObjectBar()
+{
+	CChildFrame* frame = dynamic_cast<CChildFrame*>(GetActiveFrame());
+	BOOL bShow = frame->object_bar_parent.IsVisible();
+	ShowControlBar(&frame->object_bar_parent, !bShow, FALSE);
 }
 
 // SHOW/HIDE ANIMATION BAR

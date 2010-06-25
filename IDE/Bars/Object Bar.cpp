@@ -438,7 +438,7 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 			popup->ItemInsertCommand(2, -1, "Show large icons", NULL, NULL, false, 3);
 			popup->ItemInsertCommand(3, -1, "Show small icons", NULL, NULL, false, 0);
 			popup->ItemInsertCommand(4, -1, "Show small icons (horizontal)", NULL, NULL, false, 0);
-			popup->ItemInsertCommand(5, -1, "Show object tree", NULL, NULL, false, 0);
+			//popup->ItemInsertCommand(5, -1, "Show object tree", NULL, NULL, false, 0);
 		}
 
 		else if (view == ob_small_icons)
@@ -446,7 +446,7 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 			popup->ItemInsertCommand(2, -1, "Show large icons", NULL, NULL, false, 0);
 			popup->ItemInsertCommand(3, -1, "Show small icons", NULL, NULL, false, 3);
 			popup->ItemInsertCommand(4, -1, "Show small icons (horizontal)", NULL, NULL, false, 0);
-			popup->ItemInsertCommand(5, -1, "Show object tree", NULL, NULL, false, 0);
+			//popup->ItemInsertCommand(5, -1, "Show object tree", NULL, NULL, false, 0);
 		}
 
 		else if (view == ob_small_icons_horizontal)
@@ -454,7 +454,7 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 			popup->ItemInsertCommand(2, -1, "Show large icons", NULL, NULL, false, 0);
 			popup->ItemInsertCommand(3, -1, "Show small icons", NULL, NULL, false, 0);
 			popup->ItemInsertCommand(4, -1, "Show small icons (horizontal)", NULL, NULL, false, 3);
-			popup->ItemInsertCommand(5, -1, "Show object tree", NULL, NULL, false, 0);
+			//popup->ItemInsertCommand(5, -1, "Show object tree", NULL, NULL, false, 0);
 		}
 
 		else

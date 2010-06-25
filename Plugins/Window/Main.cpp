@@ -81,12 +81,21 @@ long ExtObject::aMinimizeWindow(LPVAL theParams)
 	return 0;
 }
 
+long ExtObject::aRestoreWindow(LPVAL theParams)
+{
+	ShowWindow(m_Window, SW_RESTORE);
+
+	return 0;
+}
+
 long ExtObject::aMaximizeWindow(LPVAL theParams)
 {
 	ShowWindow(m_Window, SW_MAXIMIZE);
 
 	return 0;
 }
+
+
 
 long ExtObject::aAlwaysOnTop(LPVAL theParams)
 {
@@ -292,6 +301,7 @@ void DefineACES(MicroAceTime* at)
 
 	ADDACT("Minimize", "Window", "Minimize window", &ExtObject::aMinimizeWindow, "Minimize", 0);
 	ADDACT("Maximize", "Window", "Maximize window", &ExtObject::aMaximizeWindow, "Maximize", 0);
+	ADDACT("Restore", "Window", "Restore window", &ExtObject::aRestoreWindow, "Restore", 0);
 
 	ADDPARAMCOMBO("Always on top", "Window appears over all other windows", "Off|On");
 	ADDACT("Set always on top", "Window", "Set always on top %0", &ExtObject::aAlwaysOnTop, "AlwaysOnTop", 0);

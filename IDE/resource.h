@@ -867,7 +867,6 @@
 #define ID_EDIT_PROPERTIES              32897
 #define ID_VIEW_LAYERBAR                32898
 #define ID_VIEW_PROPERTIESBAR           32899
-#define ID_VIEW_RESOURCEBAR             32900
 #define ID_EXCHANGE                     32901
 #define ID_VIEW_ANIMBAR                 32902
 #define ID_VIEW_OBJECTBAR               32903
