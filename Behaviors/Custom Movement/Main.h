@@ -150,7 +150,7 @@ public:
 	void MoveWithStepping(float dx, float dy,  int steps, int stepStyle);
 	void MoveWithSubStepping(float dx, float dy,  int steps);
 	void MoveWithPixelStepping(float dx, float dy,  int pixelStep);
-
+	void MoveWithSteppingAdvance(int pixelStep, int subSteps, float xScale, float yScale);
 
 
 	////////////////////////////////////////////////////

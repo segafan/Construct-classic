@@ -54,6 +54,63 @@ ExtObject::~ExtObject()
 {
 }
 
+
+void ExtObject::MoveWithSteppingAdvance(int pixelStep, int subSteps, float xScale, float yScale)
+{
+	float dt = pRuntime->GetTimeDelta();
+
+	// Get our speed
+	float dx, dy;
+	ComponentToVector(m_speed, m_angle, dx, dy);
+	dx *= xScale * dt;
+	dy *= yScale * dt;
+
+
+	float steps = 0.0f; 
+
+	if(pixelStep)
+	{
+		if( abs(dx) > abs(dy) )
+			steps += abs(dx)  / pixelStep;
+		else
+			steps += abs(dy)  / pixelStep;
+	}
+	
+	if(subSteps)
+	{
+		steps += subSteps - 1;
+	}
+
+	int iSteps = floor(steps);
+	float r = 1 / steps;
+	for(int i = 0; i < iSteps; i++)
+	{
+		ComponentToVector(m_speed, m_angle, dx, dy);
+		dx *= r * xScale * dt;
+		dy *= r * yScale * dt;
+
+		pLink->info.x += dx;
+		pLink->info.y += dy;
+		pLink->UpdateBoundingBox();
+		pRuntime->GenerateEvent(info.oid, 0, this);		// On Step
+		if(m_StopStep)
+			return;
+	}
+
+	// Now we need to do the last step
+	r *= (iSteps - steps);
+	ComponentToVector(m_speed, m_angle, dx, dy);
+	dx *= r * xScale * dt;
+	dy *= r * yScale * dt;
+	pLink->info.x += dx;
+	pLink->info.y += dy;
+	pLink->UpdateBoundingBox();
+	pRuntime->GenerateEvent(info.oid, 0, this);		// On Step
+	if(m_StopStep)
+		return;
+}
+
+
 void ExtObject::MoveWithPixelStepping(float dx, float dy,  int pixelStep)
 {
 	if(dx == 0 && dy == 0) return; //nothing moved LOL
@@ -122,10 +179,16 @@ void ExtObject::MoveWithSubStepping(float dx, float dy,  int steps)
 
 void ExtObject::MoveWithStepping(float dx, float dy,  int steps, int stepStyle)
 {
-if(stepStyle == 0) // Total Steps
+/*if(stepStyle == 0) // Total Steps
 	MoveWithSubStepping(dx, dy, steps);
 else if(stepStyle == 1)  // Pixel Stepping
-	MoveWithPixelStepping(dx, dy, steps);
+	MoveWithPixelStepping(dx, dy, steps);*/
+
+	if(stepStyle == 0) // Total Steps
+		MoveWithSteppingAdvance(0, steps, dx, dy);
+	else if(stepStyle == 1) // Pixel Stepping
+		MoveWithSteppingAdvance(steps, 0, dx, dy);
+
 }
 
 // Called every frame, before the events and after drawing, for you to update your object if necessary
@@ -150,17 +213,17 @@ BOOL ExtObject::OnFrame()
 	switch (movestyle)
 	{
 		case 1: // linear lerp
-			MoveWithStepping(dx, dy, steps, stepstyle);
+			MoveWithStepping(1, 1, steps, stepstyle);
 		break;
 		
 		case 2: // Horizontal then vertical
-			MoveWithStepping(dx, 0, steps, stepstyle);
-			MoveWithStepping(0, dy, steps, stepstyle);		
+			MoveWithStepping(1, 0, steps, stepstyle);
+			MoveWithStepping(0, 1, steps, stepstyle);		
 		break;
 		
 		case 3: // Vertical then horizontal
-			MoveWithStepping(0, dy, steps, stepstyle);
-			MoveWithStepping(dx, 0, steps, stepstyle);		
+			MoveWithStepping(0, 1, steps, stepstyle);
+			MoveWithStepping(1, 0, steps, stepstyle);		
 		break;
 
 		case 4: // None

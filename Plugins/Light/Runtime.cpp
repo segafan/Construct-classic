@@ -133,22 +133,39 @@ BOOL ExtObject::OnFrame2()
 	return 1;
 }
 
-void ExtObject::ComputeVertices(const ShadowInfo& si, POINTF* vertices)
+void ExtObject::ComputeVertices(const ShadowInfo& si, point* vertices)
 {
 
 	OBJHEADER& info = si.obj->info;
+	
+	// Davos method:
+	vertices[0] = point(-0.5f, -0.5f);
+	vertices[1] = point( 0.5f, -0.5f);
+	vertices[2] = point( 0.5f,  0.5f);
+	vertices[3] = point( -0.5f, 0.5f);
+
+	// Transform it
+	for(int i = 0; i < 4; i++)
+	{
+		vertices[i] *= point(info.w, info.h);
+		vertices[i].rotate(cr::to_radians(info.displayangle));
+		vertices[i] += point(info.x, info.y);
+	}
+
+
+
 	// Tigs original method:
-	float old = info.displayangle;
+	/*float old = info.displayangle;
 	info.displayangle = 0.0f;
 	pRuntime->UpdateBoundingBox(si.obj);
 	RECTF box = info.box;
 	info.displayangle = old;
 	pRuntime->UpdateBoundingBox(si.obj);
 
-	POINTF& p1 = vertices[0];
-	POINTF& p2 = vertices[1];
-	POINTF& p3 = vertices[2];
-	POINTF& p4 = vertices[3];
+	point& p1 = vertices[0];
+	point& p2 = vertices[1];
+	point& p3 = vertices[2];
+	point& p4 = vertices[3];
 
 	p1.x = box.left;
 	p1.y = box.top;
@@ -193,7 +210,7 @@ void ExtObject::ComputeVertices(const ShadowInfo& si, POINTF* vertices)
 	p1.x -= dx;		p1.y -= dy;
 	p2.x -= dx;		p2.y -= dy;
 	p3.x -= dx;		p3.y -= dy;
-	p4.x -= dx;		p4.y -= dy;
+	p4.x -= dx;		p4.y -= dy;*/
 
 }
 
@@ -217,15 +234,37 @@ float GetAngleDifference(float start, float end)
 
 void ExtObject::DrawShadow(const ShadowInfo& si)
 {
-	POINTF vertices[4];
-	POINTF projections[4];
 	int i;
 
-	ComputeVertices(si, vertices);
+	vector<point> vertices;
+	vector<point> projections;
+
+	if(si.shape == shape_rectangle)
+	{
+		vertices.resize(4);
+		ComputeVertices(si, &vertices[0]);
+	}
+	else if(si.shape == shape_polygon)
+	{
+		for( int v = 0; v < si.vertexCount; v++ )
+		{
+			OBJHEADER& sinfo = si.obj->info;
+			point pt = si.vertex[v];
+
+			// Transform it
+			pt *= point(sinfo.w, sinfo.h);
+			pt.rotate(cr::to_radians(sinfo.displayangle));
+			pt += point(sinfo.x, sinfo.y);
+
+			vertices.push_back(pt);
+		}
+		
+	}
+	projections.resize( vertices.size());
 
 	// Compute vertex projections
-	for (i = 0; i < 4; i++) {
-		const POINTF& p = vertices[i];
+	for (i = 0; i < vertices.size(); i++) {
+		const point& p = vertices[i];
 
 		// Project this vertex away from light, casting the shadow
 		float dx = p.x - info.x;
@@ -241,13 +280,14 @@ void ExtObject::DrawShadow(const ShadowInfo& si)
 	}
 
 	// Compute backfacing edges and construct polygons
-	for (i = 0; i < 4; i++) {
-
+	for (i = 0; i < vertices.size(); i++) {
+		
+		int next_i = (i + 1) % vertices.size();
 		// Calculate normal for this edge
-		const POINTF& p = vertices[i];
-		const POINTF& next = vertices[nextClockwiseVertex[i]];
-		const POINTF& projected = projections[i];
-		const POINTF& nextprojected = projections[nextClockwiseVertex[i]];
+		const point& p = vertices[i];
+		const point& next = vertices[next_i];
+		const point& projected = projections[i];
+		const point& nextprojected = projections[next_i];
 
 		float normal_dx = p.x - next.x;
 		float normal_dy = p.y - next.y;
@@ -279,13 +319,6 @@ void ExtObject::DrawShadow(const ShadowInfo& si)
 			renderer->AddVertex(cr::point3d(nextprojected.x, nextprojected.y, 0.0f), cr::origin, shadow_filter);
 			renderer->AddVertex(cr::point3d(p.x, p.y, 0.0f), cr::origin, shadow_filter);
 			renderer->AddVertex(cr::point3d(next.x, next.y, 0.0f), cr::origin, shadow_filter);
-
-			/*
-			renderer->AddVertex(shadowfilter, projected.x, projected.y, 0.0f, 0.0f);
-			renderer->AddVertex(shadowfilter, nextprojected.x, nextprojected.y, 0.0f, 0.0f);
-			renderer->AddVertex(shadowfilter, p.x, p.y, 0.0f, 0.0f);
-			renderer->AddVertex(shadowfilter, next.x, next.y, 0.0f, 0.0f);
-			*/
 
 		}
 

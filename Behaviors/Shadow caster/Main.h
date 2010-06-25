@@ -5,42 +5,17 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define MINIMUM_VERSION	1
-#define IDE_FLAGS 	OF_MOVEMENTS | OF_EFFECTS | OF_PRIVATEVARIABLES | OF_ALLOWANGLES | OF_DEFAULTVALUE_PRIVATEVAR
+// Movement object
+#define IDE_FLAGS OF_MOVEMENTPLUGIN | OF_NODEBUG
+
 #include "..\..\Common\ExpReturn.hpp"
 #include "..\..\Common\bin.h"
 
 #define OBJECTRECT CRect(editObject->objectX, editObject->objectY, editObject->objectX + editObject->objectWidth, editObject->objectY + editObject->objectHeight)
 
-#define COMMONACE_POSITION
-#define COMMONACE_ANGLE
-#define COMMONACE_ZORDER
-#define COMMONACE_VISIBILITY
-#define COMMONACE_OPACITY
-#define COMMONACE_FILTER
-#define COMMONACE_IDS
-#define COMMONACE_COUNT_DESTROY
-
 #define colshape int
 #define shape_rectangle 0
 #define shape_polygon 1
-
-struct ShadowInfo {
-	CRunObject* obj;
-	CRunObject* shadow;
-	float* pShadowDepth;
-	colshape shape;
-	int vertexCount;
-	point* vertex;
-};
-
-#ifndef PI
-#define PI 3.14159265358979323846f
-#endif
-
-#ifndef PI_2
-#define PI_2 (PI / 2.0f)
-#endif
 
 //////////// RUNTIME OBJECT ////////////
 // Add any member functions or data you want to this class.
@@ -53,8 +28,6 @@ public:
 	ExtObject(initialObject* editObject, VRuntime* pVRuntime);
 	// Destructor (called when Construct destroys the object)
 	~ExtObject();
-
-	IRenderer* const renderer;
 
 	//////////////////////////
 	// OnFrame: called once per frame just before Draw() (after the events list)
@@ -75,38 +48,21 @@ public:
 	// Data functions
 	long		GetData(int id, void* param);
 	long		CallFunction(int id, void* param);
-	// Debugger
-	void		DebuggerUpdateDisplay(ExpStore*& pPrivateVars);
-	void		OnDebuggerValueChanged(const char* name, const char* value);
+	// Debugging
+	void		DebuggerUpdateDisplay(ExpStore*& pPrivateVars) {}
+	void		OnDebuggerValueChanged(const char* name, const char* value) {}
 
 	////////////////////////////////////////////////////
 	// ACTIONS, CONDITIONS AND EXPRESSIONS DEFINITIONS
-#include "..\..\Common\CommonAceDecl.hpp"
+	long aSetActivated(LPVAL theParams);
+	long aSetShadowDepth(LPVAL theParams);
+	long eGetShadowDepth(LPVAL theParams, ExpReturn& ret);
 
-	long cValueCmp(LPVAL theParams);
+	float shadowDepth;
+	bool activated;
 
-	long aSetValue(LPVAL theParams);
-	long aAddValue(LPVAL theParams);
-	long aSubValue(LPVAL theParams);
-	long aDestroy(LPVAL theParams);
-
-	long eGetValue(LPVAL theParams, ExpReturn& ret);
-
-	////////////////////////////////////////////////////
-	// Private values
-	vector<ExpStore> privateVars;
-
-	vector<ShadowInfo>* pShadowList;
-
-	void UpdateShadowList();
-	void DrawShadow(const ShadowInfo& si);
-	void ComputeVertices(const ShadowInfo& si, point* vertices);
-
-	TextureHandle shadow_tex;
-	RECTF layoutBox;
-
-	cr::color shadow_filter;
-	float shadowrange;
+	colshape shape;
+	vector<point> vertices;
 
 };
 
@@ -114,7 +70,6 @@ public:
 class EditExt
 {
 public:
-
 	///////////////////////////
 	// Class data
 	EditExt(class VEditTime* pVEditTime, class editInfo* pEInfo);
@@ -130,23 +85,36 @@ public:
 	void Serialize(bin& ar);
 	void OnPropertiesUpdate();
 	void GetAnimationHandle(int&) {}
-	BOOL OnNotify(int notify);
+
+	void EditCustom();
+	void CloseEdit();
+	void ClearEdit();
+	void OnMessage(int message);
+	bool MouseOverPoint(bool deletePoint);
+
 
 	class VEditTime* pEditTime;	// Pointer to Virtual Edittime
 	class editInfo*  pInfo;		// Pointer to object edittime info
 
-	///////////////////////////
-	// Your edittime extension data goes here
-	int imgTexture;
-	int iTexture;
+	float shadowDepth;
 
-	unsigned long shadowfilter;
-	float shadowopacityf;
-	float shadowrange;
+	vector<point> vertices;
+	colshape shape;
+
+	////////////////////////////////////////
+	// Editing Stuff
+
+	bool editMode;
+
+	// A pointer to the point to drag
+	point* dragPoint;
+	point dragPointOffset;
+
+	// Set window focus
+	bool setWindowFocus;
 
 
 
-	void BtnEditImage();
 };
 
 // Internal stuff include

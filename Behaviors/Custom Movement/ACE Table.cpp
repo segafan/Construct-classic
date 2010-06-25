@@ -154,7 +154,7 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAMCOMBO("Method", "Select the method of getting out", "None (Manual)|Linear|Horizontal then Vertical|Vertical then Horizontal");
 	ADDPARAMCOMBO("Step Method", "Select the step method", "Total Steps|Pixels per step");
 	ADDPARAMDEF(PARAM_VALUE, "Steps", "Steps", "1");
-	ADDACT("Set moving method", "Movement", "Set moving style to %0 : steps %1", &ExtObject::aSetMovementStyle, "SetMovementStyle", 0);
+	ADDACT("Set moving method", "Movement", "Set moving style to %0 with %2 %1", &ExtObject::aSetMovementStyle, "SetMovementStyle", 0);
 
 
 	ADDPARAM(PARAM_VALUE, "Distance", "The distance value");
