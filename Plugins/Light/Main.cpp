@@ -103,17 +103,17 @@ void DefineACES(MicroAceTime* at)
 	// ADDACT(menuID, routine, scriptname, displaytext)
 	// Same format as ADDCND, but actions have no flags.
 
-	ADDPARAM(PARAM_VALUE, "Value name", "Enter the name of the value, eg. \"Health\" (case insensitive).");
+	ADDPARAM(PARAM_PRIVATEVARIABLE, "Private variable", "Select the private variable to modify.");
 	ADDPARAM(PARAM_VALUE, "Value", "Value to store");
-	ADDACT("Set value", "Private variables", "Set %0 to %1", &ExtObject::aSetValue, "SetValue", 0);
+	ADDACT("*Set value", "Private variables", "Set %0 to %1", &ExtObject::aSetValue, "SetValue", 0);
 
-	ADDPARAM(PARAM_VALUE, "Value name", "Enter the name of the value, eg. \"Health\" (case insensitive).");
+	ADDPARAM(PARAM_PRIVATEVARIABLE, "Private variable", "Select the private variable to modify.");
 	ADDPARAM(PARAM_VALUE, "Value", "Value to add.");
-	ADDACT("Add to value", "Private variables", "Add %1 to %0", &ExtObject::aAddValue, "AddToValue", 0);
+	ADDACT("Add to value", "Private variables", "Add %1 to %0", &ExtObject::aAddValue, "AddValue", 0);
 
-	ADDPARAM(PARAM_VALUE, "Value name", "Enter the name of the value, eg. \"Health\" (case insensitive).");
+	ADDPARAM(PARAM_PRIVATEVARIABLE, "Private variable", "Select the private variable to modify.");
 	ADDPARAM(PARAM_VALUE, "Value", "Value to subtract.");
-	ADDACT("Subtract from value", "Private variables", "Subtract %1 from %0", &ExtObject::aSubValue, "SubtractFromValue", 0);
+	ADDACT("Subtract from value", "Private variables", "Subtract %1 from %0", &ExtObject::aSubValue, "SubValue", 0);
 
 
 	//ADDPARAM(PARAM_OBJECT, "Object", "DEBUG");
