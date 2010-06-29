@@ -306,6 +306,7 @@ public:
 	CUndo*			m_undo;
 
 	CString			m_AddedObject;
+	CRect			m_viewport;
 
 	void SerializeAllZLists(CArchive* ar);
 	void GetListOfAllGroups(CObjList* dest,CObjList* src);

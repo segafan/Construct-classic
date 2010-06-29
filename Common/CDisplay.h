@@ -839,7 +839,7 @@ public:
 
 	// Transformations
 	void Update3dCoords(bool translate = true);
-
+	void SetViewport(int x, int y, int width, int height);
 	D3DXMATRIX Ortho2D;
 	float trans_PanX;
 	float trans_PanY;

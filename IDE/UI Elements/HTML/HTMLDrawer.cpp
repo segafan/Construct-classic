@@ -1283,7 +1283,7 @@ void CHTMLDrawer::DrawAtoms(CDC * pDC,CObArray & arrDisplayAtoms,COLORREF rgbHig
 		{
 			pAtom->GetAdrPosition()->top--;
 			pAtom->GetAdrPosition()->bottom--;
-			pDC->DrawText(pAtom->GetText(),pAtom->GetAdrPosition(),DT_LEFT |DT_NOPREFIX |DT_SINGLELINE);
+			pDC->DrawText(pAtom->GetText(),pAtom->GetAdrPosition(),DT_LEFT |DT_NOPREFIX |DT_SINGLELINE | DT_NOCLIP);
 			pAtom->GetAdrPosition()->top++;
 			pAtom->GetAdrPosition()->bottom++;
 			if(htmlFont.IsParam())

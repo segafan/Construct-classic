@@ -516,7 +516,7 @@ void CD3DDisplay::EndScene()
 void CD3DDisplay::Present(RECT* pRec, HWND hWndOverride)
 {
 	EndBatch();
-	hr = d3dDevice->Present(pRec, NULL, hWndOverride, NULL);
+	hr = d3dDevice->Present(pRec, pRec, hWndOverride, NULL);
 
 	if (FAILED(hr))
 		throw CD3DError(hr);
@@ -825,6 +825,19 @@ void CD3DDisplay::ClearTextures()
 IDirect3DTexture9* CD3DDisplay::TextureAt(int index)
 {
 	return GetTexture(index)->texture;
+}
+
+void CD3DDisplay::SetViewport(int x, int y, int width, int height)
+{
+	D3DVIEWPORT9 viewport;
+	d3dDevice->GetViewport(&viewport);
+
+	viewport.X = x;
+	viewport.Y = y;
+	viewport.Width = width;
+	viewport.Height = height;
+
+	d3dDevice->SetViewport(&viewport);
 }
 
 // Set render target
