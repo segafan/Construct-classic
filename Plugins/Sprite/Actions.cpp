@@ -415,8 +415,15 @@ long ExtObject::aSetDisplacementRealAt(LPVAL theParams)
 
 	if(x < distort.size()){
 		if(y < distort[x].size()){
-			distort[x][y].x = (theParams[2].GetFloat() - info.x + info.HotSpotX) / info.w  - x / float(distort.size()-1);
-			distort[x][y].y = (theParams[3].GetFloat() - info.y + info.HotSpotY) / info.h - y / float(distort[0].size()-1);
+			cr::point pos( theParams[2].GetFloat(), theParams[3].GetFloat() );
+			pos -= cr::point( info.x, info.y );
+			pos.rotate(-cr::to_radians(info.angle));
+			pos += cr::point(info.HotSpotX, info.HotSpotY);
+			pos /= cr::point( info.w, info.h);
+			pos -= cr::point( x / float(distort.size()-1), y / float(distort[0].size()-1));
+
+			distort[x][y].x = pos.x; 
+			distort[x][y].y = pos.y;
 			distort[x][y].u = theParams[4].GetFloat() / info.w;
 			distort[x][y].v = theParams[5].GetFloat() / info.h;
 			distort[x][y].z = theParams[8].GetFloat();

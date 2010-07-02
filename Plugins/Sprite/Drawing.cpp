@@ -78,7 +78,8 @@ void ExtObject::RenderDistorted()
 	float ysize = cy;
 
 	point tex_scale(info.curTexture->xf, info.curTexture->yf);
-	point object_scale_factor(info.w / info.curTexture->image_widthf, info.h / info.curTexture->image_heightf);
+	//point object_scale_factor(info.w / info.curTexture->image_widthf, info.h / info.curTexture->image_heightf);
+	point object_scale_factor(1,1);
 
 	float average_scale_factor = (object_scale_factor.x + object_scale_factor.y) / 2.0f;
 
