@@ -33,7 +33,6 @@ void ExtObject::OnCreate()
 	// Your runtime loader must be able to load all versions!
 	int Version = 0;
 	ar >> Version;
-	ar >> myValue;
 
 	ar >> width;
 	ar >> maxPoints;
