@@ -166,6 +166,9 @@ public:
 	ObjectDetails oldDetails;
 
 	obj myobject;
+
+	int vertexBuffer;
+	int indexBuffer;
 };
 
 //////////// EDITTIME INFO ////////////

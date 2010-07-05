@@ -108,6 +108,10 @@ public:
 	point3d			Unproject(cr::point3d pt) const;
 	void			Unproject(const cr::point3d* pts, cr::point3d* outs, UINT count) const;
 
+	int				CreateVertexBatch(cr::point3d* vertexPosition, cr::point* texCoord, cr::color* color, int count);
+	int				CreateIndexBatch(unsigned short* index, int count);
+	void			DrawIndexedVertexTriangles(int vertexBatch, int indexBatch, int vertex_count, int index_count, float* matrix);
+
 	// For setting & restoring rendertargets
 	std::vector<TextureHandle>		rendertarget_stack;
 };

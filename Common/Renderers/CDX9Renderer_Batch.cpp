@@ -1026,6 +1026,37 @@ namespace cr {
 		batch.push_back(pCmd);
 	}
 
+	
+	void CBatch_DrawIndexedVertices::Do()
+	{
+		D3DXMATRIX worldMatrix;
+		D3DXMATRIX newWorldMatrix;
+
+		renderer->d3d9_device->GetTransform(D3DTS_WORLD, &worldMatrix);
+		renderer->d3d9_device->SetStreamSource(0, vertex_buffer, 0, sizeof(vertex));
+		renderer->d3d9_device->SetIndices(index_buffer);
+
+		int base_vertex_index = 0;
+		int min_vertex_index = 0; 
+		int start_index = 0;
+
+		D3DXMatrixMultiply(&newWorldMatrix, &matrix, &worldMatrix);
+
+		renderer->d3d9_device->SetTransform(D3DTS_WORLD, &newWorldMatrix);
+		renderer->hr = renderer->d3d9_device->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, base_vertex_index, min_vertex_index, vertex_count, start_index, index_count / 3);
+		renderer->d3d9_device->SetTransform(D3DTS_WORLD, &worldMatrix);
+		
+		if (FAILED(renderer->hr))
+			throw CDX9Error(_T("Failed drawing"), renderer->hr);
+
+		renderer->processed_vertices += vertex_count;
+		renderer->processed_indices += index_count;
+
+		renderer->SetDefaultStreamSourceAndIndices();
+	}
+
+
+
 	// Debugging
 #ifdef CR_DEBUG
 

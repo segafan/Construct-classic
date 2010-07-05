@@ -404,3 +404,16 @@ void CRenderLayer::Unproject(const cr::point3d* pts, cr::point3d* outs, UINT cou
 {
 	renderer->Unproject(pts, outs, count);
 }
+
+int	CRenderLayer::CreateVertexBatch(cr::point3d* vertexPosition, cr::point* texCoord, cr::color* color, int count)
+{
+	return renderer->CreateVertexBatch(vertexPosition, texCoord, color, count);
+}
+int	CRenderLayer::CreateIndexBatch(unsigned short* index, int count)
+{
+	return renderer->CreateIndexBatch(index, count);
+}
+void CRenderLayer::DrawIndexedVertexTriangles(int vertexBatch, int indexBatch, int vertex_count, int index_count, float* matrix)
+{
+	renderer->DrawIndexedVertexTriangles(vertexBatch, indexBatch, vertex_count, index_count, matrix);
+}

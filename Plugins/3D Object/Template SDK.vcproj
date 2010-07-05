@@ -56,6 +56,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="include\assimp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -83,10 +84,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="d3dx9.lib"
+				AdditionalDependencies="d3dx9.lib assimp.lib"
 				OutputFile="..\..\IDE\Plugins\3DObject.csx"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="lib"
 				ModuleDefinitionFile=".\ConstructSDK.def"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Sprite Object\Release/Sprite.pdb"
 				SubSystem="2"
@@ -160,6 +162,7 @@
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
 				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories="include\assimp"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;RUN_ONLY;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -188,10 +191,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="d3dx9.lib"
+				AdditionalDependencies="d3dx9.lib assimp.lib"
 				OutputFile="..\..\IDE\Plugins\Runtime\3DObject.csx"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="lib"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames=""
 				ModuleDefinitionFile=".\ConstructSDKRun.def"
@@ -263,6 +267,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="include\assimp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -292,10 +297,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="d3dx9.lib"
+				AdditionalDependencies="d3dx9.lib assimp-d.lib"
 				OutputFile="..\..\IDE\Plugins\3DObject.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="lib"
 				ModuleDefinitionFile=".\ConstructSDK.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Sprite Object\Debug/Sprite.pdb"
@@ -363,10 +369,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="include\assimp"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RUN_ONLY;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
 				PrecompiledHeaderFile="..\..\Construct Compile\Sprite Object\Debug runtime/ConstructSDK.pch"
@@ -392,10 +399,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="d3dx9.lib"
+				AdditionalDependencies="d3dx9.lib assimp-d.lib"
 				OutputFile="..\..\IDE\Plugins\Runtime\3DObject.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="lib"
 				ModuleDefinitionFile=".\ConstructSDKRun.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Sprite Object\Debug_Runtime/Sprite.pdb"
@@ -842,7 +850,7 @@
 				>
 			</File>
 			<File
-				RelativePath="ICON.BMP"
+				RelativePath="res\ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"
@@ -854,7 +862,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="res\ICON.BMP"
+				RelativePath="ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"

@@ -124,6 +124,9 @@ public:
 	
 	void load_from_string(stringstream& ss);
 	void load_from_file(string path);
+	void assimp_load_from_file(string path);
+
+	void calculate_bounding_box();
 
 	void scale(float scale);
 };

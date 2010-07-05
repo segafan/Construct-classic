@@ -162,6 +162,7 @@ namespace cr {
 	};
 }//namespace cr
 
+ 
 // Include batching definitions
 #include "CDX9Renderer_Batch.h"
 
@@ -182,6 +183,8 @@ namespace cr {
 		void			LoadD3D();								// Load DirectX DLLs
 		void			CreateDevice(d3d9_init_params& params);	// Create device
 		void			Prepare2D();							// Set render states & prepare for 2D rendering
+
+		void			SetDefaultStreamSourceAndIndices();
 		void			Reset();								// Reset device
 		void			Close();								// Shut down device (called by destructor)
 
@@ -318,6 +321,11 @@ namespace cr {
 		// Batch extensions
 		void			AddBatchExtension(CBatchBase* pCmd);
 
+		// Advanced functions for the 3d object
+		int				CreateVertexBatch(point3d* vertexPosition, point* texCoord, cr::color* color, int count);
+		int				CreateIndexBatch(unsigned short* index, int count);
+		void			DrawIndexedVertexTriangles(int vertexBatch, int indexBatch, int vertex_count, int index_count, float* matrix);
+
 		//////////////
 		// Error class
 		class error {
@@ -351,6 +359,7 @@ namespace cr {
 		friend CBatchX_FX_BeginPass;
 		friend CBatchX_FX_EndPass;
 		friend CBatchX_FX_End;
+		friend CBatch_DrawIndexedVertices;
 #endif //CDX9RENDERER_USE_BATCH_EXTENSIONS
 
 		friend CRenderLayer;

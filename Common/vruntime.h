@@ -133,6 +133,10 @@ public:
 	virtual void			SmoothLine3D(cr::point3d p1, cr::point3d p2, const cr_color& c, cr_float width = 1.0) = 0;
 
 	virtual void			GetTextSize(FontHandle fh, PCTSTR text, rect& r) = 0;
+
+	virtual int				CreateVertexBatch(cr::point3d* vertexPosition, cr::point* texCoord, cr::color* color, int count) = 0;
+	virtual int				CreateIndexBatch(unsigned short* index, int count) = 0;
+	virtual void			DrawIndexedVertexTriangles(int vertexBatch, int indexBatch, int vertex_count, int index_count, float* matrix) = 0;
 };
 
 class DECLSPEC_NOVTABLE VRuntime {

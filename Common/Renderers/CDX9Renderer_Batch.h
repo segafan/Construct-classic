@@ -52,6 +52,7 @@ namespace cr {
 		batchop_fx_beginpass,
 		batchop_fx_endpass,
 		batchop_fx_end,
+		batchop_draw_indexed_vertices
 	};
 
 	// Batch base class
@@ -267,4 +268,23 @@ namespace cr {
 
 		void Do();
 	};
+
+	class CBatch_DrawIndexedVertices : public CBatchBase {
+	public:
+		CBatch_DrawIndexedVertices(CDX9Renderer* _renderer, uint _vertex_count
+			, uint _index_count, IDirect3DVertexBuffer9* _vertex_buffer, IDirect3DIndexBuffer9* _index_buffer)
+			: CBatchBase(_renderer, batchop_draw_indexed_vertices), vertex_count(_vertex_count), index_count(_index_count), vertex_buffer(_vertex_buffer), index_buffer(_index_buffer) {}
+
+		void Do();
+
+		uint vertex_count;
+		uint index_count;
+
+		IDirect3DVertexBuffer9* vertex_buffer;
+		IDirect3DIndexBuffer9*  index_buffer;
+
+		D3DXMATRIX matrix;
+
+	};
+
 }

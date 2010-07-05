@@ -92,47 +92,80 @@ void ExtObject::Draw()
 	renderer->SetSamplerState(cr::ss_addressu, cr::ssv_wrap);
 	renderer->SetSamplerState(cr::ss_addressv, cr::ssv_wrap);
 
-
-
-	
-	//--------------------
-
-
 	// First we need to transform all the vertices
-	myobject.v = myobject.v_original;
-	transform_vertices(myobject.v, false);
+	//myobject.v = myobject.v_original;
+	//transform_vertices(myobject.v, false);
 
 
 	renderer->SetTexture(info.curTexture);
 
-
-	renderer->BeginBatchQuads(myobject.points.size(), myobject.number_of_indexes);
-
-	// Now add all the indexes
-	list<obj_object>::iterator o = myobject.objs.begin();
-	for( ; o!= myobject.objs.end(); o++)
+	if(vertexBuffer == 0)
 	{
-		// set the texture etc...
-		vector<obj_face>::iterator f = o->faces.begin();
-		for( ; f!= o->faces.end(); f++)
+		int vertexCount = myobject.points.size();
+		vector<cr::point3d> v;
+		vector<cr::point> vt;
+		vector<cr::color> c;
+
+		// Now add all the vertices to direct x
+		vector<obj_face_point>::iterator p = myobject.points.begin();
+		for(; p!= myobject.points.end(); p++)
 		{
-			vector<int>::iterator i = f->indexes.begin();
-			for( ; i!= f->indexes.end(); i++)
+			v.push_back(*p->v);
+			vt.push_back(*p->vt);
+			c.push_back(cr::opaque_white);
+		}
+
+		vertexBuffer = renderer->CreateVertexBatch(&*v.begin(), &*vt.begin(), &*c.begin(), vertexCount);
+		
+		// Now add all the indexes
+		vector<unsigned short> indices;
+		
+		list<obj_object>::iterator o = myobject.objs.begin();
+		for( ; o!= myobject.objs.end(); o++)
+		{
+			// set the texture etc...
+			vector<obj_face>::iterator f = o->faces.begin();
+			for( ; f!= o->faces.end(); f++)
 			{
-				renderer->AddIndex(*i);
+				vector<int>::iterator i = f->indexes.begin();
+				for( ; i!= f->indexes.end(); i++)
+				{
+					indices.push_back((unsigned short)*i);
+				}
 			}
 		}
+
+		indexBuffer = renderer->CreateIndexBatch(&*indices.begin(), indices.size());
+		//-----------------------
 	}
 
-	// Now add all the vertices to direct x
-	vector<obj_face_point>::iterator p = myobject.points.begin();
-	for(; p!= myobject.points.end(); p++)
-	{
-		renderer->AddVertex(*p->v, 
-			*p->vt,
-			cr::opaque_white);
-	}
-	//-----------------------
+
+
+	// Calculate scaling matrix
+	D3DXMATRIX scaleMatrix;
+	D3DXMatrixScaling(&scaleMatrix, -info.w * scale, -info.h * scale, depth * scale);
+
+	D3DXMATRIX rotMatrix;
+	D3DXMatrixRotationYawPitchRoll(&rotMatrix, (yaw), (pitch), cr::to_radians(info.angle));
+
+	// Multiply the translation, rotation and scaling matrices together to the world matrix
+	D3DXMATRIX transMatrix;
+	D3DXMatrixTranslation(&transMatrix, info.x, info.y,  info.pInfo->z_elevation);
+
+	D3DXMATRIX worldMatrix;
+	D3DXMatrixMultiply(&worldMatrix, &scaleMatrix, &transMatrix);
+	D3DXMatrixMultiply(&worldMatrix, &rotMatrix, &worldMatrix);
+
+
+
+
+
+
+
+	int vertex_count = myobject.points.size();
+	int index_count = myobject.number_of_indexes;
+
+	renderer->DrawIndexedVertexTriangles(vertexBuffer, indexBuffer, vertex_count, index_count, (float*)&worldMatrix);
 
 	renderer->SetRenderState(cr::rs_zbuffer_enabled, old_zbuffer_state);
 	renderer->SetSamplerState(cr::ss_addressu, oldU);

@@ -28,12 +28,146 @@ void obj::scale(float scale)
 
 void obj::load_from_file(string path)
 {
-	std::ifstream ifs( path.c_str() );
+	assimp_load_from_file(path);
+	/*std::ifstream ifs( path.c_str() );
 	std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 	std::stringstream ss;
 	ss << str;
 
-	load_from_string(ss);
+	load_from_string(ss);*/
+
+}
+
+void obj::calculate_bounding_box()
+{
+	// Now loop all the vertices and work out the min max for each dimension!
+
+	bb[0] = bb[1] = bb[2] = bb[3] = bb[4] = bb[5] = bb[6] = bb[7] = cr::point3d(0,0,0);
+
+	if(v.size() > 0)
+	{
+		cr::point3d min_point = v[0];
+		cr::point3d max_point = v[0];
+
+		vector<cr::point3d>::iterator iv = v.begin();
+		iv ++;
+		for(; iv!= v.end(); iv++)
+		{
+			min_point.x = min(min_point.x, iv->x);
+			min_point.y = min(min_point.y, iv->y);
+			min_point.z = min(min_point.z, iv->z);
+
+			max_point.x = max(max_point.x, iv->x);
+			max_point.y = max(max_point.y, iv->y);
+			max_point.z = max(max_point.z, iv->z);
+		}
+
+		bb[0] = cr::point3d( min_point.x, min_point.y, min_point.z );
+		bb[1] = cr::point3d( min_point.x, min_point.y, max_point.z );
+		bb[2] = cr::point3d( min_point.x, max_point.y, min_point.z );
+		bb[3] = cr::point3d( min_point.x, max_point.y, max_point.z );
+		bb[4] = cr::point3d( max_point.x, min_point.y, min_point.z );
+		bb[5] = cr::point3d( max_point.x, min_point.y, max_point.z );
+		bb[6] = cr::point3d( max_point.x, max_point.y, min_point.z );
+		bb[7] = cr::point3d( max_point.x, max_point.y, max_point.z );
+
+	}
+}
+
+void obj::assimp_load_from_file(string path)
+{
+	MessageBox(0,0,0,0);
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile( path, 
+		aiProcess_CalcTangentSpace		| 
+		aiProcess_Triangulate			|
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_GenSmoothNormals		|
+		aiProcess_PreTransformVertices  |
+		aiProcess_OptimizeMeshes		|
+		aiProcess_OptimizeGraph			|
+		aiProcess_SplitLargeMeshes		
+		
+
+		  );
+
+
+	//If the file loaded
+	if( scene == NULL )
+		return;
+
+	if( ! scene->HasMeshes() )
+		return;
+
+
+	aiMesh& mesh = *(scene->mMeshes[0]);
+
+	objs.push_back(obj_object());
+	obj_object& obj = objs.back();
+
+
+	cr::point3d pos;
+	cr::point coord;
+	cr::point3d normal;
+
+	v.reserve(mesh.mNumVertices);
+	vt.reserve(mesh.mNumVertices);
+	vn.reserve(mesh.mNumVertices);
+	points.reserve(mesh.mNumVertices);
+
+	for( unsigned i = 0; i < mesh.mNumVertices; i++ )
+	{	
+		pos.x = mesh.mVertices[i].x;
+		pos.y = mesh.mVertices[i].y;
+		pos.z = mesh.mVertices[i].z;
+
+		normal.x	= mesh.mNormals[i].x;
+		normal.y	= mesh.mNormals[i].y;
+		normal.z	= mesh.mNormals[i].z;
+
+		//If the mesh has UV coordinates..
+		if( mesh.mNumUVComponents[0] >= 2 )
+		{
+			coord.x = mesh.mTextureCoords[0][i].x;
+			coord.y = 1-mesh.mTextureCoords[0][i].y;
+		}
+		else
+		{
+			coord.x = 0; coord.y = 0;
+		}
+
+		v.push_back(pos);
+		vn.push_back(normal);
+		vt.push_back(coord);
+
+		obj_face_point pt;
+		pt.v = &v.back();
+		pt.vn = &vn.back();
+		pt.vt = &vt.back();
+
+		points.push_back(pt);
+	}
+
+	//Should only be 3 faces per polygon if assimp did its work
+	for( unsigned i = 0; i < mesh.mNumFaces; i++ )
+	{
+		obj_face face;
+		face.indexes.push_back(mesh.mFaces[i].mIndices[0]);
+		face.indexes.push_back(mesh.mFaces[i].mIndices[1]);
+		face.indexes.push_back(mesh.mFaces[i].mIndices[2]);
+		obj.faces.push_back(face);
+
+		number_of_indexes += 3;
+	}
+
+	
+
+	v_original = v;
+	vt_original = vt;
+	vn_original = vn;
+
+	calculate_bounding_box();
 
 }
 
@@ -103,43 +237,11 @@ void obj::load_from_string( stringstream& ss )
 		objs.push_back(object);
 	}
 
-	// Now loop all the vertices and work out the min max for each dimension!
-
-	bb[0] = bb[1] = bb[2] = bb[3] = bb[4] = bb[5] = bb[6] = bb[7] = cr::point3d(0,0,0);
-
-	if(v.size() > 0)
-	{
-		cr::point3d min_point = v[0];
-		cr::point3d max_point = v[0];
-
-		vector<cr::point3d>::iterator iv = v.begin();
-		iv ++;
-		for(; iv!= v.end(); iv++)
-		{
-			min_point.x = min(min_point.x, iv->x);
-			min_point.y = min(min_point.y, iv->y);
-			min_point.z = min(min_point.z, iv->z);
-	
-			max_point.x = max(max_point.x, iv->x);
-			max_point.y = max(max_point.y, iv->y);
-			max_point.z = max(max_point.z, iv->z);
-		}
-
-		bb[0] = cr::point3d( min_point.x, min_point.y, min_point.z );
-		bb[1] = cr::point3d( min_point.x, min_point.y, max_point.z );
-		bb[2] = cr::point3d( min_point.x, max_point.y, min_point.z );
-		bb[3] = cr::point3d( min_point.x, max_point.y, max_point.z );
-		bb[4] = cr::point3d( max_point.x, min_point.y, min_point.z );
-		bb[5] = cr::point3d( max_point.x, min_point.y, max_point.z );
-		bb[6] = cr::point3d( max_point.x, max_point.y, min_point.z );
-		bb[7] = cr::point3d( max_point.x, max_point.y, max_point.z );
-
-	}
-
 	v_original = v;
 	vt_original = vt;
 	vn_original = vn;
 
+	calculate_bounding_box();
 }
 
 void obj::clear()

@@ -40,6 +40,9 @@ void ExtObject::OnCreate()
 
 	ar >> filepath;
 
+	vertexBuffer = NULL;
+	indexBuffer = NULL;
+
 
 	ImageHandleInfo* imgTexture;
 	imgTexture = pRuntime->LoadSerializedImageHandle(ar);

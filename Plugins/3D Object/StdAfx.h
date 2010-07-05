@@ -90,6 +90,10 @@ typedef void*					FontHandle;
 //extern vector<EXTROUTINE> ExpRoutines;
 //extern vector<CString> ExpNames;
 
+#include <assimp.hpp>
+#include <aiScene.h>
+#include <aiPostProcess.h>
+
 #include "obj.h"
 #include "Main.h"
 

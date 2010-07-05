@@ -684,8 +684,8 @@ namespace cr {
 		// Flush anything waiting in the batch; directly modifying device
 		EndBatch();
 
-		d3d9_device->SetStreamSource(0, batch_buffer, 0, sizeof(vertex));
-		d3d9_device->SetIndices(index_buffer);
+		SetDefaultStreamSourceAndIndices();
+
 
 		// Set up rendering states for 2D drawing
 		d3d9_device->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -1911,4 +1911,77 @@ namespace cr {
 		current_texture = NULL;
 		current_rendertarget = NULL;
 	}
+
+	void CDX9Renderer::SetDefaultStreamSourceAndIndices()
+	{
+		d3d9_device->SetStreamSource(0, batch_buffer, 0, sizeof(vertex));
+		d3d9_device->SetIndices(index_buffer);
+	}
+
+	int	CDX9Renderer::CreateVertexBatch(point3d* vertexPosition, point* texCoord, cr::color* color, int count)
+	{
+		IDirect3DVertexBuffer9* vertex_buffer;
+		d3d9_device->CreateVertexBuffer(sizeof(vertex) * count, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, vertex_format, D3DPOOL_DEFAULT, &vertex_buffer, NULL);
+
+		vertex* vert_mem;
+		vertex_buffer->Lock(0, sizeof(vertex) * count, (void**)&vert_mem, D3DLOCK_DISCARD);
+
+		for(int i = 0; i < count; i++)
+		{
+			vert_mem->x = vertexPosition->x;
+			vert_mem->y = vertexPosition->y;
+			vert_mem->z = vertexPosition->z;
+			vert_mem->u = texCoord->x;
+			vert_mem->v = texCoord->y;
+			vert_mem->color = color->getD3DCOLOR();
+			
+			vertexPosition++;
+			texCoord++;
+			color++;
+			vert_mem++;
+		}
+
+		vertex_buffer->Unlock();
+
+		return (int)vertex_buffer;
+	}
+
+	int	CDX9Renderer::CreateIndexBatch(unsigned short* index, int count)
+	{
+		IDirect3DIndexBuffer9* index_buffer;
+		d3d9_device->CreateIndexBuffer(sizeof(unsigned short) * count, D3DUSAGE_WRITEONLY | D3DUSAGE_DYNAMIC, D3DFMT_INDEX16, D3DPOOL_DEFAULT, &index_buffer, NULL);
+	
+		unsigned short* index_mem;
+		index_buffer->Lock(0, sizeof(unsigned short) * count, (void**)&index_mem, D3DLOCK_DISCARD);
+
+		for(int i = 0; i < count; i++)
+		{
+			*index_mem = *index;
+			index ++;
+			index_mem++;
+		}
+
+		index_buffer->Unlock();
+
+		return (int)index_buffer;
+	}
+
+	void CDX9Renderer::DrawIndexedVertexTriangles(int vertexBatch, int indexBatch, int vertex_count, int index_count, float* matrix)
+	{
+		FlushState();
+
+		IDirect3DVertexBuffer9* vertex_buffer = reinterpret_cast<IDirect3DVertexBuffer9*>(vertexBatch);
+		IDirect3DIndexBuffer9* index_buffer = reinterpret_cast<IDirect3DIndexBuffer9*>(indexBatch);
+		CBatch_DrawIndexedVertices* batchCommand = new (this) CBatch_DrawIndexedVertices(this, vertex_count, index_count, vertex_buffer, index_buffer);
+		batch.push_back(batchCommand);
+		
+		if(matrix)
+			batchCommand->matrix = *reinterpret_cast<D3DXMATRIX*>(matrix);
+		else
+			D3DXMatrixIdentity(&batchCommand->matrix);
+	}
+
+
 }
+
+
