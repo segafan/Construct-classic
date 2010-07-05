@@ -68,7 +68,10 @@ void ExtObject::OnCreate()
 	si.pShadowDepth = &shadowDepth;
 	si.shape = shape;
 	si.vertexCount = count;
-	si.vertex = &vertices[0];
+	si.vertex = NULL;
+	if(vertices.size())
+		si.vertex = &vertices[0];
+
 	shadowList.push_back(si);
 }
 

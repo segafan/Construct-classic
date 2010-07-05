@@ -159,6 +159,7 @@
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -177,6 +178,7 @@
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\ConstructSDKRun.def"
+				GenerateDebugInformation="false"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Sprite Object\Runtime/Light.pdb"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
