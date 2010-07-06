@@ -34,7 +34,7 @@ long ExtObject::aSetRoll(LPVAL params)
 long ExtObject::aLoadFromFile(LPVAL params)
 {
 	myobject.load_from_file(params[0].GetString().GetBuffer());
-	myobject.scale(scale);
+	//myobject.scale(scale);
 
 	return 0;
 }
@@ -45,10 +45,10 @@ long ExtObject::aLoadFromResource(LPVAL params)
 }
 long ExtObject::aLoadFromString(LPVAL params)
 {
-	std::string text = params[0].GetString().GetBuffer();
+	/*std::string text = params[0].GetString().GetBuffer();
 	std::stringstream ss;
 	ss << text;
 	myobject.load_from_string(ss);
-	myobject.scale(scale);
+	myobject.scale(scale);*/
 	return 0;
 }

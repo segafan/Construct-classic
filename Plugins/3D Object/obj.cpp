@@ -28,7 +28,7 @@ void obj::scale(float scale)
 
 void obj::load_from_file(string path)
 {
-	assimp_load_from_file(path);
+	//assimp_load_from_file(path);
 	/*std::ifstream ifs( path.c_str() );
 	std::string str((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 	std::stringstream ss;
@@ -74,38 +74,10 @@ void obj::calculate_bounding_box()
 	}
 }
 
-void obj::assimp_load_from_file(string path)
+void obj::assimp_load_from_mesh(aiMesh& mesh)
 {
-	MessageBox(0,0,0,0);
-
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile( path, 
-		aiProcess_CalcTangentSpace		| 
-		aiProcess_Triangulate			|
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_GenSmoothNormals		|
-		aiProcess_PreTransformVertices  |
-		aiProcess_OptimizeMeshes		|
-		aiProcess_OptimizeGraph			|
-		aiProcess_SplitLargeMeshes		
-		
-
-		  );
-
-
-	//If the file loaded
-	if( scene == NULL )
-		return;
-
-	if( ! scene->HasMeshes() )
-		return;
-
-
-	aiMesh& mesh = *(scene->mMeshes[0]);
-
 	objs.push_back(obj_object());
 	obj_object& obj = objs.back();
-
 
 	cr::point3d pos;
 	cr::point coord;
@@ -161,14 +133,84 @@ void obj::assimp_load_from_file(string path)
 		number_of_indexes += 3;
 	}
 
-	
-
 	v_original = v;
 	vt_original = vt;
 	vn_original = vn;
 
 	calculate_bounding_box();
+}
 
+void obj_array::calculate_bounding_box()
+{
+	// Now loop all the vertices and work out the min max for each dimension!
+	bb[0] = bb[1] = bb[2] = bb[3] = bb[4] = bb[5] = bb[6] = bb[7] = cr::point3d(0,0,0);
+	bool first = true;
+
+	cr::point3d min_point;
+	cr::point3d max_point;
+
+	for( vector<obj>::iterator o = objs.begin(); o != objs.end(); o++)
+	{
+		for(int b = 0; b < 8; b++)
+		{
+			if(first)
+			{
+				min_point = o->bb[0];
+				max_point = o->bb[0];
+				first = false;
+			}
+			else
+			{
+				min_point.x = min(min_point.x, o->bb[b].x);
+				min_point.y = min(min_point.y, o->bb[b].y);
+				min_point.z = min(min_point.z, o->bb[b].z);
+
+				max_point.x = max(max_point.x, o->bb[b].x);
+				max_point.y = max(max_point.y, o->bb[b].y);
+				max_point.z = max(max_point.z, o->bb[b].z);
+			}
+		}
+	}
+	bb[0] = cr::point3d( min_point.x, min_point.y, min_point.z );
+	bb[1] = cr::point3d( min_point.x, min_point.y, max_point.z );
+	bb[2] = cr::point3d( min_point.x, max_point.y, min_point.z );
+	bb[3] = cr::point3d( min_point.x, max_point.y, max_point.z );
+	bb[4] = cr::point3d( max_point.x, min_point.y, min_point.z );
+	bb[5] = cr::point3d( max_point.x, min_point.y, max_point.z );
+	bb[6] = cr::point3d( max_point.x, max_point.y, min_point.z );
+	bb[7] = cr::point3d( max_point.x, max_point.y, max_point.z );
+
+}
+
+void obj_array::load_from_file(string path)
+{
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile( path,  
+		aiProcess_Triangulate			|
+		aiProcess_GenSmoothNormals		|
+		aiProcess_PreTransformVertices  |
+		aiProcess_SplitLargeMeshes      |
+		aiProcess_OptimizeMeshes        |
+		aiProcess_OptimizeGraph
+		);
+
+
+	//If the file loaded
+	if( scene == NULL )
+		return;
+
+	if( ! scene->HasMeshes() )
+		return;
+
+	objs.reserve(scene->mNumMeshes);
+	for(int i = 0; i < scene->mNumMeshes;i++)
+	{
+		aiMesh& mesh = *(scene->mMeshes[i]);
+		objs.push_back(obj());
+		objs.back().assimp_load_from_mesh(mesh);
+	}
+
+	calculate_bounding_box();
 }
 
 void obj::load_from_string( stringstream& ss )

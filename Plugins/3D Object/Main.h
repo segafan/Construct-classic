@@ -165,10 +165,11 @@ public:
 
 	ObjectDetails oldDetails;
 
-	obj myobject;
+	obj_array myobject;
 
-	int vertexBuffer;
-	int indexBuffer;
+	bool needToMakeBuffers;
+
+	float z;
 };
 
 //////////// EDITTIME INFO ////////////
@@ -213,9 +214,6 @@ public:
 	void EditTexture();
 
 	IDirect3DDevice9* pDevice;
-
-	IDirect3DVertexBuffer9* pVertices;
-	IDirect3DIndexBuffer9* pIndexes;
 	IDirect3DSurface9* pDepthStencil;
 
 	HRESULT hr;
@@ -247,9 +245,11 @@ public:
 	void CreateZBuffer();
 	void BrowsePath();
 	void LoadModel();
+
+	void FreeBuffers();
 	float scale;
 
-	obj myobject;
+	obj_array myobject;
 };
 
 // Internal stuff include

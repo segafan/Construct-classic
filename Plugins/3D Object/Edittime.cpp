@@ -54,8 +54,6 @@ EditExt::EditExt(VEditTime* pVEditTime, editInfo* pEInfo)
 	pEditTime = pVEditTime;
 	pInfo = pEInfo;
 	drawInit = false;
-	pVertices = NULL;
-	pIndexes = NULL;
 	pDevice = NULL;
 }
 
@@ -71,6 +69,9 @@ void EditExt::BrowsePath()
 
 void EditExt::LoadModel()
 {
+	FreeBuffers();
+	myobject.objs.clear();
+
 	myobject.load_from_file( filepath.GetBuffer() );
 	UpdateVertexData();
 }
@@ -79,8 +80,21 @@ void EditExt::LoadModel()
 // close any allocated resources here
 EditExt::~EditExt()
 {
-	if (pVertices)
-		pVertices->Release();
+	FreeBuffers();
+}
+
+void EditExt::FreeBuffers()
+{
+	for(vector<obj>::iterator o = myobject.objs.begin(); o!= myobject.objs.end(); o++)
+	{
+		IDirect3DVertexBuffer9* pVertices = (IDirect3DVertexBuffer9*)o->vertexBuffer;
+		IDirect3DIndexBuffer9* pIndexes= (IDirect3DIndexBuffer9*)o->indexBuffer;
+		if (pVertices) pVertices->Release();
+		if (pIndexes) pIndexes->Release();
+
+		o->vertexBuffer = NULL;
+		o->indexBuffer = NULL;
+	}
 }
 
 // Initialization:  when the frame editor is opened.  Create textures, fonts,
@@ -153,80 +167,92 @@ void EditExt::UpdateVertexData()
 	if (pDevice == NULL)
 		D3DInit();
 
-	if( pVertices )
+	for( vector<obj>::iterator o = myobject.objs.begin(); o!= myobject.objs.end(); o++)
 	{
-		pVertices->Release();
-		pVertices = NULL;
-	}
-	if( pIndexes )
-	{
-		pIndexes->Release();
-		pIndexes = NULL;
-	}
-
-	int vertex_count =  myobject.points.size();
-	int index_count = myobject.number_of_indexes;
-
-	if( index_count == 0 || vertex_count == 0 )
-		return;
-
-	// Set up the cube vertices
-	hr = pDevice->CreateVertexBuffer(sizeof(TLVERTEX) * vertex_count, D3DUSAGE_WRITEONLY, D3DFVF_TLVERTEX, D3DPOOL_DEFAULT,
-		&pVertices, NULL);
-
-	if (FAILED(hr)) {
-		MessageBox(NULL, "Failed to create vertex buffer", "3D Object Error", MB_OK | MB_ICONHAND);
-		return;
-	}
-
-	// Set up the cube vertices
-	hr = pDevice->CreateIndexBuffer(sizeof(unsigned short) * index_count, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT,
-		&pIndexes, NULL);
-
-	if (FAILED(hr)) {
-		MessageBox(NULL, "Failed to create index buffer", "3D Object Error", MB_OK | MB_ICONHAND);
-		return;
-	}
-
-
-	// Do the vertices
-	TLVERTEX* vertexData;
-	pVertices->Lock(0, 0, (void**)&vertexData, 0);
-
-	TLVERTEX* vxDest = vertexData;
-	TLVERTEX* vxDestEnd = vxDest + vertex_count;
-
-	for (int i = 0 ; vxDest != vxDestEnd; vxDest++, i++) {
-		vxDest->x = myobject.points[i].v->x;
-		vxDest->y = myobject.points[i].v->y;
-		vxDest->z = myobject.points[i].v->z;
-		vxDest->u = myobject.points[i].vt->x;
-		vxDest->v = myobject.points[i].vt->y;
-		vxDest->colour = 0xffffffff; //white
-	}
-	pVertices->Unlock();
-
-	// Do the indexes
-	unsigned short* indexData;
-	pIndexes->Lock(0, 0, (void**)&indexData, 0);
-
-	unsigned short* ixDest = indexData;
-	unsigned short* ixDestEnd = ixDest + index_count; 
-
-
-	// Now add all the indexes
-	list<obj_object>::iterator o = myobject.objs.begin();
-	for( ; o!= myobject.objs.end(); o++)
-	{
-		// set the texture etc...
-		vector<obj_face>::iterator f = o->faces.begin();
-		for( ; f!= o->faces.end(); f++)
+		IDirect3DVertexBuffer9* pVertices = (IDirect3DVertexBuffer9*)o->vertexBuffer;
+		IDirect3DIndexBuffer9* pIndexes= (IDirect3DIndexBuffer9*)o->indexBuffer;
+	
+		if( pVertices )
 		{
-			vector<int>::iterator i = f->indexes.begin();
-			for( ; i!= f->indexes.end(); i++)
+			pVertices->Release();
+			pVertices = NULL;
+			o->vertexBuffer = NULL;
+		}
+		if( pIndexes )
+		{
+			pIndexes->Release();
+			pIndexes = NULL;
+			o->indexBuffer = NULL;
+		}
+
+		int vertex_count =  o->points.size();
+		int index_count = o->number_of_indexes;
+
+		if( index_count == 0 || vertex_count == 0 )
+			return;
+
+		// Set up the cube vertices
+		hr = pDevice->CreateVertexBuffer(sizeof(TLVERTEX) * vertex_count, D3DUSAGE_WRITEONLY, D3DFVF_TLVERTEX, D3DPOOL_DEFAULT,
+			&pVertices, NULL);
+
+		o->vertexBuffer = (void*)pVertices;
+
+		if (FAILED(hr)) {
+			MessageBox(NULL, "Failed to create vertex buffer", "3D Object Error", MB_OK | MB_ICONHAND);
+			return;
+		}
+
+		// Set up the cube vertices
+		hr = pDevice->CreateIndexBuffer(sizeof(unsigned short) * index_count, D3DUSAGE_WRITEONLY, D3DFMT_INDEX16, D3DPOOL_DEFAULT,
+			&pIndexes, NULL);
+
+		o->indexBuffer = (void*)pIndexes;
+
+		if (FAILED(hr)) {
+			MessageBox(NULL, "Failed to create index buffer", "3D Object Error", MB_OK | MB_ICONHAND);
+			return;
+		}
+
+
+		// Do the vertices
+		TLVERTEX* vertexData;
+		pVertices->Lock(0, 0, (void**)&vertexData, 0);
+
+		TLVERTEX* vxDest = vertexData;
+		TLVERTEX* vxDestEnd = vxDest + vertex_count;
+
+		for (int i = 0 ; vxDest != vxDestEnd; vxDest++, i++) {
+			vxDest->x = o->points[i].v->x;
+			vxDest->y = o->points[i].v->y;
+			vxDest->z = o->points[i].v->z;
+			vxDest->u = o->points[i].vt->x;
+			vxDest->v = o->points[i].vt->y;
+			vxDest->colour = 0xffffffff; //white
+		}
+		pVertices->Unlock();
+
+		// Do the indexes
+		unsigned short* indexData;
+		pIndexes->Lock(0, 0, (void**)&indexData, 0);
+
+		unsigned short* ixDest = indexData;
+		unsigned short* ixDestEnd = ixDest + index_count; 
+
+
+		// Now add all the indexes
+		list<obj_object>::iterator oo = o->objs.begin();
+		for( ; oo!= o->objs.end(); oo++)
+		{
+			// set the texture etc...
+			vector<obj_face>::iterator f = oo->faces.begin();
+			for( ; f!= oo->faces.end(); f++)
 			{
-				*ixDest = *i;
-				ixDest ++;
+				vector<int>::iterator i = f->indexes.begin();
+				for( ; i!= f->indexes.end(); i++)
+				{
+					*ixDest = *i;
+					ixDest ++;
+				}
 			}
 		}
 	}
@@ -284,8 +310,11 @@ void EditExt::D3DInit()
 	}
 
 	// Set up the cube vertices
-	pVertices = NULL;
-	pIndexes = NULL;
+	for(vector<obj>::iterator o = myobject.objs.begin(); o!= myobject.objs.end(); o++)
+	{
+		o->vertexBuffer = NULL;
+		o->indexBuffer = NULL;
+	}
 
 	//RECT Rect;
 	//GetClientRect(pEditTime->GetFrameHwnd(), &Rect);

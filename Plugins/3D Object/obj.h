@@ -93,13 +93,14 @@ public:
 	// any other per 'group' setting goes here, like texture
 };
 
-
 class obj
 {
 public:
 	obj()
 	{
 		number_of_indexes = 0;
+		indexBuffer = NULL;
+		vertexBuffer = NULL;
 	}
 
 	void clear();
@@ -124,11 +125,25 @@ public:
 	
 	void load_from_string(stringstream& ss);
 	void load_from_file(string path);
-	void assimp_load_from_file(string path);
+	void assimp_load_from_mesh(aiMesh& mesh);
 
 	void calculate_bounding_box();
 
 	void scale(float scale);
+
+	void* indexBuffer;
+	void* vertexBuffer;
+};
+
+class obj_array
+{
+public:
+	void load_from_file(string file);
+	vector<obj> objs;
+
+	void calculate_bounding_box();
+
+	cr::point3d bb[8]; //8 points to make the bounding box
 };
 
 /*

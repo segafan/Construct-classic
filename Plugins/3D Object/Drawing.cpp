@@ -30,7 +30,7 @@ void ExtObject::ProjectScreenToWorld(D3DXVECTOR3* pOut, float screenX, float scr
 
 void ExtObject::transform_vertices( vector<cr::point3d>& verts, bool screen)
 {
-	cr::point3d objpos(info.x, info.y, info.pInfo->z_elevation);
+	cr::point3d objpos(info.x, info.y, z);
 
 	cr_float sin_a, sin_b, sin_c;
 	cr_float cos_a, cos_b, cos_c;
@@ -45,8 +45,8 @@ void ExtObject::transform_vertices( vector<cr::point3d>& verts, bool screen)
 	vector<cr::point3d>::iterator v = verts.begin();
 	for( ; v != verts.end(); v++)
 	{
-		cr::point vertexpos(v->x * info.w, v->y * info.h);
-		zz = v->z * depth;
+		cr::point vertexpos(v->x * info.w * scale, v->y * info.h * scale);
+		zz = v->z * depth * scale;
 
 		temp = (vertexpos.x * cos_a) - (zz * sin_a);
 		zz = (zz * cos_a) + (vertexpos.x * sin_a);
@@ -92,50 +92,49 @@ void ExtObject::Draw()
 	renderer->SetSamplerState(cr::ss_addressu, cr::ssv_wrap);
 	renderer->SetSamplerState(cr::ss_addressv, cr::ssv_wrap);
 
-	// First we need to transform all the vertices
-	//myobject.v = myobject.v_original;
-	//transform_vertices(myobject.v, false);
-
-
 	renderer->SetTexture(info.curTexture);
 
-	if(vertexBuffer == 0)
+	if(needToMakeBuffers)
 	{
-		int vertexCount = myobject.points.size();
-		vector<cr::point3d> v;
-		vector<cr::point> vt;
-		vector<cr::color> c;
-
-		// Now add all the vertices to direct x
-		vector<obj_face_point>::iterator p = myobject.points.begin();
-		for(; p!= myobject.points.end(); p++)
+		needToMakeBuffers = false;
+		for(vector<obj>::iterator o = myobject.objs.begin(); o != myobject.objs.end(); o++)
 		{
-			v.push_back(*p->v);
-			vt.push_back(*p->vt);
-			c.push_back(cr::opaque_white);
-		}
+			int vertexCount = o->points.size();
+			vector<cr::point3d> v;
+			vector<cr::point> vt;
+			vector<cr::color> c;
 
-		vertexBuffer = renderer->CreateVertexBatch(&*v.begin(), &*vt.begin(), &*c.begin(), vertexCount);
-		
-		// Now add all the indexes
-		vector<unsigned short> indices;
-		
-		list<obj_object>::iterator o = myobject.objs.begin();
-		for( ; o!= myobject.objs.end(); o++)
-		{
-			// set the texture etc...
-			vector<obj_face>::iterator f = o->faces.begin();
-			for( ; f!= o->faces.end(); f++)
+			// Now add all the vertices to direct x
+			vector<obj_face_point>::iterator p = o->points.begin();
+			for(; p!= o->points.end(); p++)
 			{
-				vector<int>::iterator i = f->indexes.begin();
-				for( ; i!= f->indexes.end(); i++)
+				v.push_back(*p->v);
+				vt.push_back(*p->vt);
+				c.push_back(cr::opaque_white);
+			}
+
+			o->vertexBuffer = (void*)renderer->CreateVertexBatch(&*v.begin(), &*vt.begin(), &*c.begin(), vertexCount);
+			
+			// Now add all the indexes
+			vector<unsigned short> indices;
+			
+			list<obj_object>::iterator oo = o->objs.begin();
+			for( ; oo!= o->objs.end(); oo++)
+			{
+				// set the texture etc...
+				vector<obj_face>::iterator f = oo->faces.begin();
+				for( ; f!= oo->faces.end(); f++)
 				{
-					indices.push_back((unsigned short)*i);
+					vector<int>::iterator i = f->indexes.begin();
+					for( ; i!= f->indexes.end(); i++)
+					{
+						indices.push_back((unsigned short)*i);
+					}
 				}
 			}
-		}
 
-		indexBuffer = renderer->CreateIndexBatch(&*indices.begin(), indices.size());
+			o->indexBuffer = (void*)renderer->CreateIndexBatch(&*indices.begin(), indices.size());
+		}
 		//-----------------------
 	}
 
@@ -145,27 +144,28 @@ void ExtObject::Draw()
 	D3DXMATRIX scaleMatrix;
 	D3DXMatrixScaling(&scaleMatrix, -info.w * scale, -info.h * scale, depth * scale);
 
-	D3DXMATRIX rotMatrix;
-	D3DXMatrixRotationYawPitchRoll(&rotMatrix, (yaw), (pitch), cr::to_radians(info.angle));
+	D3DXMATRIX rotMatrixX, rotMatrixY, rotMatrixZ, rotMatrix;
+	D3DXMatrixRotationY(&rotMatrixY, -yaw);	
+	D3DXMatrixRotationX(&rotMatrixX, -pitch);
+	D3DXMatrixRotationZ(&rotMatrixZ, cr::to_radians(info.angle));		
+	D3DXMatrixMultiply(&rotMatrix, &rotMatrixY, &rotMatrixX);
+	D3DXMatrixMultiply(&rotMatrix, &rotMatrix, &rotMatrixZ);
 
 	// Multiply the translation, rotation and scaling matrices together to the world matrix
 	D3DXMATRIX transMatrix;
-	D3DXMatrixTranslation(&transMatrix, info.x, info.y,  info.pInfo->z_elevation);
+	D3DXMatrixTranslation(&transMatrix, info.x - pLayout->scrollX, info.y - pLayout->scrollY,  z);
 
 	D3DXMATRIX worldMatrix;
-	D3DXMatrixMultiply(&worldMatrix, &scaleMatrix, &transMatrix);
-	D3DXMatrixMultiply(&worldMatrix, &rotMatrix, &worldMatrix);
+	D3DXMatrixMultiply(&worldMatrix,  &scaleMatrix, &rotMatrix);
+	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &transMatrix );
 
+	for(vector<obj>::iterator o = myobject.objs.begin(); o != myobject.objs.end(); o++)
+	{
+		int vertex_count = o->points.size();
+		int index_count = o->number_of_indexes;
 
-
-
-
-
-
-	int vertex_count = myobject.points.size();
-	int index_count = myobject.number_of_indexes;
-
-	renderer->DrawIndexedVertexTriangles(vertexBuffer, indexBuffer, vertex_count, index_count, (float*)&worldMatrix);
+		renderer->DrawIndexedVertexTriangles((int)o->vertexBuffer, (int)o->indexBuffer, vertex_count, index_count, (float*)&worldMatrix);
+	}
 
 	renderer->SetRenderState(cr::rs_zbuffer_enabled, old_zbuffer_state);
 	renderer->SetSamplerState(cr::ss_addressu, oldU);
@@ -269,13 +269,19 @@ void EditExt::Draw()
 	pEditTime->TranslateFrameToScreenCoords(objX, objY);
 	ProjectScreenToWorld(&objectSpace, objX, objY, 0.0f);
 
-	D3DXMatrixRotationYawPitchRoll(&rotMatrix, RADIANS(yaw), RADIANS(pitch), RADIANS(pInfo->objectAngle) + RADIANS(roll));
+	//D3DXMatrixRotationYawPitchRoll(&rotMatrix, RADIANS(yaw), RADIANS(pitch), RADIANS(pInfo->objectAngle) + RADIANS(roll));
+	D3DXMATRIX rotMatrixX, rotMatrixY, rotMatrixZ, rotMatrix;
+	D3DXMatrixRotationY(&rotMatrixY, -RADIANS(yaw));	
+	D3DXMatrixRotationX(&rotMatrixX, -RADIANS(pitch));
+	D3DXMatrixRotationZ(&rotMatrixZ, cr::to_radians(pInfo->objectAngle + roll));		
+	D3DXMatrixMultiply(&rotMatrix, &rotMatrixY, &rotMatrixX);
+	D3DXMatrixMultiply(&rotMatrix, &rotMatrix, &rotMatrixZ);
 
 	// Multiply the translation, rotation and scaling matrices together to the world matrix
 	D3DXMatrixTranslation(&transMatrix, objectSpace.x, objectSpace.y, scaledZ *pEditTime->GetZoom());
 
-	D3DXMatrixMultiply(&worldMatrix, &scaleMatrix, &transMatrix);
-	D3DXMatrixMultiply(&worldMatrix, &rotMatrix, &worldMatrix);
+	D3DXMatrixMultiply(&worldMatrix,  &scaleMatrix, &rotMatrix);
+	D3DXMatrixMultiply(&worldMatrix, &worldMatrix, &transMatrix );
 
 	// Use our translated, rotated and scaled matrix as the world matrix
 	hr = pDevice->SetTransform(D3DTS_WORLD, &worldMatrix);
@@ -284,19 +290,24 @@ void EditExt::Draw()
 
 	// Use our vertex stream
 
-	if(pVertices && pIndexes)
+	for(vector<obj>::iterator o = myobject.objs.begin(); o != myobject.objs.end(); o++)
 	{
-		hr = pDevice->SetStreamSource(0, pVertices, 0, sizeof(TLVERTEX));
-		if (FAILED(hr)) MessageBox(NULL, "Failed to set stream source", "3D Object", MB_OK | MB_ICONHAND);
+		IDirect3DVertexBuffer9* pVertices = (IDirect3DVertexBuffer9*)o->vertexBuffer;
+		IDirect3DIndexBuffer9* pIndexes= (IDirect3DIndexBuffer9*)o->indexBuffer;
 
-		hr = pDevice->SetIndices(pIndexes);
-		if (FAILED(hr)) MessageBox(NULL, "Failed to set indices", "3D Object", MB_OK | MB_ICONHAND);
+		if(pVertices && pIndexes)
+		{
+			hr = pDevice->SetStreamSource(0, pVertices, 0, sizeof(TLVERTEX));
+			if (FAILED(hr)) MessageBox(NULL, "Failed to set stream source", "3D Object", MB_OK | MB_ICONHAND);
 
-		
-		
-		pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, //PrimitiveType
-									   0,0,
-									   myobject.points.size(), 0, myobject.number_of_indexes / 3);      // Each face is 2 triangles
+			hr = pDevice->SetIndices(pIndexes);
+			if (FAILED(hr)) MessageBox(NULL, "Failed to set indices", "3D Object", MB_OK | MB_ICONHAND);
+
+			pDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, //PrimitiveType
+										   0,0,
+										   o->points.size(), 0, o->number_of_indexes / 3);      // Each face is 2 triangles
+		}
+
 	}
 
 	// Disable the Z stencil

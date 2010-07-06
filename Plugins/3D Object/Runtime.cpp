@@ -30,7 +30,7 @@ void ExtObject::OnCreate()
 	int Version = 0;
 	ar >> Version;
 
-	ar >> depth >> info.pInfo->z_elevation >> info.angle >> scale;
+	ar >> depth >> z >> info.angle >> scale;
 
 	ar >> yaw >> pitch >> roll;
 
@@ -40,8 +40,7 @@ void ExtObject::OnCreate()
 
 	ar >> filepath;
 
-	vertexBuffer = NULL;
-	indexBuffer = NULL;
+	needToMakeBuffers = true;
 
 
 	ImageHandleInfo* imgTexture;
@@ -82,7 +81,6 @@ void ExtObject::OnCreate()
 	pRuntime->UpdateBoundingBox(this);
 
 	myobject.load_from_file(filepath.GetBuffer());
-	myobject.scale(scale);
 }
 
 // Destructor: called when an instance of your object is destroyed.
@@ -143,6 +141,7 @@ BOOL ExtObject::OnFrame2()
 		transform_vertices(verts, true);
 
 		renderer->Project(&verts[0], unprojected, 8);
+
 
 		float maxX = unprojected[0].x;
 		float minX = unprojected[0].x;
