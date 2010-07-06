@@ -948,8 +948,8 @@ bool CApplication::Serialize(CArchive& ar)
 		if (Version >= 8) {
 			ar >> file_information.created_with;
 
-			//if (file_information.created_with > CONSTRUCT_VERSION_ID)
-			//	throw runtime_error("This file was saved in a newer version of Construct and cannot be loaded by this version.  Please visit www.scirra.com to look for the latest update, or click 'Check for updates' on the ribbon bar.");
+			if (file_information.created_with > CONSTRUCT_VERSION_ID)
+				throw runtime_error("This file was saved in a newer version of Construct and cannot be loaded by this version.  Please visit www.scirra.com to look for the latest update, or click 'Check for updates' on the ribbon bar.");
 		}
 
 		// load plugins used

@@ -243,6 +243,11 @@ namespace cr {
 		batch.push_back(new (this) CBatch_ClearRenderTarget(this, c, rect));
 	}
 
+	void CDX9Renderer::ClearZBuffer()
+	{
+		batch.push_back(new (this) CBatch_ClearZBuffer(this));
+	}
+
 	void CBatch_ClearRenderTarget::Do()
 	{
 		HRESULT hr;
@@ -257,6 +262,13 @@ namespace cr {
 		if (FAILED(hr))
 			throw CDX9Renderer::error(_T("Failed to clear render target"), hr);
 	}
+
+	void CBatch_ClearZBuffer::Do()
+	{
+		if (renderer->use_zbuffer)
+			renderer->d3d9_device->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1.0f, 0);
+	}
+
 
 	// Set texture
 	void CDX9Renderer::SetTexture(TextureHandle th)
@@ -1049,8 +1061,8 @@ namespace cr {
 		if (FAILED(renderer->hr))
 			throw CDX9Error(_T("Failed drawing"), renderer->hr);
 
-		renderer->processed_vertices += vertex_count;
-		renderer->processed_indices += index_count;
+		//renderer->processed_vertices += vertex_count;
+		//renderer->processed_indices += index_count;
 
 		renderer->SetDefaultStreamSourceAndIndices();
 	}

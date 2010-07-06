@@ -511,6 +511,7 @@ public:
 	} sampler;
 
 	bool	enable3d;			// Enable Z buffer for 3D layering
+	bool	clearDepthBuffer;
 
 	// Not available to SDK
 #ifndef CONSTRUCT_SDK

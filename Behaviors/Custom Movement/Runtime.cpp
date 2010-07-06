@@ -85,9 +85,13 @@ void ExtObject::MoveWithSteppingAdvance(int pixelStep, int subSteps, float xScal
 		steps = 1;
 
 	int iSteps = floor(steps);
-	float r = 1 / steps;
+	
+	float rl = 1;
 	for(int i = 0; i < iSteps; i++)
 	{
+		float r = 1 / steps;
+
+		rl -= r;
 		ComponentToVector(m_speed, m_angle, dx, dy);
 		dx *= r * xScale * dt;
 		dy *= r * yScale * dt;
@@ -101,13 +105,11 @@ void ExtObject::MoveWithSteppingAdvance(int pixelStep, int subSteps, float xScal
 	}
 
 	// Now we need to do the last step
-	r *= (iSteps - steps);
-
-	if(r > 0)
+	if(rl > 0)
 	{
 		ComponentToVector(m_speed, m_angle, dx, dy);
-		dx *= r * xScale * dt;
-		dy *= r * yScale * dt;
+		dx *= rl * xScale * dt;
+		dy *= rl * yScale * dt;
 		pLink->info.x += dx;
 		pLink->info.y += dy;
 		pLink->UpdateBoundingBox();

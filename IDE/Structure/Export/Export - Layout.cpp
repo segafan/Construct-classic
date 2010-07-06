@@ -484,6 +484,7 @@ void CExport::GenerateLayout(CList<CString, CString&>& dllList)
 			LayoutBlock << (bool)layer->forceOwnTexture;		// Force own texture
 			LayoutBlock << (int)layer->sampler;
 			LayoutBlock << layer->enable3d;
+			LayoutBlock << layer->clearDepthBuffer;
 			
 			//Prepare objects
 			vector<CObj*> Objects;

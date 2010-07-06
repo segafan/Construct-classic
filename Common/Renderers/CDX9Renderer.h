@@ -326,6 +326,8 @@ namespace cr {
 		int				CreateIndexBatch(unsigned short* index, int count);
 		void			DrawIndexedVertexTriangles(int vertexBatch, int indexBatch, int vertex_count, int index_count, float* matrix);
 
+		void			ClearZBuffer(); //clears the zbuffer using a batch command
+
 		//////////////
 		// Error class
 		class error {
@@ -353,13 +355,15 @@ namespace cr {
 		friend CBatch_SetBackBuffer;
 		friend CBatch_SetPointSize;
 		friend CBatch_CopySurfaceToTexture;
+		friend CBatch_DrawIndexedVertices;
+		friend CBatch_ClearZBuffer;
 
 #ifdef CDX9RENDERER_USE_BATCH_EXTENSIONS
 		friend CBatchX_FX_Begin;
 		friend CBatchX_FX_BeginPass;
 		friend CBatchX_FX_EndPass;
 		friend CBatchX_FX_End;
-		friend CBatch_DrawIndexedVertices;
+
 #endif //CDX9RENDERER_USE_BATCH_EXTENSIONS
 
 		friend CRenderLayer;

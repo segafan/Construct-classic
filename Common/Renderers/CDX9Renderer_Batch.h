@@ -52,7 +52,8 @@ namespace cr {
 		batchop_fx_beginpass,
 		batchop_fx_endpass,
 		batchop_fx_end,
-		batchop_draw_indexed_vertices
+		batchop_draw_indexed_vertices,
+		batchop_clearzbuffer
 	};
 
 	// Batch base class
@@ -112,6 +113,16 @@ namespace cr {
 		D3DRECT rect;
 		bool clearAll;
 
+	};
+
+	// Clears the z buffer
+	class CBatch_ClearZBuffer : public CBatchBase {
+	public:
+		CBatch_ClearZBuffer(CDX9Renderer* _renderer)
+			: CBatchBase(_renderer, batchop_clearzbuffer)
+		{}
+
+		void Do();
 	};
 
 	class CBatch_SetTexture : public CBatchBase {

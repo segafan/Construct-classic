@@ -85,6 +85,8 @@ public:
 	CObjList m_zOrder;
 	float m_angle;
 
+	bool clearDepthBuffer;
+
 	enum LayerSampler {
 		sample_default,	// use application setting
 		sample_point,

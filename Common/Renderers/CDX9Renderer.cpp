@@ -859,6 +859,7 @@ namespace cr {
 		D3DXVECTOR3 screen_space;
 		D3DXVECTOR3 object_space(pt.x, pt.y, pt.z);
 		D3DXVec3Project(&screen_space, &object_space, &world.viewport, &world.projection_matrix, &world.view_matrix, world_matrix);
+
 		return point(screen_space.x, screen_space.y);
 	}
 
@@ -877,6 +878,7 @@ namespace cr {
 			world_matrix = &world.world_matrix;
 
 		D3DXVec3ProjectArray((D3DXVECTOR3*)outs, sizeof(point3d), (D3DXVECTOR3*)pts, sizeof(point3d), &world.viewport, &world.projection_matrix, &world.view_matrix, world_matrix, count);
+	
 	}
 
 	point3d CDX9Renderer::Unproject(point3d pt, bool transform) const
@@ -927,8 +929,8 @@ namespace cr {
 		D3DXMatrixPerspectiveFovLH(&world.projection_matrix,					//Result Matrix
 								  D3DX_PI/4,									//Field of View, in radians.
 								  rendertarget_width / rendertarget_height,		//Aspect ratio
-								  1.0f,										//Near view plane
-								  1000.0f);									//Far view plane
+								  10.0f,										//Near view plane
+								  10000.0f);									//Far view plane
 
 		d3d9_device->SetTransform(D3DTS_PROJECTION, &world.projection_matrix);
 

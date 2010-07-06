@@ -13,6 +13,7 @@ CLayer::CLayer(CString szName, long layerType)
 	clearBack = false;
 	backColor = RGB(0,0,0);
 	forceOwnTexture = false;
+	clearDepthBuffer = false;
 
 	zoomXf = zoomYf = zoomX = zoomY = opacity = scrollXf = scrollYf = 1.0f;
 	scrollX = scrollY = 0.0f;
@@ -30,7 +31,7 @@ CLayer::~CLayer()
 bool CLayer::Serialize(CArchive& ar)
 {
 	CString ExpectedName = "CLayer";
-	int     Version      = 6;
+	int     Version      = 7;
 
 	if (!SerializeClassHeader(ExpectedName, Version, ar))
 		return false;
@@ -62,6 +63,10 @@ bool CLayer::Serialize(CArchive& ar)
 		// v6
 		if (Version >= 6)
 			ar >> enable3d;
+
+		// v7
+		if (Version >= 7)
+			ar >> clearDepthBuffer;
 
 		int count;
 		ar >> count;
@@ -101,6 +106,9 @@ bool CLayer::Serialize(CArchive& ar)
 
 		// v6
 		ar << enable3d;
+
+		// v7
+		ar << clearDepthBuffer;
 
 		// Export effects
 		ar << effects.size();

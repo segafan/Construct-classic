@@ -1037,6 +1037,9 @@ void CRunLayout::Draw(bool incrementFrameCounter)
 			renderer.SetZBufferEnabled(false);
 			renderer.SetRenderState(cr::rs_zwrite_enabled, cr::rsv_disabled);
 		}
+
+		if((*y)->clearDepthBuffer)
+			renderer.ClearZBuffer();
 	
 		// Scrolling
 		scrollX = originalScrollX * (*y)->scrollXf + (*y)->scrollXoffset;

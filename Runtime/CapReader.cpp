@@ -1470,6 +1470,7 @@ void CCapReader::ReadFrameData(BYTE* _pData, int _len)
 			pLayer->forceOwnTexture = ar.read<bool>();
 			pLayer->sampler = (CRunLayer::LayerSampler)ar.read<int>();
 			pLayer->enable3d = ar.read<bool>();
+			pLayer->clearDepthBuffer = ar.read<bool>();
 
 			// If clearing the background convert the colorref
 			if (clearBack)

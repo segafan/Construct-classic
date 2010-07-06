@@ -599,6 +599,11 @@ int CLayerPropertyValueMgr::OnChange()
 		pLayer->forceOwnTexture = value.i;
 		layout->Invalidate();
 	}
+	else if (propName == "Clear depth buffer") {
+		pLayer->clearDepthBuffer = value.i;
+		layout->Invalidate();
+	}
+
 	else if (propName == "Sampling") {
 		pLayer->sampler = (CLayer::LayerSampler)value.i;
 		layout->Invalidate();

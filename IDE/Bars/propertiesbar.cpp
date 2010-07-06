@@ -378,6 +378,11 @@ void PropertiesBar::AddLayerProperties(CLayer* layer)
 		pCheck->SetCheck(layer->enable3d);
 		pItem->ValueActiveFromDefault();
 
+		pItem = InsertLayerItem(_T("Clear depth buffer"), _T("When enabling 3d layering, ticking this option will clear the depth buffer when the layer is rendered, so 3d elements on the layers below wont 'poke through'."), pRoot);
+		pCheck = GetCheckBox(pItem);
+		pCheck->SetCheck(layer->clearDepthBuffer);
+		pItem->ValueActiveFromDefault();
+
 		pItem = InsertLayerItem(LAYER_BACKGROUND, LAYER_BACKGROUND_DESC, pRoot);
 		pColor = GetColor(pItem);
 		if (!layer->clearBack) pColor->ModifyStyle(__EGCS_READ_ONLY | __EGCS_NO_INPLACE_CONTROL);
