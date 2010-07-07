@@ -419,20 +419,20 @@ void CXRibbonBar::Init()
 	Insert.AddItemToGroup(0, IDFR_ARRAYPASTE, RIBBON_ARRAYPASTE, ID_ARRAYPASTE, true);
 	Insert.AddItemToGroup(0, IDFR_INSERT, RIBBON_INSERTOBJECT, ID_NEWOBJECT, true);
 
-	Insert.AddGroup(RIBBON_TAGS);
-	Insert.AddItemToGroup(1, IDFR_INSERTTAG, RIBBON_ADDTAG, ID_TAG, false, false);
+	//Insert.AddGroup(RIBBON_TAGS);
+	//Insert.AddItemToGroup(1, IDFR_INSERTTAG, RIBBON_ADDTAG, ID_TAG, false, false);
 
 	Insert.AddGroup(RIBBON_GRID);
-	Insert.AddItemToGroup(2, ID_TOGGLEGRID, RIBBON_TOGGLEGRID, ID_GRID, false, false);
-	Insert.AddSeparatorToGroup(2);
-	Insert.AddItemToGroup(2, ID_EDITGRID, RIBBON_EDITGRID, ID_EDIT_SMALL, true);
-	Insert.AddCheckBoxToGroup(2, ID_GRID_SNAPMOVEMENT, RIBBON_SNAPTOMOVING);
-	Insert.AddCheckBoxToGroup(2, ID_GRID_SNAPRESIZE, RIBBON_SNAPTORESIZING);
+	Insert.AddItemToGroup(1, ID_TOGGLEGRID, RIBBON_TOGGLEGRID, ID_GRID, false, false);
+	Insert.AddSeparatorToGroup(1);
+	Insert.AddItemToGroup(1, ID_EDITGRID, RIBBON_EDITGRID, ID_EDIT_SMALL, true);
+	Insert.AddCheckBoxToGroup(1, ID_GRID_SNAPMOVEMENT, RIBBON_SNAPTOMOVING);
+	Insert.AddCheckBoxToGroup(1, ID_GRID_SNAPRESIZE, RIBBON_SNAPTORESIZING);
 
 	Insert.AddGroup(RIBBON_SELECTION);
-	Insert.AddItemToGroup(3, ID_EDIT_SELECTALL, RIBBON_SELECTALL, ID_SELECTALL, true);
-	Insert.AddItemToGroup(3, ID_EDIT_UNSELECT, RIBBON_UNSELECTALL, ID_UNSELECTALL, true);
-	Insert.AddItemToGroup(3, ID_EDIT_INVERTSELECTION, RIBBON_INVERTSELECTION, ID_RIBBON_UNGROUP, true);
+	Insert.AddItemToGroup(2, ID_EDIT_SELECTALL, RIBBON_SELECTALL, ID_SELECTALL, true);
+	Insert.AddItemToGroup(2, ID_EDIT_UNSELECT, RIBBON_UNSELECTALL, ID_UNSELECTALL, true);
+	Insert.AddItemToGroup(2, ID_EDIT_INVERTSELECTION, RIBBON_INVERTSELECTION, ID_RIBBON_UNGROUP, true);
 
 	pRibbonNodeTabPageCollection->InsertNode(NULL, Insert.m_pPage);
 
