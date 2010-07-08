@@ -414,6 +414,7 @@ CEventLine* CCapReader::ParseEvent()
 		}
 		
 		// Get sub events
+		CEventLine** scopePreviousEvent = previousEvent;
 		while (pData[cursor] == CAP_BEGINEVENT || pData[cursor] == CAP_BEGINGROUP) {
 			CEventLine* pEvLine = ParseEventLine();
 
@@ -433,6 +434,7 @@ CEventLine* CCapReader::ParseEvent()
 				previousEvent = &(pEventParent->subEvents.back());
 			}
 		}
+		previousEvent = scopePreviousEvent;
 
 		pEventParent->HasSubEvents = !(pEventParent->subEvents.empty());
 
@@ -472,6 +474,7 @@ CEventGroup* CCapReader::ParseEventGroup()
 	pRuntime->groupMap[groupName].push_back(pGroup);
 
 	// Get events
+	CEventLine** scopePreviousEvent = previousEvent;
 	while (pData[cursor] == CAP_BEGINEVENT || pData[cursor] == CAP_BEGINGROUP) {
 
 		CEventLine* curLine = ParseEventLine();
@@ -481,6 +484,7 @@ CEventGroup* CCapReader::ParseEventGroup()
 			previousEvent = &(pGroup->events.back());
 		}
 	}
+	previousEvent = scopePreviousEvent;
 
 	// Check for endgroup
 	if (pData[cursor] != CAP_ENDGROUP)
