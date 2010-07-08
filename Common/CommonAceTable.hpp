@@ -24,7 +24,7 @@
 // COMMONACE_COUNT_DESTROY : Add a .count expression, and a destroy action
 
 // Next CND ID: 20
-// Next ACT ID: 25
+// Next ACT ID: 26
 // Next EXP ID: 23
 
 #define COMPARISON_COMBO_TEXT "Equal to|Not equal to|Less than|Less or equal|Greater than|Greater or equal"
@@ -56,6 +56,9 @@
 
 	ADDPARAM(PARAM_VALUE, "Y", "New Y co-ordinate in pixels");
 	ADDACT_AT(1, "Set Y", "Size & Position", "Set Y to %0", &ExtObject::cmn_aSetY, "SetY", 0);
+
+	ADDPARAM(PARAM_ARRAY, "XY Array", "Use array notations {x,y} eg {0,0}");
+	ADDACT_AT(25, "Set XY", "Size & Position", "Set XY to %0", &ExtObject::cmn_aSetXY, "SetXY", 0);
 
 	ADDPARAM(PARAM_OBJECT, "Object", "Object to set position to.");
 	ADDPARAM(PARAM_UNDEFINED, "Image point name or number (optional)", "Leave 0 to use object's position, or enter the image point name or number to position to.");

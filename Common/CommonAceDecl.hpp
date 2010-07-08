@@ -28,6 +28,7 @@ long cmn_cIsOnscreen(LPVAL params);
 long cmn_cOutsideLayout(LPVAL params);
 long cmn_aSetX(LPVAL params);
 long cmn_aSetY(LPVAL params);
+long cmn_aSetXY(LPVAL params);
 long cmn_aSetPosition(LPVAL params);
 long cmn_aSetPositionToObject(LPVAL params);
 long cmn_aMovePosition(LPVAL params);

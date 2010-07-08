@@ -166,9 +166,28 @@ namespace cr {
 			return atan2(y, x);
 		}
 
+		void angle(T rads)
+		{
+			T dist = distance();
+			x = cos(rads) * dist;
+			y = sin(rads) * dist;
+		}
+
 		T distance() const
 		{
 			return sqrt((x * x) + (y * y));
+		}
+
+		void distance(T dist)
+		{
+			normalize();
+			(*this) *= dist;
+		}
+		void normalize()
+		{
+			float dist = distance();
+			if(dist != 0)
+				(*this) /= dist;
 		}
 
 		void rotate(T rads)
