@@ -87,7 +87,6 @@ public:
 	long eMultiply(LPVAL params, ExpReturn& ret);
 	long eDivide(LPVAL params, ExpReturn& ret);
 	long eDot(LPVAL params, ExpReturn& ret);
-	long eCross(LPVAL params, ExpReturn& ret);
 	long eLerp(LPVAL params, ExpReturn& ret);
 	long eDistance(LPVAL params, ExpReturn& ret);
 

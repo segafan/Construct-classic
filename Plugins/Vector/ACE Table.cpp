@@ -87,10 +87,6 @@ void DefineACES(MicroAceTime* at)
 
 	ADDPARAM(PARAM_ARRAY, "vector", "");
 	ADDPARAM(PARAM_ARRAY, "vector", "");
-	ADDEXP("Cross", "Operations", "Cross", &ExtObject::eCross, RETURN_ARRAY);
-
-	ADDPARAM(PARAM_ARRAY, "vector", "");
-	ADDPARAM(PARAM_ARRAY, "vector", "");
 	ADDPARAM(PARAM_VALUE, "ratio", "");
 	ADDEXP("Lerp", "Operations", "Lerp", &ExtObject::eLerp, RETURN_ARRAY);
 

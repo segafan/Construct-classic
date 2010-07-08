@@ -159,7 +159,7 @@ long ExtObject::eAdd(LPVAL params, ExpReturn& ret)
 long ExtObject::eSubtract(LPVAL params, ExpReturn& ret)
 {
 	if( invalidVector(params[0]) 
-		|| invalidVector(params[1]) )
+	 || invalidVector(params[1]) )
 		return 0;
 
 	cr::point v = getVector(params[0].GetArray())  -   getVector(params[1].GetArray());
@@ -202,22 +202,40 @@ long ExtObject::eDivide(LPVAL params, ExpReturn& ret)
 
 long ExtObject::eDot(LPVAL params, ExpReturn& ret)
 {
-	return ret = 0;
+	if( invalidVector(params[0]) 
+	 || invalidVector(params[1]) )
+		return 0;
+
+	cr::point v1 = getVector(params[0].GetArray());
+	cr::point v2 = getVector(params[1].GetArray());
+
+	return ret = v1.x * v2.x + v1.y * v2.y;
 }
 
-long ExtObject::eCross(LPVAL params, ExpReturn& ret)
-{
-	return ret = 0;
-}
 
 long ExtObject::eLerp(LPVAL params, ExpReturn& ret)
 {
-	return ret = 0;
+	if( invalidVector(params[0]) 
+		|| invalidVector(params[1]) )
+		return 0;
+
+	cr::point v1 = getVector(params[0].GetArray());
+	cr::point v2 = getVector(params[1].GetArray());
+	float r = params[2].GetFloat();
+
+	static ExpStore vectorReturn[2] = { v1.x * (1-r) + v2.x * r, v1.y * (1-r) + v2.y};	
+	return ret.ReturnArray(vectorReturn, 2);
 }
 
 long ExtObject::eDistance(LPVAL params, ExpReturn& ret)
 {
-	return ret = 0;
+	if( invalidVector(params[0]) 
+		|| invalidVector(params[1]) )
+		return 0;
+
+	cr::point v = getVector(params[0].GetArray()) - getVector(params[1].GetArray());
+
+	return ret = v.distance();
 }
 
 
