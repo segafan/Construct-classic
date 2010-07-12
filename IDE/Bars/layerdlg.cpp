@@ -183,6 +183,8 @@ void CLayerDlg::OnLayerAdd()
 
 	layout_editor->layout->SetChanged(true);
 
+	g_PropertyBar->Update(layout_editor, TYPE_LAYER, NULL, NULL,NULL, layout_editor->application, 0, layer); // update the property editor
+
 	OnSelchange();
 }
 
@@ -210,6 +212,8 @@ void CLayerDlg::OnLayerAddDown()
 	m_layerListBox.SetCurSel(nIndex);
 
 	layout_editor->layout->SetChanged(true);
+
+	g_PropertyBar->Update(layout_editor, TYPE_LAYER, NULL, NULL,NULL, layout_editor->application, 0, layer); // update the property editor
 
 	OnSelchange();
 }
@@ -355,6 +359,8 @@ void CLayerDlg::OnLayerDel()
 
 		m_layerListBox.SetCurSel(0);
 		OnSelchange();
+
+		g_PropertyBar->Update(layout_editor, TYPE_LAYER, NULL, NULL,NULL, layout_editor->application, 0, layout_editor->layout->layers.GetAt(layout_editor->layout->layers.GetTailPosition())); // update the property editor
 
 		m_layerListBox.layout_editor->Invalidate();
 

@@ -186,7 +186,7 @@ void CLayerListBox::OnLButtonDown(UINT nFlags, CPoint point)
 	{
  		GetItemRect(item, &rc);
  		CPoint pt = point - rc.TopLeft();
- 		CRect rc2(CPoint(4, 22-16), CSize(12, 12));
+ 		CRect rc2(CPoint(0, 3), CSize(19, 16));
  		if (PtInRect(&rc2, pt))	// Visibility
  		{
  			layer->m_state = (layer->m_state & 0x02) + (ISLAYERVISIBLE(layer->m_state));
@@ -202,14 +202,9 @@ void CLayerListBox::OnLButtonDown(UINT nFlags, CPoint point)
  			layout_editor->m_bUpdateFrame = true;
  			layout_editor->Invalidate();
  		}
+		if(pt.x < 20)
+			return; // dont select when the mouse is lower than 12 pixels
  	}
-
-
-
-	CDragListBox::OnLButtonDown(nFlags, point);
-
-	g_PropertyBar->Update(layout_editor, TYPE_LAYER, NULL, NULL,NULL, layout_editor->application, 0, layer); // update the property editor
-
 
 	if(GetKeyState(VK_CONTROL) >> 4)
 	{
@@ -220,10 +215,12 @@ void CLayerListBox::OnLButtonDown(UINT nFlags, CPoint point)
 			layout_editor->m_sel.AddTail(layer->m_zOrder.GetNext(pos));
 
 		layout_editor->Invalidate();
+		return;
 	}
 
+	CDragListBox::OnLButtonDown(nFlags, point);
 
-
+	g_PropertyBar->Update(layout_editor, TYPE_LAYER, NULL, NULL,NULL, layout_editor->application, 0, layer); // update the property editor
 	SetCurSel(item);
 }
 
