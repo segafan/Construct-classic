@@ -1124,8 +1124,8 @@ void ExtObject::ApplyMovingPlatformSpeed()
 		// we wont 'hop' at the end due to gained vertical momentium. Although this would
 		// be realistic physics, it would suck for gameplay. Basically this section of code
 		// will make the player keep falling down if he falls off a platform or a slope.
-		dy += vertical_pixels_moved / timedelta * singa;
-		dx += vertical_pixels_moved / timedelta * cosga;
+		//dy += vertical_pixels_moved / timedelta * singa;
+		//dx += vertical_pixels_moved / timedelta * cosga;
 	}
 	vertical_pixels_moved = 0;
 }

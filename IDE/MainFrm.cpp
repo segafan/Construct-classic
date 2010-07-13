@@ -722,9 +722,9 @@ void CMainFrame::OnPropertiesBar()
 
 void CMainFrame::OnObjectBar()
 {
-	if(GetActiveFrame())
+	CChildFrame* frame = dynamic_cast<CChildFrame*>(GetActiveFrame());
+	if(frame)
 	{
-		CChildFrame* frame = dynamic_cast<CChildFrame*>(GetActiveFrame());
 		BOOL bShow = frame->object_bar_parent.IsVisible();
 		ShowControlBar(&frame->object_bar_parent, !bShow, FALSE);
 	}
