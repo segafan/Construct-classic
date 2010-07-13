@@ -672,7 +672,12 @@ ExpStore::ExpStore(const ExpStore& r) {
 		*(eData.str) = (const char*)*(r.GetStringPtr());
 		break;
 	case EXPTYPE_ARRAY:
-		// TODO: value-based array copy
+		{
+			const int size = eData.arr.size = r.eData.arr.size;
+			eData.arr.pArray = new ExpStore[size];
+			for( int i = 0; i < eData.arr.size; i++)
+				eData.arr.pArray[i] = ExpStore( r.eData.arr.pArray[i] );
+		}
 		break;
 	default:
 		// Other types can simply copy the eData union content
@@ -689,7 +694,12 @@ ExpStore::ExpStore(const ExpReturn& r) {
 		*(eData.str) = (const char*)*(r.GetStringPtr());
 		break;
 	case EXPTYPE_ARRAY:
-		// TODO: value-based array copy
+		{
+		const int size = eData.arr.size = r.eData.arr.size;
+		eData.arr.pArray = new ExpStore[size];
+		for( int i = 0; i < eData.arr.size; i++)
+			eData.arr.pArray[i] = ExpStore( r.eData.arr.pArray[i] );
+		}
 		break;
 	default:
 		// Other types can simply copy the eData union content
@@ -709,7 +719,12 @@ void ExpStore::operator=(const ExpStore& r)
 		*(eData.str) = (const char*)*(r.GetStringPtr());
 		break;
 	case EXPTYPE_ARRAY:
-		// TODO: value-based array copy
+		{
+			const int size = eData.arr.size = r.eData.arr.size;
+			eData.arr.pArray = new ExpStore[size];
+			for( int i = 0; i < eData.arr.size; i++)
+				eData.arr.pArray[i] = ExpStore( r.eData.arr.pArray[i] );
+		}
 		break;
 	default:
 		// Other types can simply copy the eData union content
