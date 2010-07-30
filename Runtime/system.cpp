@@ -1101,8 +1101,12 @@ long SystemObject::cFor(LPVAL theParams)
 	// Create loop struct and save
 	LoopInfo loop;
 	loop.index = from;
-	loop.max = to;
+	loop.max = max(to, from);
+	int step = (from < to) ? 1 : -1;
 	loops[loopname] = loop;
+
+	int end = to + step;
+
 	loopstack.push_back(&(loops.find(loopname)->second));
 	
 	// Loop index reference
@@ -1127,7 +1131,8 @@ long SystemObject::cFor(LPVAL theParams)
 		ObjTypeList* modifiers = pThisEvent->modifiers;
 		int modifiesSol = pThisEvent->modifiesSol;
 
-		for ( ; r <= to; r++) {
+		
+		for ( ; r != end; r+= step) {
 
 			// New SOL copy for the For loop conditions
 			if (modifiesSol)
@@ -1165,7 +1170,7 @@ long SystemObject::cFor(LPVAL theParams)
 	// modifications (subevents, if any, will clean up after themselves)
 	else {
 
-		for ( ; r <= to; r++) {
+		for ( ; r != end; r+= step) {
 
 			if (ev.pActs)
 				pCRuntime->RunActions(ev.pActs);
