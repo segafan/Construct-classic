@@ -1635,7 +1635,9 @@ namespace cr {
 		desc.OutputPrecision = OUT_DEFAULT_PRECIS;
 		desc.Quality = quality;
 		desc.PitchAndFamily = pitch_and_family;
-		memcpy(desc.FaceName, font_face, LF_FACESIZE);
+		int length = strlen(font_face);
+		memcpy(desc.FaceName, font_face, length < LF_FACESIZE ? length : LF_FACESIZE);
+
 
 		// Check if this font is already created
 		FontIterator i = fonts.begin();
