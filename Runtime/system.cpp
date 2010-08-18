@@ -1101,7 +1101,7 @@ long SystemObject::cFor(LPVAL theParams)
 	// Create loop struct and save
 	LoopInfo loop;
 	loop.index = from;
-	loop.max = max(to, from);
+	loop.max = to; //max(to, from);
 	int step = (from < to) ? 1 : -1;
 	loops[loopname] = loop;
 
@@ -2164,7 +2164,7 @@ long SystemObject::aStopLoop(LPVAL theParams)
 	LoopsConstIterator p = loops.find(loopname);
 
 	if (p != loops.end())
-		p->second.index = 0x7FFFFFFFFFFFFFFD; // for will increment another 1
+		p->second.index = p->second.max;//0x7FFFFFFFFFFFFFFD; // for will increment another 1
 
 	return 0;
 }
@@ -2175,7 +2175,7 @@ long SystemObject::aBreak(LPVAL theParams)
 	if (!whileStack.empty())
 		whileStack.back() = 0;	// false
 	else if (!loopstack.empty())
-		loopstack.back()->index = loopstack.back()->max + 1;
+		loopstack.back()->index = loopstack.back()->max;// + 1;
 
 	return 0;
 }
