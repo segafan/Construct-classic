@@ -5028,13 +5028,13 @@ bool SystemObject::InitPython()
 	
 #endif
 
-		s = "sys.path.append('";
+		s = "sys.path.append(r'";
 		s += pCRuntime->pythonDir;
-		s += "\\')";
-		s.Replace("\\", "\\\\");
+		s += "\')";
+		//s.Replace("\\", "\\\\");
 		AddLine(script, s);
 
-		s = "sys.path.append('";
+		s = "sys.path.append(r'";
 		s += pCRuntime->pythonZipPath;
 		s += "')";
 		//s.Replace("\\", "\\\\");
