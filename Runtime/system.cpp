@@ -4926,13 +4926,21 @@ bool SystemObject::InitPython()
 		s = "sys.path.append(r'";
 		s += pCRuntime->pythonDir;
 		s += "\')";
-		//s.Replace("\\", "\\\\");
+		AddLine(script, s);
+
+		s = "sys.path.append(r'";
+		s += pCRuntime->pythonDir;
+		s += "\\lib-tk\')";
 		AddLine(script, s);
 
 		s = "sys.path.append(r'";
 		s += pCRuntime->pythonZipPath;
-		s += "')";
-		//s.Replace("\\", "\\\\");
+		s += "\')";
+		AddLine(script, s);
+
+		s = "sys.path.append(r'";
+		s += pCRuntime->pythonZipPath;
+		s += "\\lib-tk\')";
 		AddLine(script, s);
 
 
