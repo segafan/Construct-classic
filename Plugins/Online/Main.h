@@ -25,6 +25,26 @@
 
 #define OBJECTRECT CRect(editObject->objectX, editObject->objectY, editObject->objectX + editObject->objectWidth, editObject->objectY + editObject->objectHeight)
 
+
+void TimeStamp(RakNet::BitStream& stream, RakNet::MessageID messageID);
+void WriteExpStore( RakNet::BitStream &stream, ExpStore &s );
+void ReadExpStore( RakNet::BitStream &stream, ExpStore& s );
+
+template<class key, class type>
+class maplist
+{
+public:
+	std::map<key, type*> map;
+	std::list<type> list;
+
+	int size(){	return list.size();}
+	void push_back(const key& k, const type& t) 
+	{
+		list.push_back(t);
+		map[k] = &list.back();
+	}
+};
+	
 //////////// RUNTIME OBJECT ////////////
 // Add any member functions or data you want to this class.
 // Your extension inherits CRunObject.  See the definition
@@ -47,6 +67,18 @@ struct condition
 	};
 };
 
+struct Variable
+{
+	Variable(){}
+	Variable(const string& name, const ExpStore& data) : name(name), data(data), updated(false) {}
+
+	//
+
+	string name;
+	ExpStore data;
+	bool updated;
+};
+
 class Player
 {
 public:
@@ -62,10 +94,49 @@ public:
 	{
 		stream.Serialize(write, guid);
 		stream.Serialize(write, id);
+
+		if(write)
+		{
+			int count = variables.size();
+			stream << count;
+			for( VariableList::iterator v = variables.list.begin(); v != variables.list.end(); v++ )
+			{
+				stream << v->name;
+				WriteExpStore(stream, v->data);
+			}
+		}
+		else
+		{
+			int count;
+			stream >> count;
+			for( int i = 0; i < count; i++ )
+			{
+				string name;
+				ExpStore val;
+				stream >> name;
+
+				ReadExpStore(stream, val);
+
+				variables.push_back(name, Variable(name, val) );
+			}
+		}
 	}
 
+	bool operator == (const Player& other) const
+	{
+		return other.guid == guid;
+	}
+
+public:
+	typedef maplist<std::string, Variable> VariableMapList; 
+	typedef map<std::string, Variable*> VariableMap; 
+	typedef list<Variable> VariableList; 
+
+public:
+	// Data members
 	RakNet::RakNetGUID guid;
 	int id;
+	VariableMapList variables;
 };
 
 class ExtObject : public CRunObject
@@ -118,22 +189,37 @@ public:
 	long cOnMessage(LPVAL params);
 	long cOnAnyMessage(LPVAL params);
 	long cOnPlayerHere(LPVAL params);
+	long cIsServer(LPVAL params);
 
 	long aConnect(LPVAL params);
 	long aDisconnect(LPVAL params);
 	long aAddParameter(LPVAL params);
 	long aSendMessage(LPVAL params);
+
+	void WriteParameters( RakNet::BitStream &stream );
+
+
+	long aSendMessageTo(LPVAL params);
 	long aHostServer(LPVAL params);
 	long aForwardMessage(LPVAL params);
+	long aSetPlayerVariable(LPVAL params);
 
 	long eMessage(LPVAL params, ExpReturn& ret);
 	long eNumberOfParams(LPVAL params, ExpReturn& ret);
 	long eParam(LPVAL params, ExpReturn& ret);
 	long eGetIP(LPVAL params, ExpReturn& ret);
-	long eGetUserID(LPVAL params, ExpReturn& ret);
-	long eGetRemoteUserID(LPVAL params, ExpReturn& ret);
+	long eGetPlayerID(LPVAL params, ExpReturn& ret);
+	long eGetRemotePlayerID(LPVAL params, ExpReturn& ret);
+
+	long eGetNumberOfPlayers(LPVAL params, ExpReturn& ret);
+	long ePlayerIDFromIndex(LPVAL params, ExpReturn& ret);
+
+	long ePlayerVariable(LPVAL params, ExpReturn& ret);
+	long eRemotePlayerVariable(LPVAL params, ExpReturn& ret);
 
 	void processPackets();
+
+
 	////////////////////////////////////////////////////
 	// Data
 
@@ -144,20 +230,29 @@ public:
 	RakNet::RakPeerInterface *raknet;
 	
 	vector<ExpStore> paramList; // For the send
-	vector<RakNet::RakNetGUID> remoteUserID;
+	vector<RakNet::RakNetGUID> remotePlayerID;
 
-	int userID; //user ID..peers ask the server for an ID
+	Player* player; //player ID..peers ask the server for an ID
 
 
 	// The server can use this
-	int uniqueUserID; 
-	int getUniqueUserID()
+	int uniquePlayerID; 
+	int getUniquePlayerID()
 	{
-		return uniqueUserID++;
+		return uniquePlayerID++;
+	}
+	typedef maplist<RakNet::RakNetGUID, Player> PlayerMapList;
+	typedef map<RakNet::RakNetGUID, Player*> PlayerMap;
+	typedef list<Player> PlayerList;
+	PlayerMapList players;
+
+	Player* findFromNumber(int x){
+		for ( PlayerList::iterator p = players.list.begin(); p!= players.list.end(); p++ )
+			if(p->id == x)
+				return &*p;
+		return NULL;
 	}
 
-	typedef map<RakNet::RakNetGUID, Player> PlayerMap;
-	PlayerMap players;
 
 
 	CString message;

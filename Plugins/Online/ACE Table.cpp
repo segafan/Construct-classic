@@ -36,6 +36,7 @@ void DefineACES(MicroAceTime* at)
 	ADDCND("On message", "Messages", "%o On message %0", &ExtObject::cOnMessage, "OnMessage", CND_TRIGGERED);
 	ADDCND("On any message", "Messages", "%o On any message", &ExtObject::cOnAnyMessage, "OnAnyMessage", CND_TRIGGERED);
 	ADDCND("On player here", "Triggers", "%o On player here", &ExtObject::cOnPlayerHere, "OnPlayerHere", CND_TRIGGERED);
+	ADDCND("Is Server", "Hosting", "%o Is Server", &ExtObject::cIsServer, "IsServer", 0);
 	/////////////////////////////
 	// Actions
 	// Format:
@@ -52,10 +53,18 @@ void DefineACES(MicroAceTime* at)
 	ADDACT("Send message", "Message", "Send message %0", &ExtObject::aSendMessage, "SendMessage", 0);
 	ADDPARAMDEF(PARAM_VALUE, "Host port", "The port we are listening on", "1234");
 	ADDPARAMDEF(PARAM_STRING, "Password", "Here is an example parameter.", "\"construct\"");
-	ADDACT("Host server", "Server", "Host server on port %0", &ExtObject::aHostServer, "HostServer", 0);
+	ADDPARAMCOMBO("Playing Mode", "Set the playing mode of the server. If you select player it means you become a player in the game, otherwise your a host and have no presence in the game", "Dedicated server|Player");
+	ADDACT("Host server", "Server", "Host server on port %0 ( password: %1, playing mode: %2)", &ExtObject::aHostServer, "HostServer", 0);
 	ADDACT("Forward message", "Server", "Forward message to other clients", &ExtObject::aForwardMessage, "ForwardMessage", 0);
+	ADDPARAM(PARAM_STRING, "Message", "The message that will be sent and recieved by others");
+	ADDPARAM(PARAM_VALUE, "PlayerID", "The player ID of who to send the message to");
+	ADDACT("Send message to", "Message", "Send message %0 to %1", &ExtObject::aSendMessageTo, "SendMessageTo", 0);
 
-	/////////////////////////////
+	ADDPARAM(PARAM_STRING, "Variable", "The name of the player variable to use");
+	ADDPARAM(PARAM_UNDEFINED, "Value", "The value to set the variable to");
+	ADDACT("Set variable", "Player Variables", "Set variable %0 to %1", &ExtObject::aSetPlayerVariable, "SetPlayerVariable", 0);
+
+	////////////////////////////
 	// Expressions
 	// ADDEXP(List name, Category, Display string, Function address, Flags)
 	ADDEXP("Get message", "Message", "Message", &ExtObject::eMessage, RETURN_STRING);
@@ -63,8 +72,21 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAM(PARAM_VALUE, "1", "Parameter");
 	ADDEXP("Get param", "Message", "Param", &ExtObject::eParam, 0);
 	ADDEXP("Get IP", "Information", "IP", &ExtObject::eGetIP, RETURN_STRING);
-	ADDEXP("Get User ID", "Information", "UserID", &ExtObject::eGetUserID, RETURN_STRING);
-	ADDEXP("Get Remote User ID", "Information", "RemoteUserID", &ExtObject::eGetRemoteUserID, RETURN_STRING);
+	ADDEXP("Get player ID", "Information", "PlayerID", &ExtObject::eGetPlayerID, RETURN_INTEGER);
+	ADDEXP("Get remote player ID", "Information", "RemotePlayerID", &ExtObject::eGetRemotePlayerID, RETURN_INTEGER);
+
+	ADDEXP("Get number of players", "Information", "RemotePlayerID", &ExtObject::eGetNumberOfPlayers, RETURN_INTEGER);
+
+	ADDPARAM(PARAM_VALUE, "1", "Index");
+	ADDEXP("Lookup player ID from index", "Information", "PlayerIDFromIndex", &ExtObject::ePlayerIDFromIndex, RETURN_INTEGER);
+
+	ADDPARAM(PARAM_VALUE, "Name", "The name of the variable");
+	ADDEXP("Get player variable", "Player Variables", "PlayerVariable", &ExtObject::ePlayerVariable, 0);
+
+	ADDPARAM(PARAM_VALUE, "Name", "The name of the variable");
+	ADDEXP("Get remote player variable", "Player Variables", "RemotePlayerVariable", &ExtObject::eRemotePlayerVariable, 0);
+
+
 
 #include "..\..\Common\CommonAceTable.hpp"
 }

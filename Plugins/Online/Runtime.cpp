@@ -23,8 +23,6 @@ ExtObject::ExtObject(initialObject* editObject, VRuntime* pVRuntime)
 // up your object here so it is safe to make runtime calls.
 void ExtObject::OnCreate()
 {
-	int myValue;
-
 	// Load the edittime data that was serialized.
 	bin ar;
 	ar.attach(info.editObject->eData, info.editObject->eSize);
@@ -33,7 +31,7 @@ void ExtObject::OnCreate()
 	// Your runtime loader must be able to load all versions!
 	int Version = 0;
 	ar >> Version;
-	ar >> myValue;
+	//ar >> myValue;
 
 	// Finished reading data
 	ar.detach();
@@ -45,10 +43,10 @@ void ExtObject::OnCreate()
 	info.h = info.editObject->eHeight;
 	info.angle = 0.0f;
 
-	uniqueUserID = 0;
+	uniquePlayerID = 0;
 	server = false;
 
-	userID = 0;
+	player = 0;
 
 	// Update bounding box
 	pRuntime->UpdateBoundingBox(this);
@@ -101,7 +99,7 @@ void ExtObject::OnFrameChange(int oldFrame, int newFrame)
 	// oldFrame is -1 on start of app, newFrame is -1 on end of app
 }
 
-// User defined functions
+// Player defined functions
 long ExtObject::GetData(int id, void* param)
 {
 	return 0;
@@ -137,34 +135,80 @@ void TimeStamp(RakNet::BitStream& stream, RakNet::MessageID messageID)
 	stream.Write( messageID );
 }
 
+void WriteExpStore( RakNet::BitStream &stream, ExpStore &s ) 
+{
+	stream.Write(s.Type()); 
+
+	switch(s.Type())
+	{
+	case EXPTYPE_INTEGER:
+		stream.Write(s.GetInt());
+		break;
+	case EXPTYPE_FLOAT:
+		stream.Write(s.GetFloat());
+		break;
+	case EXPTYPE_STRING:
+		RakNet::RakString string;
+		string = s.GetString();
+		stream.Write( string );
+		break;
+	}
+}
+
+void ReadExpStore( RakNet::BitStream &stream, ExpStore& s ) 
+{
+	RakNet::RakString read_string;
+	int read_int;
+	float read_float;
+	ExpType type;
+	stream.Read( type );
+
+	switch(type)
+	{
+	case EXPTYPE_INTEGER:
+		stream.Read(read_int);
+		s = read_int;
+		break;
+	case EXPTYPE_FLOAT:
+		stream.Read(read_float);
+		s = read_float;
+		break;
+	case EXPTYPE_STRING:
+		stream.Read( read_string );
+		s = read_string;
+		break;
+	}	
+}
 
 void ExtObject::processPackets()
 {
 	for(packet = raknet->Receive(); packet; packet = raknet->Receive())
 	{
-		remoteUserID.push_back( packet->guid );
+		remotePlayerID.push_back( packet->guid );
 		RakNet::MessageID packetIdentifier = GetPacketIdentifier(packet);
 		switch (packetIdentifier)
 		{
 		case ID_DISCONNECTION_NOTIFICATION:
 			if(server)
 			{
-				PlayerMap::iterator p = players.find( packet->guid );
-				if( p!= players.end() )
+				PlayerMap::iterator p = players.map.find( packet->guid );
+				if( p!= players.map.end() )
 				{
-					Player& leftPlayer = p->second;
-					remoteUserID.push_back( leftPlayer.guid );
+					Player& leftPlayer = *p->second;
+					remotePlayerID.push_back( leftPlayer.guid );
 					pRuntime->GenerateEvent(info.oid, condition::cOnPlayerDisconnect, this);
-					remoteUserID.pop_back();
+					remotePlayerID.pop_back();
 
 					// A client has disconnected from us. We must send everyone a notification about them
 					RakNet::BitStream stream;
 					TimeStamp(stream, ID_CONSTRUCT_PLAYER_LEFT );
-					leftPlayer.Serialize(true, stream);
+					stream << leftPlayer.guid;
 
 					raknet->Send(&stream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
-					players.erase(p);
+					players.list.remove(leftPlayer);
+					players.map.erase(p);
+					
 				}
 			}
 			//else
@@ -198,7 +242,7 @@ void ExtObject::processPackets()
 		{
 			if(server)
 			{		
-				int newPlayerID = getUniqueUserID();
+				int newPlayerID = getUniquePlayerID();
 				Player newPlayer(packet->guid, newPlayerID);
 
 				// We have a message from a newly connected client asking us for info
@@ -211,20 +255,18 @@ void ExtObject::processPackets()
 
 					stream.Write(newPlayerID);
 					stream.Write((int) players.size());
-					for ( PlayerMap::iterator p = players.begin(); p!= players.end(); p++ )
-						p->second.Serialize(true, stream);
-
+					for ( PlayerList::iterator p = players.list.begin(); p!= players.list.end(); p++ )
+						p->Serialize(true, stream);
 
 					raknet->Send(&stream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, false);
 				}
 
 
+				players.push_back(packet->guid, newPlayer);
 
-				players[packet->guid] = newPlayer;
-
-				remoteUserID.push_back( newPlayer.guid );
+				remotePlayerID.push_back( newPlayer.guid );
 				pRuntime->GenerateEvent(info.oid, condition::cOnPlayerConnect, this);
-				remoteUserID.pop_back();
+				remotePlayerID.pop_back();
 			
 				// Now send a message to every other client telling them a player has joined
 				{
@@ -252,25 +294,27 @@ void ExtObject::processPackets()
 				stream.Read(timeStamp);
 				stream.Read(typeId);
 
-				stream.Read(userID);
+				int playerID;
+				stream.Read(playerID);
 
 				int numberOfPlayers = 0;
 				stream.Read(numberOfPlayers);
 
 				RakNet::RakNetGUID gui = raknet->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS);
-				Player self(gui, userID );
-				players[gui] = self;
+
+				players.push_back(gui, Player(gui, playerID) );
+				player = &players.list.back();
 
 				pRuntime->GenerateEvent(info.oid, condition::cOnConnect, this);
 
 				for( int i = 0; i < numberOfPlayers; i++)
 				{
 					Player player = Player(stream);
-					players[player.guid] = player;
+					players.push_back(player.guid, player);
 
-					remoteUserID.push_back(player.guid);
+					remotePlayerID.push_back(player.guid);
 					pRuntime->GenerateEvent(info.oid, condition::cOnPlayerHere, this);
-					remoteUserID.pop_back();
+					remotePlayerID.pop_back();
 				}
 
 
@@ -291,11 +335,11 @@ void ExtObject::processPackets()
 			stream.Read(typeId);
 
 			Player newPlayer(stream);
-			players[newPlayer.guid] = newPlayer;
+			players.push_back(newPlayer.guid, newPlayer );
 
-			remoteUserID.push_back( newPlayer.guid );
+			remotePlayerID.push_back( newPlayer.guid );
 			pRuntime->GenerateEvent(info.oid, condition::cOnPlayerConnect, this);
-			remoteUserID.pop_back();
+			remotePlayerID.pop_back();
 
 			break;
 		}
@@ -308,20 +352,26 @@ void ExtObject::processPackets()
 			RakNet::MessageID useTimeStamp; 
 			RakNet::Time timeStamp; 
 			RakNet::MessageID typeId; 
+			RakNet::RakNetGUID guid;
 
 			stream.Read(useTimeStamp);
 			stream.Read(timeStamp);
 			stream.Read(typeId);
+			stream.Read(guid);
 
-			Player leftPlayer(stream);
-			PlayerMap::iterator p = players.find(leftPlayer.guid);
-			if(p != players.end())
+			Player leftPlayer(guid, 0);
+			PlayerMap::iterator p = players.map.find(leftPlayer.guid);
+			if(p != players.map.end())
 			{
-				remoteUserID.push_back( leftPlayer.guid );
+				leftPlayer.id = p->second->id;
+				remotePlayerID.push_back( leftPlayer.guid );
 				pRuntime->GenerateEvent(info.oid, condition::cOnPlayerDisconnect, this);
-				remoteUserID.pop_back();
-				players.erase(p);
+				remotePlayerID.pop_back();
+				players.map.erase(p);
+				players.list.remove(leftPlayer);
 			}
+			
+
 			break;
 		}
 
@@ -351,10 +401,6 @@ void ExtObject::processPackets()
 	
 			RakNet::BitStream stream(packet->data, packet->length, false);
 
-			RakNet::RakString read_string;
-			int read_int;
-			float read_float;
-
 			RakNet::MessageID useTimeStamp; // Assign this to ID_TIMESTAMP
 			RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()
 			RakNet::MessageID typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE
@@ -363,6 +409,7 @@ void ExtObject::processPackets()
 			stream.Read(timeStamp);
 			stream.Read(typeId);
 
+			RakNet::RakString read_string;
 			stream.Read( read_string );
 			message = read_string;
 
@@ -373,40 +420,24 @@ void ExtObject::processPackets()
 			for(int i = 0; i < numberOfParams; i++)
 			{
 				ExpStore s;
-				ExpType type;
-				stream.Read( type );
+				ReadExpStore(stream, s);
 
-				switch(type)
-				{
-				case EXPTYPE_INTEGER:
-					stream.Read(read_int);
-					s = read_int;
-					break;
-				case EXPTYPE_FLOAT:
-					stream.Read(read_float);
-					s = read_float;
-					break;
-				case EXPTYPE_STRING:
-					stream.Read( read_string );
-					s = read_string;
-					break;
-				}
 				messageParamList.push_back(s);
 			}
 			RakNet::RakNetGUID guid;
 			stream.Read(guid);
 
-			remoteUserID.push_back( guid );
+			remotePlayerID.push_back( guid );
 
 			pRuntime->GenerateEvent(info.oid, condition::cOnMessage, this);
 			pRuntime->GenerateEvent(info.oid, condition::cOnAnyMessage, this);
 
-			remoteUserID.pop_back();
+			remotePlayerID.pop_back();
 			break;
 		}
 		raknet->DeallocatePacket(packet);
 
-		remoteUserID.pop_back();
+		remotePlayerID.pop_back();
 	}
 	packet = NULL;
 }

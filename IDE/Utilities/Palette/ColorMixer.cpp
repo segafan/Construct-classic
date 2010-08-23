@@ -739,7 +739,6 @@ void CColorMixer::OnTextFieldChange()
 	if( lock_field_change)
 		return;
 
-
 	if(UseHSL)
 	{
 		CString h, s, l;

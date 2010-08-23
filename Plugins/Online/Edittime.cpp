@@ -15,7 +15,7 @@ void WINAPI ETAddDependencies(MicroDependency& dependencies)
 {
 	// Any DLL files added here are retrieved from the Plugins\Runtime directory, and compiled in to exported EXEs.
 	// When the EXE runs, the DLL is extracted to the current directory before loading your plugin, so calls such
-	// as LoadLibrary("example.dll") will succeed at runtime.  This greatly simplifies redistribution for end users.
+	// as LoadLibrary("example.dll") will succeed at runtime.  This greatly simplifies redistribution for end players.
 
 	// Eg.
 	//dependencies.Add("example.dll");
@@ -38,7 +38,7 @@ void WINAPI ETAddDependencies(MicroDependency& dependencies)
 
 BEGIN_PROPERTY_TABLE();
 
-	PROPERTY_VALUE(myValue, "Test value", "This is a test PROPERTY_VALUE.");
+	//PROPERTY_VALUE(myValue, "Test value", "This is a test PROPERTY_VALUE.");
 
 END_PROPERTY_TABLE  ();
 
@@ -74,11 +74,11 @@ void EditExt::OnPropertiesUpdate()
 {
 }
 
-// When the object is inserted to the layout editor by the user.
+// When the object is inserted to the layout editor by the player.
 void EditExt::OnPut()
 {
 	// Default value for the property
-	myValue = 50;
+	//myValue = 50;
 
 	// Default object size
 	pInfo->objectWidth = 64;
@@ -86,7 +86,7 @@ void EditExt::OnPut()
 }
 
 
-// When the object is removed from the layout editor by the user.
+// When the object is removed from the layout editor by the player.
 void EditExt::OnRemoved()
 {
 

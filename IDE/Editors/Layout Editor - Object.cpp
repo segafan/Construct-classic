@@ -124,6 +124,11 @@ CObj* CLayoutEditor::CreateNewClonedObject(const char* objectFile, CPoint point,
 	oT->m_PrivateValues = pOldType->m_PrivateValues;
 	oT->VariableID = pOldType->VariableID;
 
+	for(list<CEffect>::iterator e = oT->effects.begin(); e != oT->effects.end(); e++)
+	{
+		e->Init(this);
+	}
+
 	CObj *o = new CObj;
 	// editObject now points to member variable
 	//o->editObject = new editInfo();

@@ -34,12 +34,12 @@ void EditExt::Serialize(bin& ar)
 
 	if (ar.loading) {
 
-		ar >> myValue;
+		//ar >> myValue;
 
 	}
 	else {
 		
-		ar << myValue;
+		//ar << myValue;
 
 	}
 }

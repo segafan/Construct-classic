@@ -54,3 +54,9 @@ long ExtObject::cOnAnyMessage(LPVAL params)
 {
 	return true;
 }
+
+long ExtObject::cIsServer(LPVAL params)
+{
+	return false;
+}
+

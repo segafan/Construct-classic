@@ -55,7 +55,7 @@
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
 				EnableFiberSafeOptimizations="true"
-				WholeProgramOptimization="true"
+				WholeProgramOptimization="false"
 				AdditionalIncludeDirectories="LIBs\Include\"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_GUILIB_STATIC_;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;XLISTCTRLLIB_STATIC;XLISTCTRLLIB_NOAUTOLIB"
 				StringPooling="true"
@@ -73,7 +73,7 @@
 				BrowseInformationFile=".\..\..\Construct Compile\IDE\ReleaseX/"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="0"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -97,7 +97,7 @@
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libcmt.lib"
 				TypeLibraryResourceID="1"
-				GenerateDebugInformation="false"
+				GenerateDebugInformation="true"
 				AssemblyDebug="0"
 				ProgramDatabaseFile=".\..\..\Construct Compile\IDE\ReleaseX/Construct.pdb"
 				GenerateMapFile="false"
@@ -3092,11 +3092,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\LIBs\Include\Resources\resource.h"
+				RelativePath="Resource.h"
 				>
 			</File>
 			<File
-				RelativePath="Resource.h"
+				RelativePath=".\LIBs\Include\Resources\resource.h"
 				>
 			</File>
 			<File

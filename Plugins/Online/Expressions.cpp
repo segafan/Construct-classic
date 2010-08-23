@@ -48,22 +48,43 @@ long ExtObject::eGetIP(LPVAL params, ExpReturn& ret)
 	return ret.ReturnString(pRuntime, raknet->GetLocalIP(0) );
 }
 
-long ExtObject::eGetUserID(LPVAL params, ExpReturn& ret)
+long ExtObject::eGetPlayerID(LPVAL params, ExpReturn& ret)
 {
 	//return ret = raknet->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).systemIndex;
 	//return ret = raknet->
-	return ret = userID; //ret.ReturnString(pRuntime, raknet->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
+	return ret = player->id; //ret.ReturnString(pRuntime, raknet->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS).ToString());
 }
 
-long ExtObject::eGetRemoteUserID(LPVAL params, ExpReturn& ret)
+long ExtObject::eGetRemotePlayerID(LPVAL params, ExpReturn& ret)
 {
-	if(remoteUserID.size())
+	if(remotePlayerID.size())
 	{
-		PlayerMap::iterator p = players.find(remoteUserID.back() );
-		if( p!= players.end())
-			return ret = p->second.id;
+		PlayerMap::iterator p = players.map.find(remotePlayerID.back() );
+		if( p!= players.map.end())
+			return ret = p->second->id;
 		else
-			return ret.ReturnString(pRuntime, remoteUserID.back().ToString() );
+			return ret.ReturnString(pRuntime, remotePlayerID.back().ToString() );
 	}
+	return ret = 0;
+}
+
+long ExtObject::eGetNumberOfPlayers(LPVAL params, ExpReturn& ret)
+{
+	return ret = players.size();
+}
+
+long ExtObject::ePlayerIDFromIndex(LPVAL params, ExpReturn& ret)
+{
+	//PlayerMap::iterator p = players;
+	return ret = 0;
+}
+
+long ExtObject::ePlayerVariable(LPVAL params, ExpReturn& ret)
+{
+	return ret = 0;
+}
+
+long ExtObject::eRemotePlayerVariable(LPVAL params, ExpReturn& ret)
+{
 	return ret = 0;
 }

@@ -219,7 +219,7 @@ void CEditSpinSlider::OnTimer(UINT nIDEvent)
 		SetTimer(30,100-min(95,(m_speed/4)),0);
 		GetParent()->SendMessage(1234,100,(long)this->m_hWnd);
 
-		((CToolSettings*)(GetParent()->GetParent()))->m_pImgEd->SetFocus();
+		//((CToolSettings*)(GetParent()->GetParent()))->m_pImgEd->SetFocus();
 	}
 	if(nIDEvent == 31)
 	{
@@ -232,13 +232,13 @@ void CEditSpinSlider::OnTimer(UINT nIDEvent)
 		SetTimer(31,100-min(95,(m_speed/4)),0);
 		GetParent()->SendMessage(1234,100,(long)this->m_hWnd);
 
-		((CToolSettings*)(GetParent()->GetParent()))->m_pImgEd->SetFocus();
+		//((CToolSettings*)(GetParent()->GetParent()))->m_pImgEd->SetFocus();
 	}
 	if(nIDEvent == 32)
 	{
 		GetParent()->SendMessage(1234,100,(long)this->m_hWnd);
 
-		((CToolSettings*)(GetParent()->GetParent()))->m_pImgEd->SetFocus();
+		//((CToolSettings*)(GetParent()->GetParent()))->m_pImgEd->SetFocus();
 	}
 	CEdit::OnTimer(nIDEvent);
 }

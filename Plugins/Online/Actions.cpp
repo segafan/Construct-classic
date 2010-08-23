@@ -41,53 +41,44 @@ long ExtObject::aAddParameter(LPVAL params)
 	return 0;
 }
 
-
-
-long ExtObject::aSendMessage(LPVAL params)
+void ExtObject::WriteParameters( RakNet::BitStream &stream ) 
 {
-	RakNet::MessageID useTimeStamp; // Assign this to ID_TIMESTAMP
-	RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()
-	RakNet::MessageID typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE
-	useTimeStamp = ID_TIMESTAMP;
-	timeStamp = RakNet::GetTime();
-	typeId = ID_CONSTRUCT_MESSAGE;
-	RakNet::BitStream stream;
-	stream.Write(useTimeStamp);
-	stream.Write(timeStamp);
-	stream.Write(typeId);
-	// Assume we have a Mine* mine object
-	stream.Write( RakNet::RakString(params[0].GetString()) );
 	stream.Write( (int)paramList.size() );
-
 	for( int i = 0; i < paramList.size(); i++)
 	{
 		ExpStore& s = paramList[i];
-		stream.Write(s.Type()); 
-
-		switch(s.Type())
-		{
-		case EXPTYPE_INTEGER:
-			stream.Write(s.GetInt());
-			break;
-		case EXPTYPE_FLOAT:
-			stream.Write(s.GetFloat());
-			break;
-		case EXPTYPE_STRING:
-			RakNet::RakString string;
-			string = s.GetString();
-			stream.Write( string );
-			break;
-		}
+		WriteExpStore(stream, s);
 	}
+}
 
+long ExtObject::aSendMessage(LPVAL params)
+{
+	RakNet::BitStream stream;
+	TimeStamp(stream, ID_CONSTRUCT_MESSAGE);
+
+	stream.Write( RakNet::RakString(params[0].GetString()) );
+	WriteParameters(stream);
 
 	stream.Write( raknet->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS));
 
-
 	raknet->Send(&stream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
-	//stream.Write(mine->GetNetworkID()); // In the struct this is NetworkID networkId
-	//stream.Write(mine->GetOwner()); // In the struct this is SystemAddress systemAddress
+	paramList.clear();
+
+	return 0;
+}
+
+long ExtObject::aSendMessageTo(LPVAL params)
+{
+	RakNet::BitStream stream;
+	TimeStamp(stream, ID_CONSTRUCT_MESSAGE);
+
+	stream.Write( RakNet::RakString(params[0].GetString()) );
+	WriteParameters(stream);
+
+	stream.Write( raknet->GetGuidFromSystemAddress(RakNet::UNASSIGNED_SYSTEM_ADDRESS));
+
+	raknet->Send(&stream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, RakNet::UNASSIGNED_SYSTEM_ADDRESS, true);
 
 	paramList.clear();
 
@@ -115,6 +106,23 @@ long ExtObject::aForwardMessage(LPVAL params)
 {
 	RakNet::BitStream stream(packet->data, packet->length, false);
 	raknet->Send(&stream, HIGH_PRIORITY, RELIABLE_ORDERED, 0, packet->guid, true);
+	
+	return 0;
+}
+
+long ExtObject::aSetPlayerVariable(LPVAL params)
+{
+	if(!player)
+		return 0;
+
+	string name = params[0].GetString();
+
+	Player::VariableMap::iterator v = player->variables.map.find(name);
+	if(v != player->variables.map.end())
+	{
+		v->second->updated = true;
+		v->second->data = params[1];
+	}
 	
 	return 0;
 }

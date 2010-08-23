@@ -97,6 +97,8 @@ public:
 	long eOne(LPVAL params, ExpReturn& ret);
 	long eZero(LPVAL params, ExpReturn& ret);
 
+	
+
 	////////////////////////////////////////////////////
 	// Data members
 

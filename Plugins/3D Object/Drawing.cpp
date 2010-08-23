@@ -147,7 +147,7 @@ void ExtObject::Draw()
 	D3DXMATRIX rotMatrixX, rotMatrixY, rotMatrixZ, rotMatrix;
 	D3DXMatrixRotationY(&rotMatrixY, -yaw);	
 	D3DXMatrixRotationX(&rotMatrixX, -pitch);
-	D3DXMatrixRotationZ(&rotMatrixZ, cr::to_radians(info.angle));		
+	D3DXMatrixRotationZ(&rotMatrixZ, cr::to_radians(info.angle + roll));		
 	D3DXMatrixMultiply(&rotMatrix, &rotMatrixY, &rotMatrixX);
 	D3DXMatrixMultiply(&rotMatrix, &rotMatrix, &rotMatrixZ);
 
