@@ -4318,6 +4318,34 @@ long CallSysE(SYSEXPROUTINE exproutine, PyObject* pParams, PyObject*& pythonret)
 	return returnval;
 }
 
+long CallEDefault(CRunObject* obj, PyObject* pParams, PyObject*& pythonret)
+{
+	//assert(false);
+	// Call the action
+	ExpStorePy ret;
+	
+	// Params
+	int size = 1;
+	if(PyList_Check(pParams))
+	{
+		size = PyList_Size(pParams);
+	}
+	ExpStore ParamList[CRUNTIME_MAX_PARAMS];
+	GetPyParams(&ParamList[0], pParams, size);
+
+	// Call expression
+	long returnval = obj->ReturnDefaultValue((ExpReturn*)ParamList, *(ExpReturn*)&ret);
+
+	// Convert
+	pythonret = Py_None;
+	ExpToPython(pythonret, &ret);
+	if(pythonret == Py_None)
+		Py_INCREF( Py_None );
+
+	ret.PreventHeapCorruptionHack(); 
+
+	return returnval;
+}
 
 
 ///////////////////////
@@ -4411,10 +4439,23 @@ PyObject* pyObjExpression( PyObject* self, PyObject* args )
 	return pythonret;
 }
 
+PyObject* pyObjExpressionDefault( PyObject* self, PyObject* args )
+{
+	long object;
+	PyObject* pParams;
+
+	PyArg_ParseTuple( args, "lO", &object,  &pParams );
+
+	PyObject* pythonret;
+	CallEDefault((CRunObject*)object, pParams, pythonret);
+
+	return pythonret;
+}
+
 ///////////////////
 //	Object Type ACES
 
-PyObject* pyObjTypeAction( PyObject* self, PyObject* args )
+/*PyObject* pyObjTypeAction( PyObject* self, PyObject* args )
 {
 	long object;
 	long routine;
@@ -4481,12 +4522,7 @@ PyObject* pyObjTypeExpression( PyObject* self, PyObject* args )
 	CallE(*(EXPROUTINE*)routine, pObj->instances[0], pParams, pythonret);
 
 	return pythonret;
-}
-
-///////////////////////////////////////////////////////////
-
-
-
+}*/
 
 PyObject* pyObjCount( PyObject* self, PyObject* args )
 {
@@ -4561,6 +4597,7 @@ PyObject* pySetObjectAttribute( PyObject* self, PyObject* args)
 	else
 	{
 		PyDict_SetItemString( pObject->info.pInfo->pDictionary, Name, PyObjectValue);
+		Py_RETURN_FALSE;
 	}	
 	Py_INCREF( Py_None );
 	return Py_None;
@@ -4601,7 +4638,7 @@ PyObject* pyGetObjectAttribute( PyObject* self, PyObject* args)
 	}
 }
 
-PyObject* pySetObjTypeAttribute( PyObject* self, PyObject* args)
+/*PyObject* pySetObjTypeAttribute( PyObject* self, PyObject* args)
 {	
 	long pointer;
 	char *PyName;
@@ -4665,7 +4702,7 @@ PyObject* pyGetObjTypeAttribute( PyObject* self, PyObject* args)
 
 	PyErr_SetString(PyExc_AttributeError, Name);
 	return NULL;
-}
+}*/
 
 PyObject* pySetObjTypeDictionary( PyObject* self, PyObject* args)
 {
@@ -4736,78 +4773,6 @@ PyObject* pyGetSysAttribute( PyObject* self, PyObject* args)
 	}
 }
 
-/////////////////////////////
-/// sol picking in python ///
-/////////////////////////////
-
-PyObject* pyPickedObjTypeAction( PyObject* self, PyObject* args )
-{
-	long object;
-	long routine;
-	PyObject* pParams;
-
-	PyArg_ParseTuple( args, "llO", &object, &routine,  &pParams );
-
-	CRunObjType* pObj = (CRunObjType*)object; 
-
-	if(pObj->pSol->sol.size() == 0)
-	{
-		Py_INCREF( Py_None );
-		return Py_None;
-	}
-
-	// Call the action
-	CallAC(*(ACROUTINE*)routine, pObj->pSol->sol[0], pParams);
-
-	Py_INCREF( Py_None );
-	return Py_None;
-}
-
-PyObject* pyPickedObjTypeCondition( PyObject* self, PyObject* args )
-{
-	long object;
-	long routine;
-	PyObject* pParams;
-
-	PyArg_ParseTuple( args, "llO", &object, &routine,  &pParams );
-
-	CRunObjType* pObj = (CRunObjType*)object; 
-
-	if(pObj->pSol->sol.size() == 0)
-	{
-		Py_INCREF( Py_None );
-		return Py_None;
-	}
-
-	// Call the action
-	if(CallAC(*(ACROUTINE*)routine, pObj->pSol->sol[0], pParams))
-		return Py_BuildValue("i", 1 ); //true
-	
-	return Py_BuildValue("i", 0 ); //false
-}
-
-PyObject* pyPickedObjTypeExpression( PyObject* self, PyObject* args )
-{
-	long object;
-	long routine;
-	PyObject* pParams;
-
-	PyArg_ParseTuple( args, "llO", &object, &routine,  &pParams );
-
-	CRunObjType* pObj = (CRunObjType*)object; 
-
-	if(pObj->pSol->sol.size() == 0)
-	{
-		Py_INCREF( Py_None );
-		return Py_None;
-	}
-
-	// Call the action
-	PyObject* pythonret;
-	CallE(*(EXPROUTINE*)routine, pObj->pSol->sol[0], pParams, pythonret);
-
-	return pythonret;
-}
 
 PyObject* pyPickedObjCount( PyObject* self, PyObject* args )
 {
@@ -4815,7 +4780,10 @@ PyObject* pyPickedObjCount( PyObject* self, PyObject* args )
 	long pointer;
 	PyArg_ParseTuple( args, "l", &pointer );
 
-	CRunObjType* pType = (CRunObjType*)pointer; // we cant do any error checking here :(
+	CRunObjType* pType = (CRunObjType*)pointer;
+	if(pType->pSol->selectAll)
+		return pyObjCount(self, args);
+	
 	long size = pType->pSol->sol.size();
 
 	return Py_BuildValue( "l", size );
@@ -4827,9 +4795,10 @@ PyObject* pyPickedInstance( PyObject* self, PyObject* args )
 	long key;
 	PyArg_ParseTuple( args, "ll", &pointer, &key );
 
-	CRunObjType* pType = (CRunObjType*)pointer; 
-
-
+	CRunObjType* pType = (CRunObjType*)pointer;
+	if(pType->pSol->selectAll)
+		return pyInstance(self, args);
+	
 	if(key >= 0 && key < pType->pSol->sol.size())
 	{
 		CRunObject* pObject = pType->pSol->sol[key];
@@ -4841,73 +4810,6 @@ PyObject* pyPickedInstance( PyObject* self, PyObject* args )
 	//return Py_None;
 }
 
-PyObject* pySetPickedObjTypeAttribute( PyObject* self, PyObject* args)
-{	
-	long pointer;
-	char *PyName;
-	PyObject* PyObjectValue;
-	PyArg_ParseTuple( args, "lsO", &pointer, &PyName, &PyObjectValue);
-
-	CString Name;
-	Name.Format("%s", PyName);
-	CString lowername = GetLower(Name);
-
-	CRunObjType* pType = (CRunObjType*)pointer; 
-	map<CString, ACROUTINE>::iterator i = pType->PySetAttrib.find(lowername);
-
-	if( pType->pSol->sol.size() == 0)
-	{
-		Py_INCREF( Py_None );
-		return Py_None;
-	}
-
-	if(i !=  pType->PySetAttrib.end())
-		CallAC(i->second, pType->pSol->sol[0], PyObjectValue);
-	else
-	{
-		PyDict_SetItemString( pType->pDictionary, Name, PyObjectValue);
-	}	
-	Py_INCREF( Py_None );
-	return Py_None;
-}
-
-PyObject* pyGetPickedObjTypeAttribute( PyObject* self, PyObject* args)
-{
-	long pointer;
-	char *PyName;
-	PyObject* PyObjectValue;
-	PyArg_ParseTuple( args, "lsO", &pointer, &PyName, &PyObjectValue);
-	
-	CString Name;
-	Name.Format("%s", PyName);
-	CString lowername = GetLower(Name);
-
-	CRunObjType* pType = (CRunObjType*)pointer; 
-	map<CString, EXPROUTINE>::iterator i = pType->PyGetAttrib.find(lowername);
-
-	if( pType->pSol->sol.size() != 0)
-	{
-		if(i != pType->PyGetAttrib.end())
-		{
-			PyObject* ret;
-			CallE(i->second, pType->pSol->sol[0], PyObjectValue, ret);
-			return ret;
-		}
-		else
-		{
-			PyObject* ret = PyDict_GetItemString( pType->pDictionary, Name);
-			if(ret)
-				return ret;
-		}
-	}
-
-	//raise AttributeError, name
-
-	PyErr_SetString(PyExc_AttributeError, Name);
-	return NULL;
-}
-
-//////////////////////////end 
 
 PyMethodDef g_methodDefinitions[] =
 {
@@ -4919,30 +4821,23 @@ PyMethodDef g_methodDefinitions[] =
     { "oa", pyObjAction, METH_VARARGS, "Calls an object instance action" },
     { "oc", pyObjCondition, METH_VARARGS, "Calls an object instance condition" },
     { "oe", pyObjExpression, METH_VARARGS, "Calls an object instance expression" },
+	{ "oedefalult", pyObjExpressionDefault, METH_VARARGS, "Set an attribute to an object type with default exp" },
 
-    { "ta", pyObjTypeAction, METH_VARARGS, "Calls an object type action" },
-    { "tc", pyObjTypeCondition, METH_VARARGS, "Calls an object type condition" },
-    { "te", pyObjTypeExpression, METH_VARARGS, "Calls an object type expression" },
+//    { "ta", pyObjTypeAction, METH_VARARGS, "Calls an object type action" },
+//    { "tc", pyObjTypeCondition, METH_VARARGS, "Calls an object type condition" },
+//    { "te", pyObjTypeExpression, METH_VARARGS, "Calls an object type expression" },
 
 //SOL picking
-	{ "pta", pyPickedObjTypeAction, METH_VARARGS, "Calls an picked object type action" },
-    { "ptc", pyPickedObjTypeCondition, METH_VARARGS, "Calls an picked object type condition" },
-    { "pte", pyPickedObjTypeExpression, METH_VARARGS, "Calls an picked object type expression" },
-
 	{ "pins", pyPickedInstance, METH_VARARGS, "Retrieves a pointer to an object given an object type and an index" },
 	{ "pcnt", pyPickedObjCount, METH_VARARGS, "Retrieve a count of an objtype" },
-
-	{ "pOTGetAtt", pyGetPickedObjTypeAttribute, METH_VARARGS, "Obtain an attribute from an object type" },
-	{ "pOTSetAtt", pySetPickedObjTypeAttribute, METH_VARARGS, "Set an attribute to an object type" },
-//end
 
 	{ "ins", pyInstance, METH_VARARGS, "Retrieves a pointer to an object given an object type and an index" },
 	{ "cnt", pyObjCount, METH_VARARGS, "Retrieve a count of an objtype" },
 
 	{ "SysGetAtt", pyGetSysAttribute, METH_VARARGS, "Obtain an attribute from the system" },
 	{ "SysSetAtt", pySetSysAttribute, METH_VARARGS, "Obtain an attribute from the system" },
-	{ "OTGetAtt", pyGetObjTypeAttribute, METH_VARARGS, "Obtain an attribute from an object type" },
-	{ "OTSetAtt", pySetObjTypeAttribute, METH_VARARGS, "Set an attribute to an object type" },
+//	{ "OTGetAtt", pyGetObjTypeAttribute, METH_VARARGS, "Obtain an attribute from an object type" },
+//	{ "OTSetAtt", pySetObjTypeAttribute, METH_VARARGS, "Set an attribute to an object type" },
 	{ "OTSetDict", pySetObjTypeDictionary, METH_VARARGS, "Set a dictionary to an object type" },
 	{ "ObjGetAtt", pyGetObjectAttribute, METH_VARARGS, "Obtain an attribute from an object instance" },
 	{ "ObjSetAtt", pySetObjectAttribute, METH_VARARGS, "Set an attribute to an object instance" },
@@ -5126,7 +5021,10 @@ bool SystemObject::InitPython()
 		// SYSTEM OBJECT
 		////////////////////////
 
-		s += "class System:";
+		s += "class System(object):";
+		AddLine(script, s);
+
+		s = "	_otherAttrib=list()";
 		AddLine(script, s);
 
 		// For attributes, we will store a map of actions which we consider
@@ -5219,23 +5117,25 @@ bool SystemObject::InitPython()
 				{
 					PySetAttrib[GetLower(name)] = find->second;
 				}
-				else
-				{
-					//todo: handle readonly attributes
-				}
+				s = "	_otherAttrib.append('" + GetLower(name) + "')";
+				AddLine(script, s);
 			}
 		} // for each expressions
+
+		s +=	"	def __dir__(self):";
+		AddLine(script, s);
+		s +=	"		return list(self.__dict__) + list(self.__class__.__dict__) + self._otherAttrib";
+		AddLine(script, s);
 
 		s +=	"	def __getattr__(self, name):";
 		AddLine(script, s);
 		s +=	"		return __construct__.SysGetAtt(name, [])";
 		AddLine(script, s);
 
-
 		s +=	"	def __setattr__(self, name, key):";
 		AddLine(script, s);
 		s +=	"		return __construct__.SysSetAtt(name, key)";
-		AddLine(script, s);	
+		AddLine(script, s);
 
 	//	s += "system = System()";
 	//	AddLine(script, s);	
@@ -5248,21 +5148,21 @@ bool SystemObject::InitPython()
 	// END SYSTEM OBJECT
 
 		
-		s += "class _Instances:"; //organize
+		s = "class _Instances:"; //to organize
 		AddLine(script, s);
-		s += "	pass";
+		s = "	pass";
 		AddLine(script, s);
 
-		s += "class SOL:";  //SOL class
+		s = "class SOL:";  //SOL class
 		AddLine(script, s);
-		s += "	pass";
+		s = "	pass";
 		AddLine(script, s);
 
 
 		for(vector<CRunObjType*>::iterator o = pCRuntime->objects.begin();	o != pCRuntime->objects.end();	o ++)
 		{
 			PluginModule* plug = (*o)->pPlugin;
-
+	
 			if(!plug) // if this is null, its usually because theres an attribute in the application
 			{
 				continue;
@@ -5282,14 +5182,11 @@ bool SystemObject::InitPython()
 				name = (*o)->Name;				
 			name.Replace("&", "");
 
-			s += "class ";	s += name; s += "Instance:";
+			s = "class " + name + "Instance:";
 			AddLine(script, s);
-			//s += "	def __init__(self):";
-			//AddLine(script, s);
-			//s += "		self.__instance__ = 0";
-			//AddLine(script, s);
-
-
+			s = "	_otherAttrib=list()";
+			AddLine(script, s);
+			
 			// For attributes, we will store a map of actions which we consider
 			// possible canditates. They must have the following:
 			// begin with Set
@@ -5315,13 +5212,13 @@ bool SystemObject::InitPython()
 					}
 				}
 
-				s += 	"	def ";	s += i->name;	s += "(self";
+				s = 	"	def " + i->name + "(self";
 				for(int p = 0; p < i->paramCount; p++)
 					s += ", p" + str(p);
 				s += "):";
 				AddLine(script, s);
 
-				s +=	"		__construct__.oa(self.__instance__, ";	
+				s =	"		__construct__.oa(self.__instance__, ";	
 				s += str((int)&((*plug->pvActRoutines)[index]));
 
 				s += ", [";
@@ -5342,7 +5239,7 @@ bool SystemObject::InitPython()
 				if(i->name == "")
 					continue;
 
-				s += 	"	def ";	s += i->name;	s += "(self";
+				s = 	"	def " + i->name + "(self";
 				for(int p = 0; p < i->paramCount; p++)
 					s += ", p" + str(p);
 
@@ -5377,17 +5274,20 @@ bool SystemObject::InitPython()
 					if(find != possibleAttribute.end())
 					{
 						(*o)->PySetAttrib[GetLower(i->name)] = find->second;
-						continue;
+						//continue;
 					}
+					s = "	_otherAttrib.append('" + GetLower(i->name) + "')";
+					AddLine(script, s);
+					continue;
 				}
 				
-				s += 	"	def ";	s += i->name;	s += "(self";
+				s = 	"	def " + i->name + "(self";
 				for(int p = 0; p < i->paramCount; p++)
 					s += ", p" + str(p);
 				s += "):";
 				AddLine(script, s);
 
-				s +=	"		return __construct__.oe(self.__instance__, ";	
+				s =	"		return __construct__.oe(self.__instance__, ";	
 				s += str((int)&((*plug->pvExpRoutines)[index]));
 
 				s += ", [";
@@ -5404,30 +5304,39 @@ bool SystemObject::InitPython()
 
 			} // for each expressions
 
-			s +=	"	def __getattr__(self, name):";
+			s+="	def __call__(self, *var_args_tuple):";
 			AddLine(script, s);
-			s +=	"		return __construct__.ObjGetAtt(self.__instance__, name, [])";
+			s +=	"		return __construct__.oedefalult(self.__instance__";	
+			//s += str((long)(*o));
+			s += ", list(var_args_tuple))";
 			AddLine(script, s);
 
+			s =	"	def __getattr__(self, name):";
+			AddLine(script, s);
+			s =	"		return __construct__.ObjGetAtt(self.__instance__, name, [])";
+			AddLine(script, s);
 
-			s +=	"	def __setattr__(self, name, key):";
+			s =	"	def __setattr__(self, name, key):";
 			AddLine(script, s);
-			s +=	"		return __construct__.ObjSetAtt(self.__instance__, name, key)";
+			s =	"		return __construct__.ObjSetAtt(self.__instance__, name, key)";
 			AddLine(script, s);
+
+			/// end instance
 
 			//organize
-			s += "_Instances." + name + "Instance=" + name + "Instance";
+			s = "_Instances." + name + "Instance=" + name + "Instance";
 			AddLine(script, s);
 
 			s += "del " + name + "Instance";
 			AddLine(script, s);
 			
 			
+
 			///////////////////////////////
-			// SOL PICKED OBJECT TYPE
+			// OBJECT TYPE
 			///////////////////////////////
 
-			s += "class " + name + "_sol:";
+			s = "class " + name + "(object):";
 			AddLine(script, s);
 
 			s += "	def __init__(self):";
@@ -5435,114 +5344,72 @@ bool SystemObject::InitPython()
 			s += "		__construct__.OTSetDict(" + str((long)(*o)) + ", self.__dict__)";
 			AddLine(script, s);
 
-			// Actions
-			index = 0;
-			for(vector<PyFunct>::iterator i = plug->py_actions.begin(); i != plug->py_actions.end(); i++, index++)
-			{
-				if(i->name == "")
-					continue;
+			s += "	def __call__(self, *var_args_tuple):";
+			AddLine(script, s);
+			s += "		return self.__getitem__(0).__call__(*var_args_tuple)";	
+			AddLine(script, s);
 
-				s += 	"	def ";	s += i->name;	s += "(self";
-				for(int p = 0; p < i->paramCount; p++)
-					s += ", p" + str(p);
-				s += "):";
-				AddLine(script, s);
-
-				s +=	"		__construct__.pta(";	
-				s += str((long)(*o));
-				s += ", ";
-				s += str((int)&((*plug->pvActRoutines)[index]));
-
-				s += ", [";
-				for(int p = 0; p < i->paramCount; p++)
-				{
-					s += "p" + str(p);
-					if(p < i->paramCount-1)
-						s += ", ";
-				}
-				s += "])";
-				AddLine(script, s);
-			} // for each action
-
-
-			// Conditions
-			index = 0;
-			for(vector<PyFunct>::iterator i = plug->py_conditions.begin(); i != plug->py_conditions.end(); i++, index++)
-			{
-				if(i->name == "")
-					continue;
-				
-				s += 	"	def ";	s += i->name;	s += "(self";
-				for(int p = 0; p < i->paramCount; p++)
-					s += ", p" + str(p);
-				s += "):";
-				AddLine(script, s);
-
-				s +=	"		return __construct__.ptc(";	
-				s += str((long)(*o));
-				s += ", ";
-				s += str((int)&((*plug->pvCndRoutines)[index]));
-
-				s += ", [";
-				for(int p = 0; p < i->paramCount; p++)
-				{
-					s += "p";  s+= str(p);
-					if(p < i->paramCount-1)
-						s += ", ";
-				}
-				s += "])";
-				AddLine(script, s);
-			} // for each condition
-
-			// Expressions
-			index = 0;
-			for(vector<PyFunct>::iterator i = plug->py_expressions.begin(); i != plug->py_expressions.end(); i++, index++)
-			{
-				if(i->name == "")
-					continue;
-
-				if(i->paramCount != 0)
-				{
-					s += 	"	def ";	s += i->name;	s += "(self";
-					for(int p = 0; p < i->paramCount; p++)
-						s += ", p"  + str(p);
-					s += "):";
-					AddLine(script, s);
-
-					s +=	"		return __construct__.pte(";	
-					s += str((long)(*o));
-					s += ", ";
-					s += str((int)&((*plug->pvExpRoutines)[index]));
-
-					s += ", [";
-					for(int p = 0; p < i->paramCount; p++)
-					{
-						s += "p";  s+= str(p);
-						if(p < i->paramCount-1)
-							s += ", ";
-					}
-					s += "])";
-					AddLine(script, s);
-				}
-				
-			} // for each expression
-
-
+			s += "	def __dir__(self):";
+			AddLine(script, s);
+			s += "		return list(self.__dict__) + dir(_Instances." + name + "Instance) + _Instances." + name + "Instance._otherAttrib";
+			AddLine(script, s);
 
 			s +=	"	def __getattr__(self, name):";
 			AddLine(script, s);
-			s +=	"		return __construct__.pOTGetAtt(";
-			s += str((long)(*o));
-			s += ", name, [])";
+			s +=	"		return getattr(self.__getitem__(0), name)";
 			AddLine(script, s);
 
 			s +=	"	def __setattr__(self, name, key):";
 			AddLine(script, s);
-			s +=	"		return __construct__.pOTSetAtt(";
-			s += str((long)(*o));
-			s += ", name, key)";
+			s +=	"		if(self.__getitem__(0).__setattr__(name, key) is False):";
+			AddLine(script, s);
+			s +=	"			self.__dict__[name]=key";
+			AddLine(script, s);
+			s +=	"		return None";
 			AddLine(script, s);
 
+
+			s +=	"	def __getitem__(self,key):";
+			AddLine(script, s);
+			s +=	"		point = __construct__.ins(";
+			s += str((int)(*o));
+			s += ", key)";
+			AddLine(script, s);
+			s +=	"		if(point <> -1):";
+			AddLine(script, s);
+			s +=	"			obj = _Instances." + name + "Instance()";
+			AddLine(script, s);
+			s +=	"			__construct__.ObjSetDict(point, obj.__dict__)";
+			AddLine(script, s);
+			s +=	"			__construct__.ObjSetAtt(point, \"__instance__\", point)";
+			AddLine(script, s);
+			s +=	"			return obj";
+			AddLine(script, s);
+			s +=	"		else:";
+			AddLine(script, s);
+			s +=	"			raise IndexError()";
+			AddLine(script, s);
+
+
+			s +=	"	def __len__(self):";
+			AddLine(script, s);
+			s +=	"		return __construct__.cnt(";
+			s += str((long)(*o));
+			s += ")";
+			AddLine(script, s);
+
+
+			///////////////////////////////
+			// SOL PICKED OBJECT TYPE
+			///////////////////////////////
+
+			s += "class " + name + "_sol(" + name + "):";
+			AddLine(script, s);
+
+			s += "	def __call__(self, *var_args_tuple):";
+			AddLine(script, s);
+			s += "		return self.__getitem__(0).__call__(*var_args_tuple)";	
+			AddLine(script, s);
 
 			s +=	"	def __getitem__(self,key):";
 			AddLine(script, s);
@@ -5554,16 +5421,10 @@ bool SystemObject::InitPython()
 			AddLine(script, s);
 			s +=	"			obj = _Instances." + name + "Instance()";
 			AddLine(script, s);
-	
 			s +=	"			__construct__.ObjSetDict(point, obj.__dict__)";
 			AddLine(script, s);
-
 			s +=	"			__construct__.ObjSetAtt(point, \"__instance__\", point)";
 			AddLine(script, s);
-
-		//	s +=	"			__construct__.Test()";
-		//	AddLine(script, s);	
-
 			s +=	"			return obj";
 			AddLine(script, s);
 			s +=	"		else:";
@@ -5578,174 +5439,15 @@ bool SystemObject::InitPython()
 			s += ")";
 			AddLine(script, s);
 
-			s += name + "_sol=" + name + "_sol()";
-			AddLine(script, s);
-			s += "SOL." + name + "=" + name + "_sol";
-			AddLine(script, s);
-			s += "del " + name + "_sol";
-			AddLine(script, s);
-
-
-			///////////////////////////////
-			// OBJECT TYPE
-			///////////////////////////////
-
-			s += "class ";	s += name; s += ":";
-			AddLine(script, s);
-
-			s += "	def __init__(self):";
-			AddLine(script, s);
-			s += "		__construct__.OTSetDict(" + str((long)(*o)) + ", self.__dict__)";
-			AddLine(script, s);
-
-			// Actions
-			index = 0;
-			for(vector<PyFunct>::iterator i = plug->py_actions.begin(); i != plug->py_actions.end(); i++, index++)
-			{
-				if(i->name == "")
-					continue;
-
-				s += 	"	def ";	s += i->name;	s += "(self";
-				for(int p = 0; p < i->paramCount; p++)
-					s += ", p" + str(p);
-				s += "):";
-				AddLine(script, s);
-
-				s +=	"		__construct__.ta(";	
-				s += str((long)(*o));
-				s += ", ";
-				s += str((int)&((*plug->pvActRoutines)[index]));
-
-				s += ", [";
-				for(int p = 0; p < i->paramCount; p++)
-				{
-					s += "p" + str(p);
-					if(p < i->paramCount-1)
-						s += ", ";
-				}
-				s += "])";
-				AddLine(script, s);
-			} // for each action
-
-
-			// Conditions
-			index = 0;
-			for(vector<PyFunct>::iterator i = plug->py_conditions.begin(); i != plug->py_conditions.end(); i++, index++)
-			{
-				if(i->name == "")
-					continue;
-
-				s += 	"	def ";	s += i->name;	s += "(self";
-				for(int p = 0; p < i->paramCount; p++)
-					s += ", p" + str(p);
-				s += "):";
-				AddLine(script, s);
-
-				s +=	"		return __construct__.tc(";	
-				s += str((long)(*o));
-				s += ", ";
-				s += str((int)&((*plug->pvCndRoutines)[index]));
-
-				s += ", [";
-				for(int p = 0; p < i->paramCount; p++)
-				{
-					s += "p";  s+= str(p);
-					if(p < i->paramCount-1)
-						s += ", ";
-				}
-				s += "])";
-				AddLine(script, s);
-			} // for each condition
-
-			// Expressions
-			index = 0;
-			for(vector<PyFunct>::iterator i = plug->py_expressions.begin(); i != plug->py_expressions.end(); i++, index++)
-			{
-				if(i->name == "")
-					continue;
-
-				if(i->paramCount != 0)
-				{
-					s += 	"	def ";	s += i->name;	s += "(self";
-					for(int p = 0; p < i->paramCount; p++)
-						s += ", p"  + str(p);
-					s += "):";
-					AddLine(script, s);
-
-					s +=	"		return __construct__.te(";	
-					s += str((long)(*o));
-					s += ", ";
-					s += str((int)&((*plug->pvExpRoutines)[index]));
-
-					s += ", [";
-					for(int p = 0; p < i->paramCount; p++)
-					{
-						s += "p";  s+= str(p);
-						if(p < i->paramCount-1)
-							s += ", ";
-					}
-					s += "])";
-					AddLine(script, s);
-				}
-			} // for each expression
-
-
-
-			s +=	"	def __getattr__(self, name):";
-			AddLine(script, s);
-			s +=	"		return __construct__.OTGetAtt(";
-			s += str((long)(*o));
-			s += ", name, [])";
-			AddLine(script, s);
-
-			s +=	"	def __setattr__(self, name, key):";
-			AddLine(script, s);
-			s +=	"		return __construct__.OTSetAtt(";
-			s += str((long)(*o));
-			s += ", name, key)";
-			AddLine(script, s);
-
-
-			s +=	"	def __getitem__(self,key):";
-			AddLine(script, s);
-			s +=	"		point = __construct__.ins(";
-			s += str((int)(*o));
-			s += ", key)";
-			AddLine(script, s);
-			s +=	"		if(point <> -1):";
-			AddLine(script, s);
-			s +=	"			obj = _Instances." + name + "Instance()";
-			AddLine(script, s);
-	
-			s +=	"			__construct__.ObjSetDict(point, obj.__dict__)";
-			AddLine(script, s);
-
-			s +=	"			__construct__.ObjSetAtt(point, \"__instance__\", point)";
-			AddLine(script, s);
-
-		//	s +=	"			__construct__.Test()";
-		//	AddLine(script, s);	
-
-			s +=	"			return obj";
-			AddLine(script, s);
-			s +=	"		else:";
-			AddLine(script, s);
-			s +=	"			raise IndexError()";
-			AddLine(script, s);
-
-			s +=	"	def __len__(self):";
-			AddLine(script, s);
-			s +=	"		return __construct__.cnt(";
-			s += str((long)(*o));
-			s += ")";
-			AddLine(script, s);
 
 			//Create an instance so we can refer to the type as Object instead of Object()
+			
+			s = "SOL." + name + "=" + name + "_sol()";
+			AddLine(script, s);
+			s = "del " + name + "_sol";
+			AddLine(script, s);
 
-			s += name;
-			s += " = ";
-			s += name;//(*o)->Name;
-			s += "()";
+			s = name + " = " + name + "()";
 			AddLine(script, s);
 
 			
