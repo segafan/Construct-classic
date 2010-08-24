@@ -1635,7 +1635,7 @@ namespace cr {
 		desc.OutputPrecision = OUT_DEFAULT_PRECIS;
 		desc.Quality = quality;
 		desc.PitchAndFamily = pitch_and_family;
-		int length = strlen(font_face);
+		int length = strlen(font_face)+1;  // \0 wasn't taken into account
 		memcpy(desc.FaceName, font_face, length < LF_FACESIZE ? length : LF_FACESIZE);
 
 

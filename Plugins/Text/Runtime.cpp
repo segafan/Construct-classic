@@ -19,7 +19,7 @@ void ExtObject::UpdateFont()
 			renderer->ReleaseCRFont(iFont);
 
 		//CreateCRFont(PCTSTR font_face, INT height, UINT width = 0, UINT weight = FW_NORMAL, BOOL italic = false, DWORD quality = ANTIALIASED_QUALITY, BYTE charset = DEFAULT_CHARSET, BYTE pitch_and_family = DEFAULT_PITCH|FF_DONTCARE) = 0;
-		iFont = renderer->CreateCRFont(fontface, pxSize, 0, bold ? FW_BOLD : FW_NORMAL, italics != 0);
+		iFont = renderer->CreateCRFont(fontface, pxSize, 0, bold ? FW_BOLD : FW_NORMAL, italics != 0, pRuntime->getTextQuality());
 	}
 
 	// Application runtime only

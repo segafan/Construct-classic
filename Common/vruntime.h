@@ -475,6 +475,9 @@ public:
 	// private variable by name
 	virtual int		GetPVIndexFromName(const CString& name, CRunObjType* pType)= 0;
 
+	//
+	virtual DWORD	getTextQuality(void)=0;
+
 	//////////////////////////////
 	// PLUGIN ACCESSIBLE DATA - for internal use only!
 

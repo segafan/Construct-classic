@@ -257,6 +257,7 @@ public:
 	ImageMap	imagehandle_to_address;				// For converting handles to ImageHandleInfos
 
 	DWORD		textQuality;
+	DWORD		getTextQuality(void){return textQuality;}//rojo
 
 #ifndef CONSTRUCT_SDL
 
