@@ -1,6 +1,6 @@
 [Setup]
 AppName=Construct
-AppVerName=Construct 0.99.84
+AppVerName=Construct 0.99.93
 AppPublisher=Scirra
 AppPublisherURL=http://www.scirra.com
 AppSupportURL=http://www.scirra.com
