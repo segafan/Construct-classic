@@ -845,7 +845,9 @@ void CLayoutEditor::DeleteSelection(bool omit_prompt)
 	CExtMsgBox msg(NULL, CONF_DELETE, CONFIRMATION, __EXT_MB_YESNO | __EXT_MB_ICONINFORMATION | __EXT_MB_DO_NOT_ASK_AGAIN, 0, "DeleteObject", __EXT_MB_EX_CHECK_BOX_IS_NOT_CHECKED_INTIALLY);
 	int result = 0;
 
-	if (!omit_prompt)
+	if (omit_prompt)
+		result = IDYES;
+	else
 		result = msg.DoModal();
 
 	if (result == IDYES)
