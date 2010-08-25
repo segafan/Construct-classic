@@ -154,15 +154,13 @@ BOOL CParametersDlg::OnInitDialog()
 	// Add the global and layout object icons
 	for ( ; t != typesToAdd.end(); t++)
 	{
-		CBitmap Bitmap;
+		CBitmap bmpSmall;
+		bmpSmall.Attach((*t)->small_image.MakeBitmap());
+		m_ObjectImages.Add(&bmpSmall, &bmpSmall);
 
-		Bitmap.Attach((*t)->small_image.MakeBitmap());
-		m_ObjectImages.Add(&Bitmap, &Bitmap);
-		Bitmap.Detach();
-
-		Bitmap.Attach((*t)->m_Image.MakeBitmap());
-		m_ObjectImagesLarge.Add(&Bitmap, &Bitmap);
-		Bitmap.Detach();
+		CBitmap bmpLarge;
+		bmpLarge.Attach((*t)->m_Image.MakeBitmap());
+		m_ObjectImagesLarge.Add(&bmpLarge, &bmpLarge);
 	}
 
 	// Add family icons
@@ -170,15 +168,13 @@ BOOL CParametersDlg::OnInitDialog()
 	{
 		if(i->is_in_use)
 		{
-			CBitmap Bitmap;
+			CBitmap bmpSmall;
+			bmpSmall.Attach(i->small_image.MakeBitmap());
+			m_ObjectImages.Add(&bmpSmall, &bmpSmall);
 
-			Bitmap.Attach(i->small_image.MakeBitmap());
-			m_ObjectImages.Add(&Bitmap, &Bitmap);
-			Bitmap.Detach();
-
-			Bitmap.Attach(i->image.MakeBitmap());
-			m_ObjectImagesLarge.Add(&Bitmap, &Bitmap);
-			Bitmap.Detach();	
+			CBitmap bmpLarge;
+			bmpLarge.Attach(i->image.MakeBitmap());
+			m_ObjectImagesLarge.Add(&bmpLarge, &bmpLarge);	
 		}
 	}
 
