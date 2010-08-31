@@ -244,6 +244,10 @@ public:
 	/////////////////////////////
 	// Runtime capabilities
 
+#ifdef APPRUNTIME
+	DWORD		getTextQuality(void){return 0;}//rojo
+#endif
+
 	// Display engine (DX9)
 #ifndef APPRUNTIME
 
