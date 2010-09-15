@@ -172,10 +172,6 @@ public:
 	float contactFriction;
 	float contactElasticity;
 
-	// Fix for calls to hinge actions at unsafe times
-	//vector<HingeToObjectAction> waitingHingeActions;
-	void DoWaitingHinges();
-
 	template<typename T>
 	void TransformFrameToWorld(T& x, T& y) {
 		x *= worldXscale;
@@ -226,6 +222,9 @@ public:
 	static Box2DCollisionFilter* collisionFilter;
 
 	ObjTypeList disabledCollisions;
+
+	// New mode to prevent weird scaling of variables
+	bool oldUnits;
 };
 #endif
 

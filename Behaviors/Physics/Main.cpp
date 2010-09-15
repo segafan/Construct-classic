@@ -20,9 +20,6 @@ long ExtObject::aAddForce(LPVAL params)
 {
 	forceX += params[0].GetDouble();
 	forceY += params[1].GetDouble();
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
@@ -30,31 +27,27 @@ long ExtObject::aSetForce(LPVAL params)
 {
 	forceX = params[0].GetDouble();
 	forceY = params[1].GetDouble();
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
 void AddSpringForce(b2Body& bA, b2Vec2& localA, b2Body& bB, b2Vec2& localB, float32 k, float32 friction, float32 desiredDist)
 {
-
-        b2Vec2 pA = bA.GetWorldPoint(localA);
-        b2Vec2 pB = bB.GetWorldPoint(localB);
-        b2Vec2 diff = pB - pA;
-        //Find velocities of attach points
-		b2Vec2 vA = bA.GetLinearVelocity() - b2Cross(bA.GetWorldVector(localA), bA.GetAngularVelocity());
-        b2Vec2 vB = bB.GetLinearVelocity() - b2Cross(bB.GetWorldVector(localB), bB.GetAngularVelocity());
-        b2Vec2 vdiff = vB-vA;
-        float32 dx = diff.Normalize(); //normalizes diff and puts length into dx
-        float32 vrel = vdiff.x*diff.x + vdiff.y*diff.y;
-        float32 forceMag = -k*(dx-desiredDist) - friction*vrel;
-        diff *= forceMag; // diff *= forceMag
-        bB.ApplyForce(diff, bA.GetWorldPoint(localA));
-		diff *= -1.0f;
-        bA.ApplyForce(diff, bB.GetWorldPoint(localB));
-        bA.WakeUp();
-        bB.WakeUp();
+    b2Vec2 pA = bA.GetWorldPoint(localA);
+    b2Vec2 pB = bB.GetWorldPoint(localB);
+    b2Vec2 diff = pB - pA;
+    //Find velocities of attach points
+	b2Vec2 vA = bA.GetLinearVelocity() - b2Cross(bA.GetWorldVector(localA), bA.GetAngularVelocity());
+    b2Vec2 vB = bB.GetLinearVelocity() - b2Cross(bB.GetWorldVector(localB), bB.GetAngularVelocity());
+    b2Vec2 vdiff = vB-vA;
+    float32 dx = diff.Normalize(); //normalizes diff and puts length into dx
+    float32 vrel = vdiff.x*diff.x + vdiff.y*diff.y;
+    float32 forceMag = -k*(dx-desiredDist) - friction*vrel;
+    diff *= forceMag; // diff *= forceMag
+    bB.ApplyForce(diff, bA.GetWorldPoint(localA));
+	diff *= -1.0f;
+    bA.ApplyForce(diff, bB.GetWorldPoint(localB));
+    bA.WakeUp();
+    bB.WakeUp();
 
 }
 
@@ -91,7 +84,6 @@ long ExtObject::aSpringToBody(LPVAL params)
 	if (pPhysics->physicsID != UNIQUE_PHYSICS_ID) return 0;	// Dynamic casts seem to sometimes give false positives
 	if(!pPhysics->body) pPhysics->CreateBody();
 
-
 	float k = params[1].GetDouble();
 	float damp = params[2].GetDouble();
 	float distance = params[3].GetDouble() * worldXscale;
@@ -116,8 +108,6 @@ long ExtObject::aAddForceTowardsPosition(LPVAL params)
 	forceX += cos(angle) * force;
 	forceY += sin(angle) * force;
 
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
@@ -135,8 +125,6 @@ long ExtObject::aSetForceTowardsPosition(LPVAL params)
 	forceX = cos(angle) * force;
 	forceY = sin(angle) * force;
 
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
@@ -144,9 +132,6 @@ long ExtObject::aSetGravity(LPVAL params)
 {
 	gravity = params[0].GetBool();
 	body->WakeUp();
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
@@ -154,7 +139,6 @@ long ExtObject::aSetImmovable(LPVAL params)
 {
 	immovable = params[0].GetBool();
 	do_recreate = true;
-
 	return 0;
 }
 
@@ -162,7 +146,6 @@ long ExtObject::aSetNoRotations(LPVAL params)
 {
 	norotation = params[0].GetBool();
 	do_recreate = true;
-
 	return 0;
 }
 
@@ -175,7 +158,8 @@ long ExtObject::aSetGravityForce(LPVAL params)
 
 long ExtObject::aSetMass(LPVAL params)
 {
-	if(mass < 0) return 0;
+	if(mass < 0) 
+		return 0;
 
 	do_recreate = true;
 	mass = params[0].GetFloat();
@@ -186,41 +170,31 @@ long ExtObject::aSetMass(LPVAL params)
 long ExtObject::aSetLinearDamp(LPVAL params)
 {
 	lineardamp = params[0].GetDouble() / 100.0;
-
-//	NewtonBodySetLinearDamping(body, lineardamp);
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
 long ExtObject::aAddTorque(LPVAL params)
 {
 	torque += params[0].GetDouble();
-//	NewtonWorldUnfreezeBody(nWorld, body);
 	return 0;
 }
 
 long ExtObject::aSetTorque(LPVAL params)
 {
 	torque = params[0].GetDouble();
-//	NewtonWorldUnfreezeBody(nWorld, body);
 	return 0;
 }
 
 long ExtObject::aSetVelocity(LPVAL params)
 {
 	b2Vec2 v;
-	v.x = params[0].GetDouble() / 30;
-	v.y = params[1].GetDouble() / 30;
+	v.x = params[0].GetDouble() / (oldUnits ? 30 : 1);
+	v.y = params[1].GetDouble() / (oldUnits ? 30: 1);
 
 	if(!body) CreateBody();
 	body->SetLinearVelocity(v);
 
 	body->WakeUp();
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-//	NewtonBodySetVelocity(body, &v[0]);
 
 	return 0;
 }
@@ -229,13 +203,6 @@ long ExtObject::aSetOmega(LPVAL params)
 {
 	if(!body) CreateBody();
 	body->SetAngularVelocity(params[0].GetDouble());
-//	dVector m;
-//	m.m_x = 0.0;
-//	m.m_y = 0.0;
-//	m.m_z = params[0].GetDouble();
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-//	NewtonBodySetOmega(body, &m[0]);
 	body->WakeUp();
 
 	return 0;
@@ -258,8 +225,6 @@ long ExtObject::aAddTorqueTowardsAngle(LPVAL params)
 	else
 		torque -= params[0].GetDouble();
 
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
@@ -280,8 +245,6 @@ long ExtObject::aSetTorqueTowardsAngle(LPVAL params)
 	else
 		torque = -params[0].GetDouble();
 
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
 	return 0;
 }
 
@@ -298,13 +261,6 @@ long ExtObject::aHingeToXY(LPVAL params)
 	Clamp(stiffness, 0.0, 1.0);
 
 	TransformFrameToWorld(x, y);
-
-//	NewtonWorldUnfreezeBody(nWorld, body);
-
-//	dVector pivotPoint(x, y, 0);
-//	dVector pinDir(0, 0, 1);	// only rotates over Z axis
-//	hinge = NewtonConstraintCreateHinge(nWorld, &pivotPoint[0], &pinDir[0], body, NULL);
-//	NewtonJointSetStiffness(hinge, stiffness);
 
 	b2Vec2 point;
 	point.x = x;
@@ -383,8 +339,6 @@ long ExtObject::aHingeToObj(LPVAL params)
 		}
 	}
 
-	//waitingHingeActions.push_back(htoa);
-
 	TransformFrameToWorld(htoa.offsetX, htoa.offsetY);
 
 	b2Vec2 point;
@@ -436,30 +390,6 @@ long ExtObject::aResetDisabledCollisions(LPVAL params)
 	return 0;
 }
 
-void ExtObject::DoWaitingHinges()
-{
-/*	vector<HingeToObjectAction>::iterator i = waitingHingeActions.begin();
-
-	for ( ; i != waitingHingeActions.end(); i++) {
-
-		TransformFrameToWorld(i->offsetX, i->offsetY);
-		NewtonWorldUnfreezeBody(nWorld, body);
-
-		dMatrix location(GetIdentityMatrix());
-		NewtonBodyGetMatrix(i->pPhysics->body, &location[0][0]);
-
-		dVector pivotPoint = location.m_posit;
-		pivotPoint.m_x += i->offsetX;
-		pivotPoint.m_y += i->offsetY;
-
-		dVector pinDir(0, 0, 1);	// only rotates over Z axis
-		hinge = NewtonConstraintCreateHinge(nWorld, &pivotPoint[0], &pinDir[0], body, i->pPhysics->body);
-		NewtonJointSetStiffness(hinge, i->stiffness);
-	}
-
-	waitingHingeActions.resize(0);*/
-}
-
 //////////////////////////////////////////////////////////////////////////////////
 // Expressions
 //////////////////////////////////////////////////////////////////////////////////
@@ -488,7 +418,8 @@ long ExtObject::eGetVelocityX(LPVAL params, ExpReturn& ret)
 {
 	if(!body) CreateBody();
 	b2Vec2 v = body->GetLinearVelocity();
-	v *= 30;
+	if(oldUnits)
+		v *= 30;
 	return ret = v.x;
 }
 
@@ -496,7 +427,8 @@ long ExtObject::eGetVelocityY(LPVAL params, ExpReturn& ret)
 {
 	if(!body) CreateBody();
 	b2Vec2 v = body->GetLinearVelocity();
-	v *= 30;
+	if(oldUnits)
+		v *= 30;
 	return ret = v.y;
 }
 

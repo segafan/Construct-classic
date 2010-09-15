@@ -16,8 +16,6 @@ b2World* ExtObject::world;
 double ExtObject::worldXscale;
 double ExtObject::worldYscale;
 double ExtObject::worldGravity;
-//int ExtObject::worldSolver;
-//int ExtObject::worldFriction;
 int ExtObject::simulation_steps;
 Box2DCollisionDetector* ExtObject::collisionDetector;
 Box2DCollisionFilter* ExtObject::collisionFilter;
@@ -34,9 +32,6 @@ ExtObject::ExtObject(initialObject* editObject, VRuntime* pVRuntime)
 	pRuntime = pVRuntime;
 	info.editObject = editObject;
 
-	//body = NULL;
-	//upvector = NULL;
-	//hinge = NULL;
 	physicsID = UNIQUE_PHYSICS_ID;
 }
 
@@ -73,94 +68,6 @@ bool Box2DCollisionFilter::ShouldCollide(b2Shape *shape1, b2Shape *shape2)
 	return true;
 }
 
-/*
-// add force and torque to rigid body
-void PhysicsApplyForceAndTorque(const NewtonBody* body)
-{
-	ExtObject* pMov = (ExtObject*)NewtonBodyGetUserData(body);
-
-	if (pMov->gravity)
-		pMov->forceY += pMov->worldGravity * pMov->mass;		// f = mg
-
-	if (pMov->forceX != 0.0 || pMov->forceY != 0.0) {
-		//NewtonWorldUnfreezeBody(pMov->nWorld, body);
-		dVector force(pMov->forceX, pMov->forceY, 0.0);
-		NewtonBodySetForce(body, &force[0]);
-	}
-
-	if (pMov->torque != 0.0) {
-		dVector torqueVec(0.0, 0.0, pMov->torque);
-		NewtonBodySetTorque(body, &torqueVec[0]);
-
-		pMov->torque = 0.0;
-	}
-}
-*/
-/*
-dFloat AngleFromMatrix(dFloat m11, dFloat m21, dFloat m31)
-{
-	dFloat beta = atan2(-m31, sqrt(m11*m11 + m21*m21));
-	dFloat alpha = atan2(m21 / cos(beta), m11 / cos(beta));
-	return alpha;
-}
-
-void MatrixFromAngle(dFloat radians, dFloat& m11, dFloat& m21, dFloat& m31)
-{
-	dFloat cosAng = cos(radians);
-	dFloat sinAng = sin(radians);
-
-	m11 = cosAng;
-	m21 = sinAng;
-	m31 = 0.0f;
-}
-
-void ExtObject::SetTransformCallback(const NewtonBody* body, const dFloat* matrix)
-{
-	dFloat unused;
-
-	dFloat mat[16];
-	memcpy(mat, matrix, sizeof(dFloat) * 16);
-	mat[2] = 0;
-	mat[6] = 0;
-	mat[8] = 0;
-	mat[9] = 0;
-	mat[10] = 1;
-	mat[14] = 0;
-
-	// Check if the object's angle or position has been changed
-	if (lastKnownX != pLink->info.x) {
-		mat[12] = pLink->info.x;
-		TransformFrameToWorld(mat[12], unused);
-	}
-
-	if (lastKnownY != pLink->info.y) {
-		mat[13] = pLink->info.y;
-		TransformFrameToWorld(unused, mat[13]);
-	}
-	
-
-	
-	
-	NewtonBodySetMatrix(body, mat);
-
-	pLink->info.x = mat[12];
-	pLink->info.y = mat[13];
-	pLink->info.angle = DEGREES(AngleFromMatrix(mat[0], mat[1], mat[2]));
-
-	TransformWorldToFrame(pLink->info.x, pLink->info.y);
-	pRuntime->UpdateBoundingBox(pLink);
-
-	lastKnownX = pLink->info.x;
-	lastKnownY = pLink->info.y;
-}
-
-// set the transformation of a rigid body
-void PhysicsSetTransform(const NewtonBody* body, const dFloat* matrix)
-{
-	ExtObject* pMov = (ExtObject*)NewtonBodyGetUserData(body);
-	pMov->SetTransformCallback(body, matrix);
-}
-*/
 float MakePtrFloat(void* ptr)
 {
 	int data = (int)ptr;
@@ -219,8 +126,6 @@ void ExtObject::OnCreate()
 	worldXscale = MakePtrFloat(pRuntime->GetLayoutKey(pLayout, "worldXscale"));
 	worldYscale = MakePtrFloat(pRuntime->GetLayoutKey(pLayout, "worldYscale"));
 
-	//worldSolver = (int)pRuntime->GetLayoutKey(pLayout, "worldSolver");
-	//worldFriction = (int)pRuntime->GetLayoutKey(pLayout, "worldFriction");
 	simulation_steps = (int)pRuntime->GetLayoutKey(pLayout, "simulationSteps");
 
 	ar.detach();
@@ -228,7 +133,7 @@ void ExtObject::OnCreate()
 	forceX = 0;
 	forceY = 0;
 	torque = 0;
-	//hinge = NULL;
+	
 
 	// Create the physics world if no other object has.
 	if (physicsCount == 0) 
@@ -262,12 +167,10 @@ void ExtObject::OnCreate()
 
 	physicsCount++;
 
-	//worldXscale = 1.0f;
-	//worldYscale = 1.0f;
-
 	CreateBody();
-	//body = NULL;
+
 	do_recreate = false;
+	oldUnits = true;
 	
 }
 
@@ -278,7 +181,6 @@ void ExtObject::CreateBody()
 		Mass = 0.0f;
 
 
-		
 	b2PolygonDef ShapeDefBox;
 	b2PolygonDef ShapeDefCustom;
 	b2CircleDef ShapeDefCircle;
@@ -332,8 +234,6 @@ void ExtObject::CreateBody()
     double HotSpotAngle = atan2((float)(pLink->info.HotSpotX - pLink->info.w / 2.0f), (float)(pLink->info.HotSpotY - pLink->info.h / 2.0f));
 	double HotSpotDist = sqrt((double)POW2(pLink->info.HotSpotX - pLink->info.w / 2.0f) + POW2(pLink->info.HotSpotY - pLink->info.h / 2.0f));
 
-	//double HotSpotAngle = atan2((float)(pLink->info.HotSpotX), (float)(pLink->info.HotSpotY));
-	//double HotSpotDist = sqrt((double)POW2(pLink->info.HotSpotX) + POW2(pLink->info.HotSpotY));
 	float hotspotOffsetX = cos(HotSpotAngle + RADIANS(pLink->info.angle)) * HotSpotDist;
 	float hotspotOffsetY = sin(HotSpotAngle + RADIANS(pLink->info.angle)) * HotSpotDist;
 
@@ -419,15 +319,6 @@ ExtObject::~ExtObject()
 		world->DestroyBody(body);
 		body = NULL;
 	}
-	/*
-	if (hinge != NULL)
-		NewtonDestroyJoint(nWorld, hinge);
-
-	if (upvector != NULL)
-		NewtonDestroyJoint(nWorld, upvector);
-
-	NewtonDestroyBody(nWorld, body);*/
-
 	physicsCount--;
 	if (physicsCount == 0){
 		if (world) {
@@ -508,8 +399,6 @@ void ExtObject::UpdateOldValues()
 	b2Vec2 position = body->GetPosition();
 	float32 rotation = body->GetAngle();
 
-
-
 	pLink->info.x = position.x;
 	pLink->info.y = position.y;
 	pLink->info.angle = DEGREES(rotation);
@@ -537,20 +426,23 @@ BOOL ExtObject::OnFrame()
 	if(!body) CreateBody();
 	CheckForBodyChange();
 
-
 	if (lastFrameCountUpdate != pLayout->frameCounter64) {
 		lastFrameCountUpdate = pLayout->frameCounter64;
 
 		world->Step(pRuntime->GetTimeDelta(), simulation_steps);
 	}
 
-	forceX *= 0.05;
-	forceY *= 0.05;
+	if(oldUnits)
+	{
+		forceX *= 0.05;
+		forceY *= 0.05;
+	}
+
 
 	bool sleeping = body->IsSleeping();
 
 	if (gravity)
-		forceY += worldGravity * 0.4 * body->GetMass();		// f = mg
+		forceY += worldGravity * body->GetMass() * (oldUnits ? 0.4 : 1);		// f = mg
 
 	if (forceX != 0.0 || forceY != 0.0) {
 		b2Vec2 force; 
@@ -563,9 +455,11 @@ BOOL ExtObject::OnFrame()
 			body->PutToSleep();
 	}
 
-	torque *= 0.035;
-	if (torque != 0.0) {
-
+	if(oldUnits)
+		torque *= 0.035;
+	
+	if (torque != 0.0) 
+	{
 		bool sleeping = body->IsSleeping();
 		body->ApplyTorque(torque);
 		if(sleeping && torque == oldtorque)
