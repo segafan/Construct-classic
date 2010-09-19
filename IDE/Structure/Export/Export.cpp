@@ -207,6 +207,25 @@ void CExport::GenerateApplicationData(int layoutid)
 	appBlock << (int)application->game_information.texture_loading;
 }
 
+CString GetTempExeFile(const CString& path)
+{
+	// Ordinary temp.exe is free - use that
+	if (DeleteFile(path + "Temp.exe"))		// delete succeeded, file not in use
+		return path + "Temp.exe";
+
+	// Otherwise try temp2.exe, temp3.exe etc...
+	int num = 2;
+	CString try_path;
+
+	do 
+	{
+		try_path.Format("%sTemp%d.exe", path, num);
+		num++;
+	} while (FileExists(try_path) && DeleteFile(try_path) == 0);
+
+	return try_path;
+}
+
 void CExport::Preview(CApplication* pApplication, int layoutid)
 {
 	ProgressDlg.Start("Loading preview");
@@ -223,8 +242,7 @@ void CExport::Preview(CApplication* pApplication, int layoutid)
 
 	CPath path;
 	path.SetToAppDataDirectory("Scirra");
-	CString OutPath;
-	OutPath.Format("%sTemp.exe", path.GetFullPath());
+	CString OutPath = GetTempExeFile(path.GetFullPath());
 
 	CString iniPath;
 	iniPath.Format("%sConstruct.ini", path.GetFullPath());
@@ -246,18 +264,6 @@ void CExport::Preview(CApplication* pApplication, int layoutid)
 		DataEXE += "s";		// script enabled
 
 	DataEXE += ".exe";
-
-	// Copy runtime.exe to the target file
-	if (DeleteFile(OutPath) == 0)
-	{
-		if (FileExists(OutPath))
-		{
-			CErrorDlg Dlg;
-			Dlg.Error("Preview failed", "A preview is already running. Please close this before previewing again.");
-
-			return;
-		}
-	}
 
 	ret = CopyFile(DataEXE, OutPath, false);
 
@@ -289,11 +295,11 @@ void CExport::PreviewDebug(CApplication* pApplication, int layoutid)
 
 	CPath path;
 	path.SetToAppDataDirectory("Scirra");
-	CString OutPath;
-	OutPath.Format("%sTemp.exe", path.GetFullPath());
+	CString OutPath = GetTempExeFile(path.GetFullPath());
 
 	CString iniPath;
 	iniPath.Format("%sConstruct.ini", path.GetFullPath());
+
 	CIni ini;
 	ini.SetPathName(iniPath);
 	path.SetToCurrentDirectory();

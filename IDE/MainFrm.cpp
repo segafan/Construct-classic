@@ -860,6 +860,8 @@ void CMainFrame::OnClose()
 	CApplication *app;
 	POSITION pos = m_apps.GetHeadPosition();
 
+	std::vector<CApplication*> apps_to_delete;
+
 	bool bClose = true;
 	while (pos != NULL) 
 	{
@@ -869,17 +871,35 @@ void CMainFrame::OnClose()
 		
 		// Check save
 		if (app->CloseSafely()) {
-			delete app;
+			apps_to_delete.push_back(app);
 			m_apps.RemoveAt(oldPos);
 		}
 		else
 			bClose = false;
 	}
 
-	if (!bClose) return;
+	if (!bClose)
+	{
+		std::vector<CApplication*>::iterator i = apps_to_delete.begin();
 
-	has_been_closed = true;	// stop layout editors crashing trying to access apps deleted above
+		for ( ; i != apps_to_delete.end(); ++i)
+		{
+			delete *i;
+		}
+
+		return;
+	}
+
+	//has_been_closed = true;	// stop layout editors crashing trying to access apps deleted above
 	CMDIFrameWnd::OnClose();
+
+	// Delete apps after closing main window & docs
+	std::vector<CApplication*>::iterator i = apps_to_delete.begin();
+
+	for ( ; i != apps_to_delete.end(); ++i)
+	{
+		delete *i;
+	}
 }
 
 void CMainFrame::OnSize(UINT nType, int cx, int cy) 

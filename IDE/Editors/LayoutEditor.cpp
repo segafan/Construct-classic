@@ -469,6 +469,8 @@ void CLayoutEditor::OnDestroy()
 		application->m_display = NULL;
 
 	}
+
+	CScrollView::OnDestroy();
 }
 
 void CLayoutEditor::CreateDirectXFrame()
