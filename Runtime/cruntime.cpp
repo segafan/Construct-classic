@@ -2008,14 +2008,6 @@ void CRuntime::UpdateKnownAnimationFrame(CRunAnimation* pAnim, CRunObject* obj)
 	float oldHotSpotX = obj->info.HotSpotX;
   	float oldHotSpotY = obj->info.HotSpotY;
 
-	ObjCollisionMask& dynMask = obj->info.dynMask;
-	if (dynMask.curMask)				//fix for: https://sourceforge.net/tracker/?func=detail&aid=2974232&group_id=207820&atid=1003219
-	{									//basicly forces recalc of collision mask per frame.
-		FreeMask(dynMask.curMask);
-		delete dynMask.curMask;
-		dynMask.curMask = NULL;
-	}
-
 	obj->info.HotSpotX = (pFrame->pivotX * obj->info.w) / pFrame->width;
 	obj->info.HotSpotY = (pFrame->pivotY * obj->info.h) / pFrame->height;
 
@@ -2066,6 +2058,14 @@ bool CRuntime::UpdateObjectSizeForFrameChange(CRunObject* obj, int oFrame, Anima
 	obj->info.w = p_nFrame->width;
 	obj->info.h = p_nFrame->height;
 	*/
+	
+	CollisionMask*& curMask = obj->info.dynMask.curMask;
+	if (curMask)
+	{
+		FreeMask(curMask);
+		delete curMask;
+		curMask = NULL;
+	}
 
 	// Davo's a moron for forgetting this.
 	UpdateBoundingBox(obj);
