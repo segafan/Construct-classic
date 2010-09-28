@@ -304,6 +304,8 @@ BOOL CParametersDlg::OnInitDialog()
 		}
 	}
 
+	m_pWindow = NULL;
+
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -466,7 +468,7 @@ void CParametersDlg::OnCancel()
 void CParametersDlg::OnTimer(UINT nIDEvent) 
 {	
 	// Event 500: Reevaluate current scintilla
-	if (nIDEvent == 500)
+	if (nIDEvent == 500 && m_pWindow)
 	{
 		KillTimer(500); // Don't continue indefinitely
 		CString Text;
@@ -483,7 +485,6 @@ void CParametersDlg::OnTimer(UINT nIDEvent)
 		}
 		else 
 			SetScintillaColour(m_pWindow, 0xf4f4ff);		// RED: syntax error
-
 	}
 	if( nIDEvent == 15)
 	{

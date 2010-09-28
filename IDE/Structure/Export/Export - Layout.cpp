@@ -354,30 +354,40 @@ void CExport::GenerateLayout(CList<CString, CString&>& dllList)
 
 	for (int i = 0; i < Families.size(); i++)
 	{
-		LayoutBlock << Families[i].m_FamilyName;
-		LayoutBlock << Families[i].m_ObjectTypeID.size();
-		for (int j = 0; j < Families[i].m_ObjectTypeID.size(); j++)
-			LayoutBlock << Families[i].m_ObjectTypeID[j];
+		FamilyLookup& fl =  Families[i];
 
-		Families[i].m_Family->UpdateFamilyData();
+		LayoutBlock << fl.m_FamilyName;
+		LayoutBlock << fl.m_ObjectTypeID.size();
+		for (int j = 0; j < fl.m_ObjectTypeID.size(); j++)
+			LayoutBlock << fl.m_ObjectTypeID[j];
 
-		int size = Families[i].m_Family->variables.size();
+		fl.m_Family->UpdateFamilyData();
+
+		int size = fl.m_Family->variables.size();
 		int size_check = 0;
 		for (int j = 0 ; j < size ; j++)
 		{
-			PrivateValue* pVal = Families[i].m_Family->GetReferenceVariable(j);
+			PrivateValue* pVal = fl.m_Family->GetReferenceVariable(j);
 			if(pVal)
 				size_check ++;
 		}
 		LayoutBlock << (int)size_check;
 		for (int j = 0 ; j < size ; j++)
 		{
-			PrivateValue* pVal = Families[i].m_Family->GetReferenceVariable(j);
+			PrivateValue* pVal = fl.m_Family->GetReferenceVariable(j);
 			if(pVal){
 				LayoutBlock << pVal->name;
 				LayoutBlock << pVal->type;
 			}
 		}
+		// New code - We export a list of behavior names
+		/*size = fl.m_Family->behaviors.size();
+		LayoutBlock << size;
+		for(int b = 0; b < size; b++ )
+		{
+			CBehavior* beh = fl.m_Family->GetReferenceBehavior(b);
+			LayoutBlock << beh->Text;
+		}*/
 
 	}
 
