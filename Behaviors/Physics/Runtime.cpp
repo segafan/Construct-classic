@@ -120,6 +120,10 @@ void ExtObject::OnCreate()
 		ar >> contactFriction;
 		ar >> contactElasticity;
 	}
+	if(Version >= 4)
+	{
+		ar >> oldUnits;
+	}
 
 	mass = fMass;
 	worldGravity = MakePtrFloat(pRuntime->GetLayoutKey(pLayout, "worldGravity"));
@@ -169,9 +173,7 @@ void ExtObject::OnCreate()
 
 	CreateBody();
 
-	do_recreate = false;
-	oldUnits = true;
-	
+	do_recreate = false;	
 }
 
 void ExtObject::CreateBody()

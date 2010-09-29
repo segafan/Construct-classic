@@ -291,6 +291,8 @@ public:
 
 	// Set window focus
 	bool setWindowFocus;
+
+	bool oldUnits;
 };
 
 // Internal stuff include

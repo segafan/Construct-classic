@@ -55,8 +55,9 @@
 #include <map>
 #include <algorithm>
 
+#ifdef RUN_ONLY
 #include "Box2d\Include\Box2d.h"
-
+#endif
 
 using namespace std;
 

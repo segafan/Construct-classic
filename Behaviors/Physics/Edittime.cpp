@@ -112,13 +112,15 @@ BEGIN_PROPERTY_TABLE();
 		PROPERTY_VALUE(simulation_steps,	"Simulation Steps",	"Number of simulation steps the physics uses");
 		PROPERTY_PERCENT(worldXscale, "World X scale", "The ratio that defines how big your world objects are.");
 		PROPERTY_PERCENT(worldYscale, "World Y scale", "The ratio that defines how big your world objects are.");
-		PROPERTY_FLOAT(worldGravity, "World Gravity", "The force of gravity, 9.8 being earth gravity.");
+		PROPERTY_FLOAT(worldGravity, "World Gravity", "The force of gravity, 9.8 being earth gravity.");		
+		
+		PROPERTY_BOOL(oldUnits,	"Use old units", "Backwards compatability option to make physics use the old units system for forces");
 	PROPERTY_ENDIF
 
 	if (iMode == MODE_READ)
 		if (SLabel == "Custom Collision")
 			return;
-		else// means it does not equal custom colliison
+		else// means it does not equal custom collison
 			editObject->objectPtr->OnPropertyUpdated(SLabel);
 END_PROPERTY_TABLE  ();
 
@@ -204,6 +206,7 @@ EditExt::EditExt(VEditTime* pVEditTime, editInfo* pEInfo)
 	boolAddingPoints = false;
 	AddingPointsIndex = 0;
 	AddingPointsCollision = 0;
+	oldUnits = false;
 }
 
 // Destructor: when your object is deleted or the application closed:
@@ -401,13 +404,15 @@ BOOL EditExt::OnSizeObject()
 
 void EditExt::Serialize(bin& ar)
 {
-	int Version = 3;
+	int Version = 4;
 	SerializeVersion(ar, Version);
 
 	if (ar.loading)
 	{
 		ar >> gravity >> mass >> immovable >> lineardamp >> shape >> angulardamp
 			>> norotation;
+		if(Version <= 3)
+			oldUnits = true;
 		if(Version >= 2)
 		{
 			ar >> editMode
@@ -426,7 +431,9 @@ void EditExt::Serialize(bin& ar)
 		if(Version >= 3){
 			ar >> contactFriction
 				>> contactElasticity;
-
+		}
+		if(Version >=4){
+			ar >> oldUnits;
 		}
 	
 	}
@@ -446,6 +453,7 @@ void EditExt::Serialize(bin& ar)
 		}
 		ar << contactFriction
 			<< contactElasticity;
+		ar << oldUnits;
 	}
 }
 
