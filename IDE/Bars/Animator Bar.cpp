@@ -681,7 +681,7 @@ void AnimatorBar::OnRClickFilmStrip(NMHDR *pNMHDR, LRESULT *pResult)
 				Info.Format("Frame %d%sPivotX%s%d%sPivotY%s%d%s", index, nl,nl, img->m_Hotspot.x, nl,nl, img->m_Hotspot.y, nl);
 				for(map<CString, CPoint>::iterator a = img->m_Action.begin(); a!= img->m_Action.end(); a++)
 				{
-					Info.Format("%s%s%s%d%s%d%s", Info, nl, a->first, nl, a->second.x, nl, a->second.y, nl);
+					Info.Format("%s%s%s%d%s%d%s", Info, a->first, nl, a->second.x, nl, a->second.y, nl);
 				}
 				Info += nl;
 				File.Write((const char*)Info, Info.GetLength() * sizeof(char));
