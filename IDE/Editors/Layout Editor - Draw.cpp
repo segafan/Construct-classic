@@ -1308,7 +1308,7 @@ void CLayoutEditor::OnDraw( CDC* pDC )
 		if (m_bPanel)
 		{
 			CD3DDisplayFont Font;
-			(*m_display)->CreateFont("Arial", 14, false, false, &Font);
+			(*m_display)->CreateFont("Segoe UI", 14, false, false, &Font);
 
 			(*m_display)->FillGradient(CRect(0, 0, 1000, 30), D3D_CONVERTCOLORREF(RGB(255, 177, 140)), D3D_CONVERTCOLORREF(RGB(255, 255, 210)), DIR_UP);
 

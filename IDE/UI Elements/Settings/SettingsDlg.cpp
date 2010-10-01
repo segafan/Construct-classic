@@ -81,7 +81,7 @@ BOOL CSettingsDialog::OnInitDialog()
 	m_CaptionBarCtrl.m_textClr     = ::g_PaintManager->GetColor(COLOR_3DFACE);
 	m_CaptionBarCtrl.m_fontWeight  = FW_BOLD;
 	m_CaptionBarCtrl.m_fontSize    = 14;
-	m_CaptionBarCtrl.m_csFontName  = "Arial";
+	m_CaptionBarCtrl.m_csFontName  = "Segoe UI";
 	m_CaptionBarCtrl.SetConstantText(m_csLogoText);
 
 	InitTreeCtrl();		// Initialize the tree control with options

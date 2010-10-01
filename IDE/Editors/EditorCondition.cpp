@@ -203,7 +203,7 @@ void CEditorCondition::Render(CRect &Pos, CDC &dc, bool EventSelected, CChronoEv
 	CHTMLFont f;
 	f.SetBold(false);
 	f.SetSize(8);
-	f.SetName("Arial");
+	f.SetName("Segoe UI");
 	f.SetImage(false);
 
 	// Is it enabled?

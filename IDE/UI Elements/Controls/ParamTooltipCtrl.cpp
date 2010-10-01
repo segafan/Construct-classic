@@ -143,9 +143,9 @@ CSize CParamTooltipCtrl::Draw( CDC& dc, bool bDraw )
 		ANSI_CHARSET,              // nCharSet
 		OUT_DEFAULT_PRECIS,        // nOutPrecision
 		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
+		CLEARTYPE_QUALITY,           // nQuality
 		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		"Arial"));                 // lpszFacename
+		"Segoe UI"));                 // lpszFacename
 
 	CFont fontBold;
 	VERIFY(fontBold.CreateFont(
@@ -160,9 +160,9 @@ CSize CParamTooltipCtrl::Draw( CDC& dc, bool bDraw )
 		ANSI_CHARSET,              // nCharSet
 		OUT_DEFAULT_PRECIS,        // nOutPrecision
 		CLIP_DEFAULT_PRECIS,       // nClipPrecision
-		DEFAULT_QUALITY,           // nQuality
+		CLEARTYPE_QUALITY,           // nQuality
 		DEFAULT_PITCH | FF_SWISS,  // nPitchAndFamily
-		"Arial"));                 // lpszFacename
+		"Segoe UI"));                 // lpszFacename
 
 	CFont* pOldFont = dc.SelectObject(&fontNormal);
 

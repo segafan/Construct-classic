@@ -103,7 +103,7 @@ int CChronoEventEditor::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_pDDMgr->AddFormat("Construct Actions");
 	m_pDDMgr->AddFormat("Construct Object");
 
-	MyFont.CreateFont(14,0,0,0,0,0,0,0,0,0,0,0,0,"Arial");
+	MyFont.CreateFont(14,0,0,0,0,0,0,0,0,0,0,CLEARTYPE_QUALITY,0,"Segoe UI");
 	SetTimer(0,20,0);
 	m_Ellapsed = 0;
 	

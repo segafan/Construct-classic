@@ -89,7 +89,7 @@ BOOL CExportWizardDlg::OnInitDialog()
 	// New drawing code
 	LOGFONT* m_pLF;
 	m_pLF=(LOGFONT*)calloc(1,sizeof(LOGFONT));
-	strncpy(m_pLF->lfFaceName,"Arial",6);
+	strncpy(m_pLF->lfFaceName,"Segoe UI",9);
 	m_pLF->lfHeight = 14;
 	m_pLF->lfWeight = 600;
 	m_pLF->lfItalic = 0;

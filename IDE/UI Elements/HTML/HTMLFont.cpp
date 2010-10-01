@@ -122,7 +122,7 @@ CFont* CHTMLFont::GetFont(CDC * pDC) const
 		lfHeight =(int) -(m_dSize* pDC->GetDeviceCaps(LOGPIXELSY) / 65.);
 
 	CFont * pFont =
-	gMyFontManager.RequestFont(lfHeight , 0, 0, 0,m_isBold?FW_BOLD:FW_NORMAL, m_isItalic, m_isUnderline, m_isStrike, (BYTE) m_nCharSet,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY,DEFAULT_PITCH, m_strName);
+	gMyFontManager.RequestFont(lfHeight , 0, 0, 0,m_isBold?FW_BOLD:FW_NORMAL, m_isItalic, m_isUnderline, m_isStrike, (BYTE) m_nCharSet,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY,DEFAULT_PITCH, m_strName);
 
 	return pFont;
 }

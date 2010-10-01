@@ -1332,7 +1332,7 @@ int AnimatorBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	animations.ModifyStyleEx(0, WS_EX_STATICEDGE);
 	film_strip.ModifyStyleEx(0, WS_EX_STATICEDGE);
 
-	m_font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
+	m_font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
 	animations.SetFont(&m_font);
 
 	m_bDragging = false;

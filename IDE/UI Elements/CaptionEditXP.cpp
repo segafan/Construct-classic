@@ -64,18 +64,18 @@ int CCaptionEditXP::OnCreate(LPCREATESTRUCT lpCreateStruct)
 												0, 0, 0, ANSI_CHARSET,
 												OUT_DEFAULT_PRECIS,
 												CLIP_DEFAULT_PRECIS,
-												DEFAULT_QUALITY,
+												CLEARTYPE_QUALITY,
 												FF_MODERN,
-												"Arial");	
+												"Segoe UI");	
 	m_CaptionFont.CreateFont( 14, 
 												0, 0, 0, 
 												0,
 												0, 0, 0, ANSI_CHARSET,
 												OUT_DEFAULT_PRECIS,
 												CLIP_DEFAULT_PRECIS,
-												DEFAULT_QUALITY,
+												CLEARTYPE_QUALITY,
 												FF_MODERN,
-												"Arial");		
+												"Segoe UI");		
 	
 	
 
@@ -323,9 +323,9 @@ void COutlineFillOption::OnPaint()
 												0, 0, 0, ANSI_CHARSET,
 												OUT_DEFAULT_PRECIS,
 												CLIP_DEFAULT_PRECIS,
-												DEFAULT_QUALITY,
+												CLEARTYPE_QUALITY,
 												FF_MODERN,
-												"Arial");	
+												"Segoe UI");	
 
 	CFont* Old = dc.SelectObject(&m_CaptionFont);
 

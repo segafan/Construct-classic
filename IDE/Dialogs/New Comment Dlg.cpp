@@ -27,7 +27,7 @@ CAddCommentDlg::CAddCommentDlg(CWnd* pParent /*=NULL*/)
 	
 	colour = RGB(255, 255, 200);
 	lf.lfHeight = 14;
-	strcpy(lf.lfFaceName, "Arial");
+	strcpy(lf.lfFaceName, "Segoe UI");
 }
 
 void CAddCommentDlg::DoDataExchange(CDataExchange* pDX)

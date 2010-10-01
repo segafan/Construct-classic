@@ -214,7 +214,7 @@ class CFontMgr
 
 			MyFont.m_myFont->CreateFont(nHeight, nWidth, nEscapement,nOrientation,
 				nWeight, bItalic, bUnderline, cStrikeOut, nCharSet,
-				nOutPrecision, nClipPrecision, nQuality, nPitchAndFamily,
+				nOutPrecision, nClipPrecision, CLEARTYPE_QUALITY, nPitchAndFamily,
 				lpszFacename);
 			MyFont.m_life = 1;
 			m_Fonts.push_back(MyFont);

@@ -76,7 +76,7 @@ void CPrefsStatic::OnPaint()
 												0, 0, 0, ANSI_CHARSET,
 												OUT_DEFAULT_PRECIS,
 												CLIP_DEFAULT_PRECIS,
-												DEFAULT_QUALITY,
+												CLEARTYPE_QUALITY,
 												FF_MODERN,
 												m_csFontName);
 		}
@@ -203,7 +203,7 @@ void CPrefsStatic::MakeCaptionBitmap()
 											0, 0, 0, ANSI_CHARSET,
 											OUT_DEFAULT_PRECIS,
 											CLIP_DEFAULT_PRECIS,
-											DEFAULT_QUALITY,
+											CLEARTYPE_QUALITY,
 											FF_MODERN,
 											m_csFontName);	
 	}

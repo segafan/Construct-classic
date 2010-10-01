@@ -339,7 +339,7 @@ CXRibbonBar::CXRibbonBar()
 	m_hIconFontPix = AfxGetApp()->LoadIcon(IDI_ICON_FONT_PIX);
 	ASSERT( m_hIconFontPix != NULL );
 
-	m_sCurrentFontFaceName = _T("Arial");
+	m_sCurrentFontFaceName = _T("Segoe UI");
 	m_lfCurrentFontSize = 12.0f;
 
 	//m_clrFontColor = RGB(255,0,0);

@@ -58,7 +58,7 @@ int ProjectBar::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	tree.ModifyStyleEx(0, WS_EX_STATICEDGE);
 
-	font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
+	font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
 	tree.SetFont(&font);
 	tree.always_shift = false;
 	

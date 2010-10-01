@@ -164,7 +164,7 @@ void CEditorAction::Render(CRect &Pos, CDC& dc,bool EventSelected, CChronoEventE
 			CHTMLFont f;
 			f.SetBold(false);
 			f.SetSize(8);
-			f.SetName("Arial");
+			f.SetName("Segoe UI");
 			f.SetImage(false);
 
 			if (!bEnabled)
@@ -214,7 +214,7 @@ void CEditorAction::Render(CRect &Pos, CDC& dc,bool EventSelected, CChronoEventE
 			CHTMLFont f;
 			f.SetBold(false);
 			f.SetSize(8);
-			f.SetName("Arial");
+			f.SetName("Segoe UI");
 			f.SetImage(false);
 
 			if (!bEnabled)

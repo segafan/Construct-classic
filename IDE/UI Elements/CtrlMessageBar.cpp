@@ -186,7 +186,7 @@ CCtrlMessageBar::CCtrlMessageBar()
   m_crTextHilite = CLR_DEFAULT;
   m_bResize = FALSE;
   m_pfnShowMenuCallback = NULL;
-  	font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
+  	font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
 }
 
 CCtrlMessageBar::~CCtrlMessageBar()

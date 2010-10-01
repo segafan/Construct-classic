@@ -11,7 +11,7 @@ public:
 
 	CEmptyListCtrl()
 	{
-		m_Font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Arial");
+		m_Font.CreateFont(14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, CLEARTYPE_QUALITY, 0, "Segoe UI");
 	}
 
 protected:

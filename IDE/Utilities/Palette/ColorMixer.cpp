@@ -303,9 +303,9 @@ CFont MyFont;
 												0, 0, 0, ANSI_CHARSET,
 												OUT_DEFAULT_PRECIS,
 												CLIP_DEFAULT_PRECIS,
-												DEFAULT_QUALITY,
+												CLEARTYPE_QUALITY,
 												FF_MODERN,
-												"Arial");
+												"Segoe UI");
 
 
 
@@ -324,9 +324,9 @@ CFont MyFont;
 												0, 0, 0, ANSI_CHARSET,
 												OUT_DEFAULT_PRECIS,
 												CLIP_DEFAULT_PRECIS,
-												DEFAULT_QUALITY,
+												CLEARTYPE_QUALITY,
 												FF_MODERN,
-												"Arial"
+												"Segoe UI"
 											);
 	dc.SelectObject(MyFont2);
 	dc.SetTextColor(DAVOSPECIALCOLOUR);

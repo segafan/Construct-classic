@@ -232,7 +232,7 @@ void CActionTooltip::OnPaint()
 		CHTMLFont f;
 			f.SetBold(false);
 			f.SetSize(8);
-			f.SetName("Arial");
+			f.SetName("Segoe UI");
 			f.SetImage(false);
 
 			CRect Calc = Pos;
@@ -864,8 +864,8 @@ void CHoverButton::OnPaint()
 	dc.Draw3dRect(ClientRect,0,0);
 
 	CFont* NewFont = gMyFontManager.RequestFont(14, 0, 0, 0, 0 ,0,
-		   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-		   FF_DONTCARE,"Arial");
+		   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+		   FF_DONTCARE,"Segoe UI");
 
 	dc.SelectObject(NewFont);
 

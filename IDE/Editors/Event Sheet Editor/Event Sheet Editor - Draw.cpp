@@ -248,7 +248,7 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 
 					CFont* NewFont = gMyFontManager.RequestFont(m_cFontSize,0,0,0,m_cbFontBold? FW_BOLD : FW_NORMAL
 													,m_cbFontItalic,
-								   this->m_cbFontUnderline,this->m_cbFontStrike,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
+								   this->m_cbFontUnderline,this->m_cbFontStrike,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
 								   FF_DONTCARE,this->m_cFontName);
 
 					CFont* FontOld = dc.SelectObject(NewFont);
@@ -284,7 +284,7 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 
 					CFont* NewFont = gMyFontManager.RequestFont(m_cFontSize,0,0,0,m_cbFontBold? FW_BOLD : FW_NORMAL
 													,m_cbFontItalic,
-								   this->m_cbFontUnderline,this->m_cbFontStrike,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
+								   this->m_cbFontUnderline,this->m_cbFontStrike,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
 								   FF_DONTCARE,this->m_cFontName);
 
 
@@ -316,12 +316,12 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 				{
 
 					CFont* TitleFont = gMyFontManager.RequestFont(20,0,0,0,FW_BOLD,0,
-									   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-									   FF_DONTCARE,"Arial");
+									   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+									   FF_DONTCARE,"Segoe UI");
 						
 					CFont* DescripionFont = gMyFontManager.RequestFont(12,0,0,0,FW_NORMAL,0,
-									   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-									   FF_DONTCARE,"Arial");
+									   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+									   FF_DONTCARE,"Segoe UI");
 								  
 
 					m_visible(&Ed) = true;
@@ -399,13 +399,13 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 
 					CFont* NewFont = gMyFontManager.RequestFont(14,0,0,0,FW_BOLD 
 													,0,
-								   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-								   FF_DONTCARE,"Arial");
+								   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+								   FF_DONTCARE,"Segoe UI");
 
 					CFont* NewFont2 = gMyFontManager.RequestFont(14,0,0,0,0 
 													,0,
-								   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-								   FF_DONTCARE,"Arial");
+								   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+								   FF_DONTCARE,"Segoe UI");
 
 
 					
@@ -546,8 +546,8 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 				// draw the number
 				CFont* NewFont = gMyFontManager.RequestFont(14,0,0,0,FW_NORMAL
 															,0,
-										   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-										   FF_DONTCARE,"Arial");
+										   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+										   FF_DONTCARE,"Segoe UI");
 				CFont* old = dc.SelectObject(NewFont);
 				CString num;
 				num.Format("%d", this->m_number);
@@ -566,8 +566,8 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 				// draw the number
 				CFont* NewFont = gMyFontManager.RequestFont(14,0,0,0,FW_NORMAL
 															,0,
-										   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-										   FF_DONTCARE,"Arial");
+										   0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+										   FF_DONTCARE,"Segoe UI");
 				CFont* old = dc.SelectObject(NewFont);
 				CString num;
 				num.Format("%d", this->m_number);
@@ -715,13 +715,13 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 						if (mouseOverNewAction) {
 							// Underlined
 							NewFont = gMyFontManager.RequestFont(14,0,0,0,0 
-								,0,1,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-							   FF_DONTCARE,"Arial");
+								,0,1,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+							   FF_DONTCARE,"Segoe UI");
 						}
 						else {
 							NewFont = gMyFontManager.RequestFont(14,0,0,0,0 
-								,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-							   FF_DONTCARE,"Arial");
+								,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+							   FF_DONTCARE,"Segoe UI");
 						}
 						dc.SelectObject(NewFont);
 
@@ -812,20 +812,20 @@ int CEditorEvent::Render(CRect &Pos, CDC &dc,bool ParentSelected,EventSheetEdito
 				if (mouseOverFooter) {
 							// Underlined
 						Footer = gMyFontManager.RequestFont(14,0,0,0,0 
-							,0,1,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-						  FF_DONTCARE,"Arial");
+							,0,1,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+						  FF_DONTCARE,"Segoe UI");
 				}
 				else {
 							Footer = gMyFontManager.RequestFont(14,0,0,0,0 
-								,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-							   FF_DONTCARE,"Arial");
+								,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+							   FF_DONTCARE,"Segoe UI");
 				}
 
 /*
 
 				CFont* Footer = gMyFontManager.RequestFont(14,0,0,0,FW_BOLD,0,
-										  0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,DEFAULT_QUALITY,
-										  FF_DONTCARE,"Arial");	*/
+										  0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,CLEARTYPE_QUALITY,
+										  FF_DONTCARE,"Segoe UI");	*/
 
 				CFont* pFontOld = dc.SelectObject(Footer);
 				COLORREF old = dc.SetTextColor(255);

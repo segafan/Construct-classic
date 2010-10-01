@@ -607,7 +607,7 @@ void EventSheetEditor::OnAddComment()
 	newEvent->m_cText = "";
 	newEvent->m_cTextBG = m_CommentColour;
 	newEvent->m_cTextColour = 0;
-	newEvent->m_cFontName = "Arial";
+	newEvent->m_cFontName = "Segoe UI";
 	newEvent->m_cFontSize = 14;
 	newEvent->m_cbFontBold = false;
 	newEvent->m_cbFontItalic = false;
@@ -2385,7 +2385,7 @@ void EventSheetEditor::AddScript()
 	python->m_cText = dlg.m_script;
 	python->m_cTextBG = RGB(255,255,255);
 	python->m_cTextColour = RGB(0,0,0);
-	python->m_cFontName = "Arial";
+	python->m_cFontName = "Segoe UI";
 	python->m_cFontSize = 14;
 	python->m_cbFontBold = false;
 	python->m_cbFontItalic = false;
@@ -2413,7 +2413,7 @@ void EventSheetEditor::EditScript(CEditorEvent* pEvent)
 	newEvent->m_cText = dlg.m_script;
 	newEvent->m_cTextBG = RGB(255,255,255);
 	newEvent->m_cTextColour = RGB(0,0,0);
-	newEvent->m_cFontName = "Arial";
+	newEvent->m_cFontName = "Segoe UI";
 	newEvent->m_cFontSize = 14;
 	newEvent->m_cbFontBold = false;
 	newEvent->m_cbFontItalic = false;

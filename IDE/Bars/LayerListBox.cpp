@@ -9,7 +9,7 @@ extern PropertiesBar* g_PropertyBar;
 
 CLayerListBox::CLayerListBox()
 {
-	m_Font.CreateFont(14, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, "Arial");
+	m_Font.CreateFont(14, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, CLEARTYPE_QUALITY, NULL, "Segoe UI");
 }
 
 CLayerListBox::~CLayerListBox()
