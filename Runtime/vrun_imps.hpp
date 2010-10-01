@@ -974,7 +974,11 @@
 		// Calling from ExpBase guarantees pCallerType != pOriginalType
 		// Hence pOriginalType is the family type, and needs to map the private variable to the relevant
 		// index for pCallerType.
-		int ret = pOriginalType->teamPvMap[pCallerType][index];
+		int ret;
+		if(pCallerType->IsFamily())
+			ret = find_index(pCallerType->privateVars.begin(), pCallerType->privateVars.end(), pOriginalType->privateVars[index].name);
+		else
+			ret=pOriginalType->teamPvMap[pCallerType][index];
 		return ret;
 	}
 
