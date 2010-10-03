@@ -93,6 +93,7 @@ inline int condition::DoStatic(ObjList& o)
 	// For family conditions: make the object think it's a family type so it picks from the family SOL
 	CRunObjType* pOriginalType = pObjToCall->pType;
 	pObjToCall->pType = this->pType;		// Use condition type
+	this->pType->teamPvMap[this->pType].push_back(pOriginalType->oid); //store the oid of the original type, so it can be accessed later if needed.
 
 	pRuntime->solIndex = 0;
 
@@ -103,6 +104,7 @@ inline int condition::DoStatic(ObjList& o)
 	D_RUNTIME();
 
 	// Restore the object's actual type
+	this->pType->teamPvMap.erase(this->pType);  //stored oid is no longer needed.
 	pObjToCall->pType = pOriginalType;
 
 	return ret;

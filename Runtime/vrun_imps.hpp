@@ -975,10 +975,11 @@
 		// Hence pOriginalType is the family type, and needs to map the private variable to the relevant
 		// index for pCallerType.
 		int ret;
+		// When using families and static conditions pCallerType will be a family in the first instance.
+		// The non-family "oid" of the actual type is temporarily stored in pCallerType->teamPvMap[pCallerType][0].
 		if(pCallerType->IsFamily())
-			ret = find_index(pCallerType->privateVars.begin(), pCallerType->privateVars.end(), pOriginalType->privateVars[index].name);
-		else
-			ret=pOriginalType->teamPvMap[pCallerType][index];
+			pCallerType = pCallerType->pRuntime->GetTypeFromOID(pCallerType->teamPvMap[pCallerType][0]);
+		ret=pOriginalType->teamPvMap[pCallerType][index];
 		return ret;
 	}
 
