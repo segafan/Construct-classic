@@ -175,7 +175,7 @@ extern int g_actionIndex;	// 1-based at all times
 #endif
 
 // Inline for running a bunch of actions
-__forceinline void RunActionList(ActionList& acts)
+inline void RunActionList(ActionList& acts)
 {
 	// Iterators
 	ActionIterator a = acts.begin();
@@ -199,7 +199,7 @@ __forceinline void RunActionList(ActionList& acts)
 }
 
 // Run sub-events with derivative SOLs
-__forceinline void RunSubEventList(EventList& events)
+inline void RunSubEventList(EventList& events)
 {
 	// Then execute sub events
 	EventIterator e = events.begin();
@@ -265,7 +265,7 @@ inline void RunElseEvent(CEventLine* parentEvent, CEventLine* elseEvent)
 }
 
 // Run a plain event list with no derivation eg. an event group's content
-__forceinline void RunInlineEventList(EventList& events)
+inline void RunInlineEventList(EventList& events)
 {
 	// Then execute sub events
 	EventIterator e = events.begin();

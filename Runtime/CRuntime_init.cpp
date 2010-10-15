@@ -924,7 +924,7 @@ bool CRuntime::MakeWindows(CRuntimeSetup* crSetup)
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof(long);
     wc.hInstance = hInstance;
-    wc.hIcon = NULL;
+    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(5));
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
