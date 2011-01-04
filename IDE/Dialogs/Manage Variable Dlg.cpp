@@ -370,6 +370,13 @@ void CManageVariableDlg::ConfirmDeleteSelectedItems()
 
 			pType->m_PrivateValues.erase(pType->m_PrivateValues.begin() + index);
 
+			for(int i=0; i<pType->families.size(); i++) //remove it from families also
+			{
+				int findex=find_index(pType->families[i]->variables.begin(), pType->families[i]->variables.end(), name);
+				if(i<pType->families[i]->variables.size())
+					pType->families[i]->variables.erase(pType->families[i]->variables.begin() + findex);
+			}
+
 			PrivateVariableInstanceDeleter updater(index);
 			ForEachObjectInstance(pType, layout->application, updater);
 		}
@@ -397,6 +404,13 @@ void CManageVariableDlg::ConfirmDeleteSelectedItems()
 			ErasePrivateVariableReferences(application, pType, pType->m_PrivateValues[index].identifier);
 
 			pType->m_PrivateValues.erase(pType->m_PrivateValues.begin() + index);
+
+			for(int i=0; i<pType->families.size(); i++) //remove it from families also
+			{
+				int findex=find_index(pType->families[i]->variables.begin(), pType->families[i]->variables.end(), name);
+				if(i<pType->families[i]->variables.size())
+					pType->families[i]->variables.erase(pType->families[i]->variables.begin() + findex);
+			}
 
 			PrivateVariableInstanceDeleter updater(index);
 			ForEachObjectInstance(pType, layout->application, updater);

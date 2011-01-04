@@ -924,7 +924,7 @@ bool CRuntime::MakeWindows(CRuntimeSetup* crSetup)
     wc.cbClsExtra = 0;
     wc.cbWndExtra = sizeof(long);
     wc.hInstance = hInstance;
-    wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(5));
+    wc.hIcon = LoadIcon(hInstance, "MAINICON");
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = NULL;
     wc.lpszMenuName = NULL;
@@ -934,7 +934,7 @@ bool CRuntime::MakeWindows(CRuntimeSetup* crSetup)
 	else
 	    wc.lpszClassName = "ConstructRt";
 
-    wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(5));  //IDI_MAINICON == 5
+    wc.hIconSm = (HICON)LoadImage(hInstance, "MAINICON", IMAGE_ICON, GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0); 
 
     //Register class
     if(!RegisterClassEx(&wc))
