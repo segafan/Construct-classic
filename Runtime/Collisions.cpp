@@ -648,8 +648,8 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 	BYTE bEight;//[8];
 	float angle = obj->info.displayangle;
 
-	// Faster stretch-only algo
-	if (angle == 0.0f) {
+	// Faster stretch-only algo.  Note: works only with positive scaleX, scaleY.
+	if (angle == 0.0f && scaleX >= 0.0f && scaleY >= 0.0f) {
 		float srcYf = 0.0f;
 		for (int y = 0; y < pxHeight; y++, srcYf += scaleY) 
 		{
