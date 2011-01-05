@@ -248,6 +248,10 @@ bool CRuntime::Initialise(CRuntimeSetup* crSetup)
 	hData = OpenResourceBinary(992, "PYTHONLIBS", pData, dataSize);
 	CapReader.ReadPythonResources(pData, dataSize);
 	FreeResource(hData);
+	if(!SearchPath(NULL, "python26.dll", NULL, 0, NULL, NULL))
+		throw runtime_error("Python26.dll was not found and is required to run this application or feature.  Reinstalling the application "
+								"may fix this problem.");
+	Py_Initialize();
 #endif
 
 	// Get menu resources

@@ -4876,15 +4876,15 @@ bool SystemObject::InitPython()
 	if(!PythonInit)
 	{
 		// Try to find python25.dll
-		DWORD dw = SearchPath(NULL, "python26.dll", NULL, 0, NULL, NULL);
+		//DWORD dw = SearchPath(NULL, "python26.dll", NULL, 0, NULL, NULL);
 
-		// Not found
-		if (dw == 0) {
-			throw runtime_error("Python26.dll was not found and is required to run this application or feature.  Reinstalling the application "
-								"may fix this problem.");
-		}
+		//// Not found
+		//if (dw == 0) {
+		//	throw runtime_error("Python26.dll was not found and is required to run this application or feature.  Reinstalling the application "
+		//						"may fix this problem.");
+		//}
 
-		Py_Initialize();
+		//Py_Initialize();
 		
 		pDictionary = PyDict_New();
 	    PyDict_SetItemString( pDictionary, "__builtins__", PyEval_GetBuiltins() );
