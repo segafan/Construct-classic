@@ -1635,7 +1635,7 @@ LRESULT ProjectBar::OnBeginDrag(WPARAM wParam, LPARAM lParam)
 			dragging_object = true;
 			tree.always_shift = true;
 
-////////////// drag object out of project bar attempt
+////////////// drag object out of project bar
 			if (last_opened->m_tabs.SelectionGet() == 0 && last_opened->m_tabs.ItemGetCount() == 2)
 			{
 				CObjType* pType = (CObjType*)tree.GetItemData(pData->hItem);
@@ -1646,7 +1646,7 @@ LRESULT ProjectBar::OnBeginDrag(WPARAM wParam, LPARAM lParam)
 				int i=0;
 				for(; i<types.size(); i++)
 				{
-					if(types[0]==pType)
+					if(types[i]==pType)
 						break; // It is a type of the current project.
 				}
 				if(i==types.size())
@@ -1656,7 +1656,7 @@ LRESULT ProjectBar::OnBeginDrag(WPARAM wParam, LPARAM lParam)
 				CPlugin plugin = GetPlugin(pType->DLLIndex);
 
 				if (plugin.m_Flags & OF_NODRAW)
-					return 1;
+					return 0;
 
 				CLayout* pLayout = last_opened->layout_editor[0][0]->layout;
 
