@@ -1634,6 +1634,62 @@ LRESULT ProjectBar::OnBeginDrag(WPARAM wParam, LPARAM lParam)
 		{
 			dragging_object = true;
 			tree.always_shift = true;
+
+////////////// drag object out of project bar attempt
+			if (last_opened->m_tabs.SelectionGet() == 0 && last_opened->m_tabs.ItemGetCount() == 2)
+			{
+				CObjType* pType = (CObjType*)tree.GetItemData(pData->hItem);
+				
+				//verify that pType is a type of the current project
+				vector<CObjType*> types;
+				last_opened->application->GetObjectTypes(types);
+				int i=0;
+				for(; i<types.size(); i++)
+				{
+					if(types[0]==pType)
+						break; // It is a type of the current project.
+				}
+				if(i==types.size())
+					return 0; // don't drag new object, it's not part of the current project.
+
+				// Find out if this is a nonframe object
+				CPlugin plugin = GetPlugin(pType->DLLIndex);
+
+				if (plugin.m_Flags & OF_NODRAW)
+					return 1;
+
+				CLayout* pLayout = last_opened->layout_editor[0][0]->layout;
+
+				// We're creating a duplicate
+				g_bDuplicate = TRUE;
+
+				last_opened->layout_editor[0][0]->m_sel.RemoveAll();
+
+				// Iterate each instance
+				POSITION InstancePos = pLayout->objects.GetStartPosition();
+				long unused = 0;
+				CObj* pObj;
+
+				while (InstancePos)
+				{
+					pLayout->objects.GetNextAssoc(InstancePos, unused, pObj);
+
+					// Add 
+					if (pObj->editObject->ObjectIdentifier == pType->ObjectIdentifier)
+						break;
+				}
+
+				long OID = pObj->GetInstanceID();
+
+				last_opened->layout_editor[0][0]->m_sel.AddTail(OID);
+				CPoint pt = pObj->GetObjectRect(last_opened->layout_editor[0][0]).GetBoundingRect().CenterPoint();
+
+				last_opened->layout_editor[0][0]->m_oldPt = pt;
+				pt.Offset(3,3);
+
+				last_opened->layout_editor[0][0]->InitializeMove(pt);
+			}
+//////////////
 			return 0;
 		}
 
