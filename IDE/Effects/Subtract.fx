@@ -13,7 +13,7 @@ technique ConstructEffect
    	PixelShader = null;
   	AlphaBlendEnable = TRUE;
   	SrcBlend         = ZERO;
-  	DestBlend        = INVSRCCOLOR;       
+  	DestBlend        = SRCCOLOR;       
     }
 
 
