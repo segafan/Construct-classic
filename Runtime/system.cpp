@@ -2836,7 +2836,17 @@ long SystemObject::aAddToAttribute(LPVAL theParams)
 	}
 	else
 	{
-
+		for(; i!=instances_end; i++)
+		{
+			for(ObjIterator it=pAttribute->instances.begin(); it!=pAttribute->instances.end(); it++)
+			{
+				if(*i==*it)
+				{
+					pAttribute->instances.erase(it);
+					break;
+				}
+			}
+		}
 	}
 
 	return 0;
