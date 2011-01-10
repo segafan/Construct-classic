@@ -729,6 +729,8 @@ void ProjectBar::OnRightClick(NMHDR* pNMHDR, LRESULT* pResult)
 				application->ChangeModifiedStatus();
 
 				UpdateApplication(application);
+				//update object bar
+				last_opened->object_bar.Refresh();
 			}
 		}
 
@@ -1481,10 +1483,15 @@ void ProjectBar::OnEditLabel(NMHDR *pNMHDR, LRESULT *pResult)
 			CApplication* application = (CApplication*)tree.GetItemData(tree.GetParentItem(tree.GetParentItem(selected)));
 
 			application->RenameObjectFolder(tree.GetItemText(selected), name);
+			//update object bar
+			last_opened->object_bar.Refresh();
 		}
 
 		else
+		{
 			*pResult = 0;
+			return;
+		}
 	} break;
 
 	// renaming file resource
@@ -1595,7 +1602,8 @@ void ProjectBar::OnEditLabel(NMHDR *pNMHDR, LRESULT *pResult)
 		// rename object
 		CObjType* type = (CObjType*)tree.GetItemData(selected);
 		type->SetName(name);
-		
+		//update object bar
+		last_opened->object_bar.Refresh();
 		break;
 	}
 
@@ -1786,6 +1794,8 @@ LRESULT ProjectBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 					type->SetFolder(tree.GetItemText(pData->hNewParent));
 
 					tree.ExpandBranch(pData->hNewParent);
+					//update object bar
+					last_opened->object_bar.Refresh();
 
 					return 1;
 				}

@@ -52,7 +52,8 @@ ObjectBarDialog::ObjectBarDialog(CChildFrame& parent_)
 	view(ob_large_icons),
 	sorting(ob_sort_zorder),
 	show_only_selected_layer(false),
-	show_nonlayout_objects(true)
+	show_nonlayout_objects(true),
+	folderfilter(-1)
 {
 }
 
@@ -144,9 +145,47 @@ void ObjectBarDialog::Refresh(bool layer_changed)
 	for (int i = 0; i < small_images.GetImageCount(); i++)
 		small_images.Remove(0);
 
+	if(folderfilter > -1 && folderfilter >= application->object_folders.size())
+		folderfilter = -1;
+
 	CObj*			pObject;
 	CObjType*		pObjectType;
 	CStringArray	List; // Object list
+
+	//object folders
+	if (folderfilter == -1)
+	{
+		HBITMAP large_image = (HBITMAP) LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(20150), IMAGE_BITMAP, 32, 32, LR_LOADTRANSPARENT);
+		HBITMAP small_image = (HBITMAP) LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(20150), IMAGE_BITMAP, 16, 16, LR_LOADTRANSPARENT);
+		
+		int ImageID = ImageList_Add(large_images.m_hImageList, large_image, NULL);
+		ImageList_Add(small_images.m_hImageList, small_image, NULL);
+		
+		DeleteObject(large_image);
+		DeleteObject(small_image);
+
+		for (int i=0; i<application->object_folders.size(); ++i)
+		{
+			if(application->object_folders[i].name == "Default")
+				continue;
+			int item = objects.InsertItem(objects.GetItemCount(), application->object_folders[i].name, ImageID);
+			objects.SetItemData(item, (DWORD_PTR)(const char*)"-1");
+		}
+	} // -1 is Default, -2 is disabled
+	else if(folderfilter != -2 && application->object_folders[folderfilter].name != "Default")
+	{
+		HBITMAP large_image = (HBITMAP) LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(20150), IMAGE_BITMAP, 32, 32, LR_LOADTRANSPARENT);
+		HBITMAP small_image = (HBITMAP) LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(20150), IMAGE_BITMAP, 16, 16, LR_LOADTRANSPARENT);
+		
+		int ImageID = ImageList_Add(large_images.m_hImageList, large_image, NULL);
+		ImageList_Add(small_images.m_hImageList, small_image, NULL);
+		
+		DeleteObject(large_image);
+		DeleteObject(small_image);
+
+		int item = objects.InsertItem(0,"...\\"+application->object_folders[folderfilter].name, ImageID);
+		objects.SetItemData(item, (DWORD_PTR)(const char*)"-1");
+	}
 
 	if (layout)
 	{
@@ -180,6 +219,12 @@ void ObjectBarDialog::Refresh(bool layer_changed)
 					
 					// Failed/invalid object type, for some reason
 					if(!pObjectType)
+						continue;
+
+					//folder filtering
+					if(folderfilter ==-1 && pObjectType->GetFolder() != "Default")
+						continue;
+					else if(folderfilter > -1 && pObjectType->GetFolder()!=application->object_folders[folderfilter].name)
 						continue;
 
 					bool bAdd = true;
@@ -258,6 +303,11 @@ void ObjectBarDialog::Refresh(bool layer_changed)
 	// now replace the ids
 	for (int i = 0; i < objects.GetItemCount(); i++)
 	{
+		if((const char*)objects.GetItemData(i) == "-1")
+		{
+			objects.SetItemData(i, -1);
+			continue;
+		}
 		CObjType* type = GetTypeFromName(application, objects.GetItemText(i, 0));
 		objects.SetItemData(i, type->ObjectIdentifier);
 	}
@@ -289,6 +339,9 @@ void ObjectBarDialog::OnClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 
 		// Now we have to wangle in the selected object
 		int ObjectIdentifier = objects.GetItemData(Item);
+
+		if (ObjectIdentifier==-1)
+			return; //folder
 
 		CObj*			pObject = 0;
 		CObjType*		pObjectType = 0;
@@ -358,6 +411,28 @@ void ObjectBarDialog::OnDblClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 
 	CObjType* pType;
 	long ID = objects.GetItemData(Item);
+
+	if (ID == -1)  // object folder
+	{
+		if (folderfilter == -1)  //Default folder
+		{
+			for(int i=0; i < application->object_folders.size(); i++)
+			{
+				if (objects.GetItemText(Item,0) == application->object_folders[i].name)
+				{
+					folderfilter=i;
+					break;
+				}
+			}
+		}
+		else //return folder
+		{
+			folderfilter = -1;
+		}
+		Refresh();
+		return;
+	}
+
 	application->object_types.Lookup(ID, pType);
 
 	if (!pType) return;
@@ -422,6 +497,17 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 		GetCursorPos(&MousePosition);
 
 		CExtPopupMenuWnd * popup = new CExtPopupMenuWnd;
+
+		//object filter
+		CExtPopupMenuWnd * objfilterlist = new CExtPopupMenuWnd;
+		for (int i=0 ; i < application->object_folders.size(); i++)
+		{
+			int sel = (i==folderfilter)?3:0;
+			if (folderfilter==-1 && application->object_folders[i].name == "Default")
+				sel = 3;
+			objfilterlist->ItemInsertCommand(100+i, -1, application->object_folders[i].name, NULL, NULL, false, sel);
+		}
+
 		popup->LoadMenu(m_hWnd, IDR_BLANK, true, false);
 		popup->ItemRemove(0);
 
@@ -500,6 +586,13 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 		else
 			popup->ItemInsertCommand(10, -1, "Show non-layout objects", NULL, NULL, false, 0);
 
+		if (folderfilter > -2)
+			popup->ItemInsertCommand(99, -1, "Use Folders", NULL, NULL, false, 1);
+		else
+			popup->ItemInsertCommand(99, -1, "Use Folders", NULL, NULL, false, 0);
+
+		popup->ItemInsertSpecPopup(objfilterlist, -1, "Filter by Object Folder", NULL);
+
 		// show menu
 		popup->TrackPopupMenu(TPMX_DO_MESSAGE_LOOP | TPMX_NO_WM_COMMAND | TPMX_NO_CMD_UI, MousePosition.x, MousePosition.y, NULL, NULL, NULL, &item);
 			
@@ -570,6 +663,22 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 			show_nonlayout_objects = !show_nonlayout_objects;
 			Refresh();
 		}
+
+		else if (item == 99)
+		{
+			if(folderfilter == -2)
+				folderfilter=-1;
+			else
+				folderfilter=-2;
+			Refresh();
+		}
+		else if (item >= 100)
+		{
+			folderfilter=item-100;
+			if(application->object_folders[folderfilter].name=="Default")
+				folderfilter=-1;
+			Refresh();
+		}
 	}
 
 	else
@@ -580,6 +689,10 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 
 			CObjType* pType;
 			long ID = objects.GetItemData(Item);
+
+			if (ID == -1)
+				return; //folder
+
 			application->object_types.Lookup(ID, pType);
 
 			CLayout* pLayout = parent.layout_editor[0][0]->layout;
@@ -633,6 +746,10 @@ void ObjectBarDialog::OnBeginDrag(NMHDR* pNMHDR, LRESULT* pResult)
 		// Find a CObj for the CObjType
 		CObjType* pType;
 		long ID = objects.GetItemData(Item);
+
+		if (ID == -1)
+			return; //folder
+
 		application->object_types.Lookup(ID, pType);
 
 		// Find out if this is a nonframe object

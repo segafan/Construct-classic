@@ -45,6 +45,8 @@ public:
 	// parent (not always guaranteed to be docked, so needs storing)
 	CChildFrame&		parent;
 
+	int folderfilter;
+
 protected:
 
 	virtual BOOL OnInitDialog();
