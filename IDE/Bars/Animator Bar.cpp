@@ -895,6 +895,16 @@ LRESULT AnimatorBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 			// Get the animation to be dropped
 			CAnimation* pAnimation = (CAnimation*)animations.GetItemData(pData->hItem);
 			CAnimation New = *pAnimation;
+			
+			// Now find a parent
+			HTREEITEM Parent = pData->hNewParent;
+			CAnimation* pParent = m_pAnimation;
+
+			if(!Parent)
+				pParent = m_pAnimation;//return 1;
+
+			else if (Parent != TVI_ROOT)
+				pParent = (CAnimation*)animations.GetItemData(Parent);
 
 			// Find it and remove it from wherever it is
 			if(isCopying)
@@ -904,13 +914,6 @@ LRESULT AnimatorBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 			}
 			else
 				application->resources.DeleteAnimationFromNumber(pAnimation->m_FixedID);
-
-			// Now find a parent
-			HTREEITEM Parent = pData->hNewParent;
-			CAnimation* pParent = m_pAnimation;
-
-			if (Parent != TVI_ROOT)
-				pParent = (CAnimation*)animations.GetItemData(pData->hNewParent);
 
 			// Now find where under this parent we need to insert
 			if (pData->hAfter == TVI_FIRST)
