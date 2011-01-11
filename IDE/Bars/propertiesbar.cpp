@@ -174,6 +174,7 @@ void PropertiesBar::AddAnimationProperties()
 	m_pGrid->pCurView = m_view;
 	curExpandSave = NULL;
 	m_pGrid->pGridCategorized->expandSaves.resize(0);
+	m_pCurrentStore = m_pStore; //fix for multiple object select crash
 
 	if (m_iIndex == -1)
 	{
