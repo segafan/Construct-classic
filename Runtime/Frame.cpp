@@ -487,6 +487,10 @@ void CRunLayout::RenderEffectChain(EffectList& effects, TextureHandle sourceText
 
 	Renderer& renderer = pRuntime->renderer;
 
+	// Its important to flush the state otherwise the state changes will end up on the quad that is rendered between passes, and the 
+	// settings will be reverted by DirectX when the shader pass ends - which is a very bad thing!
+	renderer.FlushState();
+
 	// Multisample targets sample from the real texture
 	TextureHandle background_texture = destTexture;
 

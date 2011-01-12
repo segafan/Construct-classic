@@ -440,8 +440,10 @@ namespace cr {
 		BatchMemIterator		current_batch_block;
 
 		// State control
+	public:
 		void					FlushState();		// Add renderstates etc. to the batch
-
+	
+	protected:
 		struct State {
 
 			RenderStateBits renderstate_bits;		// for changed states
