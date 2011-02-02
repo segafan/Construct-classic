@@ -1026,7 +1026,12 @@ void CCapReader::ReadFrameData(BYTE* _pData, int _len)
 		ObjTypeConstIterator sisters_end = pObjType->sisterTypes.end();
 
 		for ( ; t != sisters_end; t++)
+		{
 			pMovType->sisterTypes.push_back(*t);
+
+			//DAVO: We need to register ourself to the other sisters too!
+			(*t)->sisterTypes.push_back(pMovType);
+		}
 
 		// Add me to linked type sisters
 		pObjType->sisterTypes.push_back(pMovType);
