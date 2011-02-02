@@ -9,6 +9,59 @@
 //////////////////////////////////////////////////////////////////////////////////
 #ifdef RUN_ONLY
 
+cr::point ExtObject::GetWorldSpeed()
+{
+	return cr::point(dx, dy);
+}
+
+cr::point ExtObject::GetLocalSpeed()
+{
+	return WorldToLocal(GetWorldSpeed());
+}
+
+void ExtObject::SetWorldSpeed(cr::point v)
+{
+	dx = v.x;
+	dy = v.y;
+}
+
+void ExtObject::SetLocalSpeed(cr::point v)
+{
+	SetWorldSpeed( LocalToWorld(v));
+}
+
+
+cr::point ExtObject::WorldToLocal(cr::point v)
+{
+	switch (grav_dir) 
+	{
+	case GRAV_UP:
+		return cr::point(-v.x, -v.y);
+	case GRAV_DOWN:
+		return cr::point(v.x, v.y);
+	case GRAV_LEFT:
+		return cr::point(-v.y, v.x);
+	case GRAV_RIGHT:
+		return cr::point(v.y, -v.x);	
+	}
+	return cr::point(v.x, v.y);
+}
+cr::point ExtObject::LocalToWorld(cr::point v)
+{
+	switch (grav_dir) 
+	{
+	case GRAV_UP:
+		return cr::point(-v.x, -v.y);
+	case GRAV_DOWN:
+		return cr::point(v.x, v.y);
+	case GRAV_LEFT:
+		return cr::point(v.y, -v.x);
+	case GRAV_RIGHT:
+		return cr::point(-v.y, v.x);	
+	}
+	return cr::point(v.x, v.y);
+}
+
 // ExtObject constructor:
 // Only use for class initializer list.  Object initialisation must be done in OnCreate.
 // It is not safe to make runtime calls here: do so in OnCreate.
@@ -64,7 +117,7 @@ void ExtObject::OnCreate()
 
 	ignoringInput = false;
 	activated = true;
-	oldjump = false;
+	oldjump = true; //this will mean u wont jump if the jump button was being held down before the object was created
 
 	pStandOnMoving = NULL;
 
@@ -89,6 +142,9 @@ void ExtObject::OnCreate()
 	bMove_with_platform = true;
 	action_gothroughplatform = false;
 	vertical_pixels_moved = 0;
+
+	additionalSpeedX = 0;
+	additionalSpeedY = 0;
 }
 
 // Destructor: called when an instance of your object is destroyed.
@@ -123,6 +179,27 @@ void ExtObject::StopFalling()
 bool ExtObject::IsOnFloor( bool use_p_stand_on_moving_too )
 {
 	if (pObstacles == NULL && pPlatforms == NULL) return false;
+
+	// If we are moving 'upwards' we are not on the floor
+	switch (grav_dir) 
+	{
+	case GRAV_UP:
+		if(dy > 0)
+			return false;
+		break;
+	case GRAV_DOWN:
+		if(dy < 0)
+			return false;
+		break;	
+	case GRAV_LEFT:
+		if(dx > 0)
+			return false;
+		break;
+	case GRAV_RIGHT:
+		if(dx < 0)
+			return false;
+		break;	
+	}
 
 	float ga = RADIANS(grav_dir * 90);
 	int cosga = cos(ga)*1.5f;
@@ -447,6 +524,9 @@ void ExtObject::PushOutOfSolids()
 	float startX = pLink->info.x;
 	float startY = pLink->info.y;
 
+	if(IsOverlapping(true))
+		pRuntime->GenerateEvent(info.oid, 10, this);		// On Function
+
 	while (IsOverlapping(true)){
 		pLink->info.x = startX;
 		pLink->info.y = startY;
@@ -540,8 +620,8 @@ void ExtObject::MovePlayerVertically()
 	int cosga = cos(ga)*1.5f;
 	int singa = sin(ga)*1.5f;
 	float speedv = dx  * cosga + dy * singa;
+	speedv += additionalSpeedY;
 	speedv *= timedelta;
-
 
 	float xstepdirection = speedv * cosga;
 	float ystepdirection = speedv * singa;
@@ -629,6 +709,7 @@ void ExtObject::MoveWithMovingPlatform()
 	{
 		float movex = round_x_up(pStandOnMoving->info.x) - moving_oldx;
 		float movey = round_y_up(pStandOnMoving->info.y) - moving_oldy; 
+		float movea = pStandOnMoving->info.displayangle - moving_olda;
 
 		switch (grav_dir)
 		{
@@ -648,8 +729,18 @@ void ExtObject::MoveWithMovingPlatform()
 
 		pLink->info.x += movex;
 		pLink->info.y += movey;
+
+		//Some tricky maths:
+		cr::point playerPosition = cr::point(pLink->info.x, pLink->info.y);
+		playerPosition.rotate( cr::to_radians(movea) , pStandOnMoving->info.x, pStandOnMoving->info.y);
+
+		pLink->info.x = playerPosition.x;
+		pLink->info.y = playerPosition.y;
+		
+
 		moving_oldx = round_x_up(pStandOnMoving->info.x);
 		moving_oldy = round_y_up(pStandOnMoving->info.y);
+		moving_olda = pStandOnMoving->info.displayangle;
 
 		pRuntime->UpdateBoundingBox(pLink);
 
@@ -664,6 +755,7 @@ void ExtObject::MovePlayerHorizontally()
 	float timedelta = pRuntime->GetTimeDelta();
 
 	float speedh = dy * cosga + dx * singa;
+	speedh += additionalSpeedX;
 	speedh *= timedelta;
 
 	{
@@ -1156,6 +1248,7 @@ void ExtObject::LookForMovingPlatformBelow()
 			pStandOnMoving = pObjectList[i];
 			moving_oldx = round_x_up(pStandOnMoving->info.x);
 			moving_oldy = round_y_up(pStandOnMoving->info.y);
+			moving_olda = pStandOnMoving->info.displayangle;
 			break;
 		}
 	}
@@ -1170,6 +1263,7 @@ void ExtObject::LookForMovingPlatformBelow()
 				pStandOnMoving = pObjectList[i];
 				moving_oldx = round_x_up(pStandOnMoving->info.x);
 				moving_oldy = round_y_up(pStandOnMoving->info.y);
+				moving_olda = pStandOnMoving->info.displayangle;
 				standing_on_platform = true;
 				break;
 			}

@@ -40,11 +40,11 @@ void DefineACES(MicroAceTime* at)
 	// CND_TRIGGERED: ordinary event trigger
 
 	ADDCND("Is moving", "Movement", "%o is moving", &ExtObject::cIsMoving, "IsMoving", 0);
-	ADDCND("On bounce", "Movement", "%o On Bounce", &ExtObject::cOnBounce, "OnBounce", CND_TRIGGERED);
+	ADDCND("On bounce", "Movement", "%o on Bounce", &ExtObject::cOnBounce, "OnBounce", CND_TRIGGERED);
 
 	ADDPARAMCOMBO("Comparison", "Select the way to compare gravity", COMPARISON_COMBO_TEXT);
 	ADDPARAM(PARAM_VALUE, "Gravity", "Enter the gravity value to compare.");
-	ADDCND("Compare gravity", "Movement", "%o Gravity %0 %1", &ExtObject::cCompareGravity, "CompareGravity", 0);
+	ADDCND("Compare gravity", "Movement", "%o gravity %0 %1", &ExtObject::cCompareGravity, "CompareGravity", 0);
 
 	ADDCND("Is walking", "Movement", "%o is walking", &ExtObject::cIsWalking, "IsWalking", 0);
 	ADDCND("Is jumping", "Movement", "%o is jumping", &ExtObject::cIsJumping, "IsJumping", 0);
@@ -53,6 +53,7 @@ void DefineACES(MicroAceTime* at)
 	ADDCND("Wall to the left", "Movement", "%o has wall to left", &ExtObject::cWallLeft, "WallLeft", 0);
 	ADDCND("Wall to the right", "Movement", "%o has wall to right", &ExtObject::cWallRight, "WallRight", 0);
 	ADDCND("Ceiling just above", "Movement", "%o has ceiling just above", &ExtObject::cCeilingAbove, "CeilingAbove", 0);
+	ADDCND("On inside obstacle", "Triggers", "On %o inside obstacle", &ExtObject::cOnInsideObstacle, "OnInsideObstacle", CND_TRIGGERED); //10
 
 	/////////////////////////////
 	// Actions
@@ -64,18 +65,18 @@ void DefineACES(MicroAceTime* at)
 	ADDACT("Stop", "Movement", "Stop", &ExtObject::aStop, "Stop", 0);
 
 	ADDPARAM(PARAM_VALUE, "Max floor speed", "The maximum X speed the object can move, in units of pixels per second");
-	ADDACT("Set maximum floor speed", "Movement", "Set maximum X speed to %0", &ExtObject::aSetMaxXFloorSpeed, "SetMaxFloorSpeed", 0);
+	ADDACT("Set maximum floor speed", "Movement", "Set maximum floor X speed to %0", &ExtObject::aSetMaxXFloorSpeed, "SetMaxFloorSpeed", 0);
 
 	ADDPARAM(PARAM_VALUE, "Acceleration", "The rate the object accelerates, in pixels per second per second");
-	ADDACT("Set floor acceleration", "Movement", "Set acceleration to %0", &ExtObject::aSetFloorAcc, "SetFloorAcc", 0);
+	ADDACT("Set floor acceleration", "Movement", "Set floor acceleration to %0", &ExtObject::aSetFloorAcc, "SetFloorAcc", 0);
 
 	ADDPARAM(PARAM_VALUE, "Deceleration", "The rate the object slows down, in pixels per second per second");
-	ADDACT("Set floor deceleration", "Movement", "Set deceleration to %0", &ExtObject::aSetFloorDec, "SetFloorDec", 0);
+	ADDACT("Set floor deceleration", "Movement", "Set floor deceleration to %0", &ExtObject::aSetFloorDec, "SetFloorDec", 0);
 
 	ADDACT("Jump", "Movement", "Jump", &ExtObject::aJump, "Jump", 0);
 
 	ADDPARAMCOMBO("Set Gravity Direction", "Select which direction you want gravity", "Right|Down|Left|Up");
-	ADDACT("Set gravity direction", "Settings", "Set gravity direction: %0", &ExtObject::aSetGravDir, "SetGravDir", 0);
+	ADDACT("Set gravity direction", "Settings", "Set gravity direction to %0", &ExtObject::aSetGravDir, "SetGravDir", 0);
 
 	ADDPARAMCOMBO("Ignore input?", "Choose whether to ignore the user controls.", "Stop ignoring|Start ignoring");
 	ADDACT("Set ignoring input", "Settings", "%0 user input", &ExtObject::aSetIgnoreInput, "SetIgnore", 0);
@@ -95,7 +96,6 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAM(PARAM_VALUE, "Set Vector X", "Horizontal speed, in pixels per second.");
 	ADDACT("Set X component of motion", "Movement", "Set horizontal speed to %0", &ExtObject::aSetXSpeed, "SetVectorX", 0);
 
-	// NEW
 	ADDPARAM(PARAM_VALUE, "Set Vector Y", "Vertical speed, in pixels per second.");
 	ADDACT("Set Y component of motion", "Movement", "Set vertical speed to %0", &ExtObject::aSetYSpeed, "SetVectorY", 0);
 
@@ -124,6 +124,19 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAM(PARAM_VALUE, "Gravity", "Force of gravity (downwards acceleration pixels per second per second).");
 	ADDACT("Set jump sustain gravity", "Settings", "Set jump sustain gravity to %0", &ExtObject::aSetJumpSustainGravity, "SetGravity", 0);
 
+	ADDPARAM(PARAM_VALUE, "Pixels per second", "Speed, in pixels per second.");
+	ADDACT("Set additional x speed", "Additional", "Set additional x speed to %0", &ExtObject::aSetAdditionalXSpeed, "SetAdditionalXSpeed", 0);
+
+	ADDPARAM(PARAM_VALUE, "Pixels per second", "Speed, in pixels per second.");
+	ADDACT("Set additional y speed", "Additional", "Set additional y speed to %0", &ExtObject::aSetAdditionalYSpeed, "SetAdditionalYSpeed", 0);
+
+	ADDPARAM(PARAM_VALUE, "Set Vector X", "Horizontal speed, in pixels per second.");
+	ADDACT("Set local X component of motion", "Movement", "Set local horizontal speed to %0", &ExtObject::aSetLocalXSpeed, "SetLocalVectorX", 0);
+
+	ADDPARAM(PARAM_VALUE, "Set Vector Y", "Vertical speed, in pixels per second.");
+	ADDACT("Set local Y component of motion", "Movement", "Set local vertical speed to %0", &ExtObject::aSetLocalYSpeed, "SetLocalVectorY", 0);
+
+
 
 	/////////////////////////////
 	// Expressions
@@ -151,7 +164,10 @@ void DefineACES(MicroAceTime* at)
 	ADDEXP("Get jump strength", "Movement", "JumpSustain", &ExtObject::eJumpSustain, RETURN_VALUE);
 	ADDEXP("Get jump gravity", "Movement", "Gravity", &ExtObject::eJumpGrav, RETURN_VALUE);
 	ADDEXP("Get jump sustain gravity", "Movement", "Gravity", &ExtObject::eJumpSustainGrav, RETURN_VALUE);
-
+	ADDEXP("Get additional speed x", "Additional", "AdditionalSpeedX", &ExtObject::eAdditionalXSpeed, RETURN_VALUE);
+	ADDEXP("Get additional speed y", "Additional", "AdditionalSpeedY", &ExtObject::eAdditionalYSpeed, RETURN_VALUE);
+	ADDEXP("Get local X component of motion", "Movement", "LocalVectorX", &ExtObject::eLocalVectorX, RETURN_VALUE);
+	ADDEXP("Get local Y component of motion", "Movement", "LocalVectorY", &ExtObject::eLocalVectorY, RETURN_VALUE);
 }
 
 

@@ -88,3 +88,7 @@ long ExtObject::cWallLeft (LPVAL theParams)
 {
 	return !CanMoveLeft();
 }
+long ExtObject::cOnInsideObstacle (LPVAL theParams)
+{
+	return true;
+}

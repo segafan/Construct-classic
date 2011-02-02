@@ -77,11 +77,14 @@ public:
 	long cWallLeft(LPVAL theParams);
 	long cWallRight(LPVAL theParams);
 	long cCeilingAbove(LPVAL theParams);
+	long cOnInsideObstacle (LPVAL theParams);
 
 	long aBounce		(LPVAL theParams);
 	long aStop			(LPVAL theParams);
 	long aSetXSpeed		(LPVAL theParams);
 	long aSetYSpeed		(LPVAL theParams);
+	long aSetLocalXSpeed(LPVAL theParams);
+	long aSetLocalYSpeed(LPVAL theParams);
 
 	long aSetMaxXFloorSpeed	(LPVAL theParams);
 	long aSetMaxXAirSpeed	(LPVAL theParams);
@@ -101,6 +104,8 @@ public:
 	long aSetJumpSustainGravity	(LPVAL theParams);
 	long aSetGravDir	(LPVAL theParams);
 	long aSetFallThroughPlatforms(LPVAL theParams);
+	long aSetAdditionalXSpeed(LPVAL theParams);
+	long aSetAdditionalYSpeed(LPVAL theParams);
 
 	long eSpeed(LPVAL theParams, ExpReturn& ret);
 	long eMaxXFloorSpeed(LPVAL theParams, ExpReturn& ret);
@@ -113,6 +118,8 @@ public:
 	long eMovAngle(LPVAL theParams, ExpReturn& ret);
 	long eVectorX(LPVAL theParams, ExpReturn& ret);
 	long eVectorY(LPVAL theParams, ExpReturn& ret);
+	long eLocalVectorX(LPVAL theParams, ExpReturn& ret);
+	long eLocalVectorY(LPVAL theParams, ExpReturn& ret);
 	long eGrav(LPVAL theParams, ExpReturn& ret);
 	long eJumpGrav(LPVAL theParams, ExpReturn &ret);
 	long eJumpSustainGrav(LPVAL theParams, ExpReturn &ret);
@@ -120,6 +127,8 @@ public:
 	long eGravAngle(LPVAL theParams, ExpReturn& ret);
 	long eJumpStrength(LPVAL theParams, ExpReturn& ret);
 	long eJumpSustain(LPVAL theParams, ExpReturn& ret);
+	long eAdditionalXSpeed(LPVAL theParams, ExpReturn& ret);
+	long eAdditionalYSpeed(LPVAL theParams, ExpReturn& ret);
 
 	bool IsOnFloor( bool use_p_stand_on_moving_too);
 	bool IsOnCeiling();
@@ -148,6 +157,18 @@ public:
 	void ApplyMovingPlatformSpeed();
 
 	bool IsMovingUpwards();
+
+	// At some point the rest of the code should just use these functions
+	cr::point WorldToLocal(cr::point v);
+	cr::point LocalToWorld(cr::point v);
+
+	cr::point GetWorldSpeed();
+	cr::point GetLocalSpeed();
+
+	void SetWorldSpeed(cr::point v);
+	void SetLocalSpeed(cr::point v);
+
+
 	////////////////////////////////////////////////////
 	// Data members
 
@@ -164,6 +185,7 @@ public:
 	bool standing_on_platform;
 	float moving_oldx;
 	float moving_oldy;
+	float moving_olda;
 
 	bool bMove_with_platform;
 
@@ -207,6 +229,8 @@ public:
 
 	float vertical_pixels_moved; // this stores how many pixels we have moved downwards due to slopes or moving platforms to prevent the 'hop' bug
 
+	float additionalSpeedX;
+	float additionalSpeedY;
 
 };
 

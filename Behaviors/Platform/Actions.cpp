@@ -149,8 +149,35 @@ long ExtObject::aSetYSpeed(LPVAL theParams)
 	return 0;
 }
 
+long ExtObject::aSetLocalXSpeed(LPVAL theParams)
+{
+	cr::point local = GetLocalSpeed();
+	local.x = theParams[0].GetFloat();
+	SetLocalSpeed(local);
+	return 0;
+}
+
+long ExtObject::aSetLocalYSpeed(LPVAL theParams)
+{
+	cr::point local = GetLocalSpeed();
+	local.y = theParams[0].GetFloat();
+	SetLocalSpeed(local);
+	return 0;
+}
+
+
 long ExtObject::aSetFallThroughPlatforms(LPVAL theParams)
 {
 	action_gothroughplatform = theParams[0].GetBool();
+	return 0;
+}
+long ExtObject::aSetAdditionalXSpeed(LPVAL theParams)
+{
+	additionalSpeedX = theParams[0].GetFloat();
+	return 0;
+}
+long ExtObject::aSetAdditionalYSpeed(LPVAL theParams)
+{
+	additionalSpeedY = theParams[0].GetFloat();
 	return 0;
 }

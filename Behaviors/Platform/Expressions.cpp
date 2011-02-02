@@ -108,3 +108,21 @@ long ExtObject::eJumpSustain(LPVAL theParams, ExpReturn& ret)
 {
 	return ret = jump_sustain;
 }
+long ExtObject::eAdditionalXSpeed(LPVAL theParams, ExpReturn& ret)
+{
+	return ret = additionalSpeedX;
+}
+long ExtObject::eAdditionalYSpeed(LPVAL theParams, ExpReturn& ret)
+{
+	return ret = additionalSpeedY;
+}
+
+long ExtObject::eLocalVectorX(LPVAL theParams, ExpReturn& ret)
+{
+	return ret = GetLocalSpeed().x;
+}
+
+long ExtObject::eLocalVectorY(LPVAL theParams, ExpReturn& ret)
+{
+	return ret = GetLocalSpeed().y;
+}
