@@ -110,6 +110,8 @@ void ExtObject::OnCreate()
 
 	lastX = info.x;
 	lastY = info.y;
+
+	firstFrame = true;
 }
 
 // Destructor: called when an instance of your object is destroyed.
@@ -219,6 +221,14 @@ template<class tyA, class tyB> tyA lerp(const tyA& a, const tyA& b, const tyB& r
 // Called every frame for you to update your object if necessary
 BOOL ExtObject::OnFrame()
 {
+	return 1;
+}
+
+// I change the particle spray to update in OnFrame2, after the event sheet, so that if we
+// have repositioned the particle to say the mouse, we dont have a 1 frame delay with spawning 
+// particles.
+BOOL ExtObject::OnFrame2()
+{
 	sprayAngle = RADIANS(info.angle);
 
 	// Calculate how many particles should be created
@@ -227,6 +237,15 @@ BOOL ExtObject::OnFrame()
 	timeDelta = pRuntime->GetTimeDelta();
 	if (timeDelta > 0.5f)
 		timeDelta = 0.0f;
+
+	// Prevent the particle spray from doing smooth transitions on the first frame
+	if(firstFrame)
+	{
+		lastX = info.x;
+		lastY = info.y;
+
+		firstFrame = false;
+	}
 
 	// Update all particles and determine bounding box
 	ParticleIterator p = particles.begin();
@@ -263,7 +282,7 @@ BOOL ExtObject::OnFrame()
 
 				float oX = lerp(info.x, lastX, r);
 				float oY = lerp(info.y, lastY, r);
-		
+
 				particles.push_back(Particle());
 				Particle& p = particles.back();
 
@@ -328,15 +347,15 @@ BOOL ExtObject::OnFrame()
 			p.scale_speed = pp.grow + pp.growRandom * pRuntime->Random();
 
 			// This avoids 'gaps' in particle creation
-	//		timeDelta = oldtimeDelta * (float)i/(float)num;
-	//		p.Update(this);
+			//		timeDelta = oldtimeDelta * (float)i/(float)num;
+			//		p.Update(this);
 		}
 		timeDelta = oldtimeDelta;
 	}
 
 	// Remove expired particles
 	p = particles.begin();
-	
+
 	for ( ; p != particles.end(); ) {
 		if (p->expired)
 			p = particles.erase(p);
@@ -355,11 +374,6 @@ BOOL ExtObject::OnFrame()
 	lastY = info.y;
 
 	return 0;
-}
-
-BOOL ExtObject::OnFrame2()
-{
-	return 1;
 }
 
 // Draw: Construct calls this when it wants you to draw your object.  You can

@@ -291,6 +291,8 @@ public:
 
 	float lastX;
 	float lastY;
+
+	bool firstFrame;
 };
 
 //////////// EDITTIME INFO ////////////
