@@ -270,12 +270,21 @@ long ExtObject::aHingeToXY(LPVAL params)
 	jointDef.Initialize(body, staticbody, point);
 
 	// This might be a memory leak...i dont know
-	world->CreateJoint(&jointDef);
+	joints.push_back(world->CreateJoint(&jointDef));
+
 	
 
 	return 0;
 }
-
+long ExtObject::aDestroyHinges(LPVAL params)
+{
+	for (int i=0;i<joints.size();i++)
+	{
+		world->DestroyJoint(joints[i]);
+	}
+	joints.clear();
+	return 0;
+}
 long ExtObject::aHingeToObj(LPVAL params)
 {
 	if(!body) CreateBody();
@@ -349,7 +358,7 @@ long ExtObject::aHingeToObj(LPVAL params)
 	jointDef.Initialize(htoa.pPhysics->body, body, point);
 
 	// This might be a memory leak...i dont know
-	world->CreateJoint(&jointDef);
+	joints.push_back(world->CreateJoint(&jointDef));
 
 	return 0;
 }
@@ -554,6 +563,8 @@ void DefineACES(MicroAceTime* at)
 
 	ADDPARAMCOMBO("No rotation", "Choose if the object can rotate", "Enabled|Disabled");
 	ADDACT("Set rotations disabled", "Settings", "Set rotations: %0", &ExtObject::aSetNoRotations, "SetRotationsDisabled", 0);
+
+	ADDACT("Destroy Hinges", "Hinges", "DestroyHinges", &ExtObject::aDestroyHinges, "DestroyHinges", 0);
 
 	/////////////////////////////
 	// Expressions

@@ -128,6 +128,7 @@ public:
 
 	long		aHingeToXY(LPVAL params);
 	long		aHingeToObj(LPVAL params);
+	long		aDestroyHinges(LPVAL params);
 
 	long		aSetVelocity(LPVAL params);
 	long		aSetOmega(LPVAL params);
@@ -152,6 +153,7 @@ public:
 
 	void		UpdateOldValues();
 	void		CheckForBodyChange();
+	float		AngleDiff(float ang1, float ang0);
 
 
 	int physicsID;	// Used to check that a ExtObject* pointer really is a physics instance
@@ -222,6 +224,7 @@ public:
 	static Box2DCollisionFilter* collisionFilter;
 
 	ObjTypeList disabledCollisions;
+	vector< b2Joint* > joints;
 
 	// New mode to prevent weird scaling of variables
 	bool oldUnits;

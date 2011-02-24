@@ -163,10 +163,12 @@ void ExtObject::OnCreate()
 
 		//b2World::s_enablePositionCorrection = true;
 		//b2World::s_enableWarmStarting = true;
-		
+
 		// We need a static body so joints can connect to the world
 		b2BodyDef BodyDef;
 		staticbody = world->CreateBody(&BodyDef);
+		world->SetContinuousPhysics(true);
+		world->SetPositionCorrection(true);
 	}
 
 	physicsCount++;
@@ -377,22 +379,39 @@ void ExtObject::CheckForBodyChange()
 		do_recreate = false;
 	}
 
-	if (lastKnownX != pLink->info.x) {
+	if ((lastKnownX != pLink->info.x || lastKnownY != pLink->info.y)){
+	
 		position.x = pLink->info.x;
 		TransformFrameToWorld(position.x, unused);
-		body->SetXForm(position, rotation);
-	}
-
-	if (lastKnownY != pLink->info.y) {
+		velocity.x=(position.x-body->GetPosition().x)*55;
 		position.y = pLink->info.y;
 		TransformFrameToWorld(unused, position.y);
+		velocity.y=(position.y-body->GetPosition().y)*55;
 		body->SetXForm(position, rotation);
+		body->SetLinearVelocity(velocity);
+	
 	}
+
 
 	if(lastKnownAngle != pLink->info.angle) {
 		rotation = RADIANS(pLink->info.angle);
 		body->SetXForm(position, rotation);
+		body->SetAngularVelocity(AngleDiff(pLink->info.angle,lastKnownAngle));
 	}
+}
+float ExtObject::AngleDiff(float ang1, float ang0)
+{
+	if ((ang1-ang0)>180)
+	{
+		ang0+=360;
+		return ang1-ang0;
+	}
+	else if ((ang1-ang0)<-180)
+	{
+		ang0-=360;
+		return ang1-ang0;
+	}
+	else return ang1-ang0;
 }
 
 void ExtObject::UpdateOldValues()
