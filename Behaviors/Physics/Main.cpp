@@ -170,6 +170,7 @@ long ExtObject::aSetMass(LPVAL params)
 long ExtObject::aSetLinearDamp(LPVAL params)
 {
 	lineardamp = params[0].GetDouble() / 100.0;
+	do_recreate=true;
 	return 0;
 }
 
