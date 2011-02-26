@@ -23,13 +23,16 @@ long ExtObject::cOverlap(LPVAL params)
 	CRunObject** other_objects;
 	int other_count;
 	pRuntime->GetTypeInstances(pOtherType, other_objects, other_count);
-bool isNegated = pRuntime->ConditionIsNegated();
+
+
+	bool isNegated = pRuntime->ConditionIsNegated();
+
 	if (other_count == 0 || other_objects == NULL)
-		{
+	{
 		if (isNegated)
 			return true;
 		else
-		return FALSE;
+			return FALSE;
 	}
 
 	CRunObject** other_end = other_objects + other_count;
