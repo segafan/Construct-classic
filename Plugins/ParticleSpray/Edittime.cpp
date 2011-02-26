@@ -202,7 +202,7 @@ void EditExt::Serialize(bin& ar)
 			ar >> pp.sprayCone >> pp.particleSize >> pp.color >> pp.opacity >> pp.speed >> pp.acc >> pp.destroyMode >> pp.lifeTime
 			   >> pp.angleRandomiser >> rate;
 
-			pp.rate = rate;
+			pp.rate = max(0,rate);
 			ar  >>  pp.xRandom >> pp.yRandom >> pp.speedRandom >> pp.gravity >> pp.colorRandom
 				>> pp.opacityRandom >> pp.fadeoutTime >> pp.fadeColor >> pp.fadeColorTime;
 		}

@@ -18,7 +18,7 @@ void ParticleParameters::Serialize(bin& ar)
 		{
 			int irate;
 			ar >> irate;
-			rate = irate;
+			rate = max(0,irate);
 		}
 		else
 			ar >> rate;
@@ -41,7 +41,7 @@ void ParticleParameters::Serialize(bin& ar)
 	}
 	else {
 		ar << sprayCone << particleSize << color << opacity << speed << acc << destroyMode << lifeTime
-			<< angleRandomiser << rate << xRandom << yRandom << speedRandom << gravity << colorRandom
+			<< angleRandomiser << max(0,rate) << xRandom << yRandom << speedRandom << gravity << colorRandom
 			<< opacityRandom << fadeoutTime << fadeColor << fadeColorTime
 
 			<< particleDisplayAngle << daRandom << daTurnRandom << sizeRandom << gravityangle << daTurn << grow << growRandom
@@ -321,7 +321,7 @@ long ExtObject::aSetAngleRandomiser(LPVAL params)
 }
 long ExtObject::aSetRate(LPVAL params)
 {
-	pp.rate = params[0].GetFloat();
+	pp.rate = max(0,params[0].GetFloat());
 	return 0;
 }
 long ExtObject::aSetXRandom(LPVAL params)
