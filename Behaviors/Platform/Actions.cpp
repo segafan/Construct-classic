@@ -181,3 +181,37 @@ long ExtObject::aSetAdditionalYSpeed(LPVAL theParams)
 	additionalSpeedY = theParams[0].GetFloat();
 	return 0;
 }
+
+long ExtObject::aAddToIgnoreList(LPVAL theParams)
+{
+	for(int i=0;i<ignorelist.size();i++)
+	{
+		if (ignorelist[i]==theParams->GetObjectParam(pRuntime))
+			return 0;
+	}
+	ignorelist.push_back(theParams->GetObjectParam(pRuntime));
+	return 0;
+}
+//ADDPARAM(PARAM_OBJECT, "Object to Stop Ignoring", "Stop Ignoring platforms of this object type");
+//ADDACT("Remove Object from ignore list", "Ignore", "Remove %0 from ignore list", &ExtObject::aRemoveFromIgnoreList, "RemoveFromIgnoreList", 0);
+
+long ExtObject::aRemoveFromIgnoreList(LPVAL theParams)
+{
+
+	for(int i=0;i<ignorelist.size();i++)
+	{
+		if (ignorelist[i]==theParams->GetObjectParam(pRuntime))
+		{
+			vector<CRunObjType*>::iterator it=ignorelist.begin()+i;
+			ignorelist.erase(it);
+		}
+	}
+	return 0;
+}
+//ADDACT("Clear ignore list", "Ignore", "Clear ignore list", &ExtObject::aClearIgnoreList, "ClearIgnoreList", 0);
+
+long ExtObject::aClearIgnoreList(LPVAL theParams)
+{
+	ignorelist.clear();
+	return 0;
+}

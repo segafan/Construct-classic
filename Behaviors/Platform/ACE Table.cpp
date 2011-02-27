@@ -136,7 +136,13 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAM(PARAM_VALUE, "Set Vector Y", "Vertical speed, in pixels per second.");
 	ADDACT("Set local Y component of motion", "Movement", "Set local vertical speed to %0", &ExtObject::aSetLocalYSpeed, "SetLocalVectorY", 0);
 
+	ADDPARAM(PARAM_OBJECT, "ObjectType to Ignore", "Ignore platforms and solids of this object type");
+	ADDACT("Add Object Type to ignore list", "Ignore", "Add %0 to ignore list", &ExtObject::aAddToIgnoreList, "AddToIgnoreList", 0);
 
+	ADDPARAM(PARAM_OBJECT, "ObjectType to Stop Ignoring", "Stop Ignoring platforms of this object type");
+	ADDACT("Remove Object Type from ignore list", "Ignore", "Remove %0 from ignore list", &ExtObject::aRemoveFromIgnoreList, "RemoveFromIgnoreList", 0);
+
+	ADDACT("Clear ignore list", "Ignore", "Clear ignore list", &ExtObject::aClearIgnoreList, "ClearIgnoreList", 0);
 
 	/////////////////////////////
 	// Expressions

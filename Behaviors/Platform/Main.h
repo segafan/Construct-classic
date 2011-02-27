@@ -106,6 +106,9 @@ public:
 	long aSetFallThroughPlatforms(LPVAL theParams);
 	long aSetAdditionalXSpeed(LPVAL theParams);
 	long aSetAdditionalYSpeed(LPVAL theParams);
+	long aAddToIgnoreList(LPVAL theParams);
+	long aRemoveFromIgnoreList(LPVAL theParams);
+	long aClearIgnoreList(LPVAL theParams);
 
 	long eSpeed(LPVAL theParams, ExpReturn& ret);
 	long eMaxXFloorSpeed(LPVAL theParams, ExpReturn& ret);
@@ -231,6 +234,9 @@ public:
 
 	float additionalSpeedX;
 	float additionalSpeedY;
+
+	vector<CRunObjType*> ignorelist; // to store objecttypes to ignore
+	bool IsIgnoring(CRunObjType* objtype);   //checks if objecttype is on ignorelist
 
 };
 
