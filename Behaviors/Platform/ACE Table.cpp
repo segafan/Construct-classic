@@ -162,8 +162,8 @@ void DefineACES(MicroAceTime* at)
 	ADDEXP("Get Y component of motion", "Movement", "VectorY", &ExtObject::eVectorY, RETURN_VALUE);
 	ADDEXP("Get max air x speed", "Movement", "MaxAirSpeed", &ExtObject::eMaxXAirSpeed, RETURN_VALUE);
 	ADDEXP("Get max y speed", "Movement", "MaxYSpeed", &ExtObject::eMaxYSpeed, RETURN_VALUE);
-	ADDEXP("Get air acceleration rate", "Movement", "FloorAccRate", &ExtObject::eAccAirRate, RETURN_VALUE);
-	ADDEXP("Get air deceleration rate", "Movement", "FloorDecRate", &ExtObject::eDecAirRate, RETURN_VALUE);
+	ADDEXP("Get air acceleration rate", "Movement", "AirAccRate", &ExtObject::eAccAirRate, RETURN_VALUE);
+	ADDEXP("Get air deceleration rate", "Movement", "AirDecRate", &ExtObject::eDecAirRate, RETURN_VALUE);
 	ADDEXP("Get fall gravity", "Movement", "Gravity", &ExtObject::eGrav, RETURN_VALUE);
 	ADDEXP("Get gravity angle", "Movement", "GravityAngle", &ExtObject::eGravAngle, RETURN_VALUE);
 	ADDEXP("Get jump strength", "Movement", "JumpStrength", &ExtObject::eJumpStrength, RETURN_VALUE);
