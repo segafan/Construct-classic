@@ -202,8 +202,8 @@ bool ExtObject::IsOnFloor( bool use_p_stand_on_moving_too )
 	}
 
 	float ga = RADIANS(grav_dir * 90);
-	int cosga = cos(ga)*1.5f;
-	int singa = sin(ga)*1.5f;
+	int cosga = cos(ga)*0.5f;
+	int singa = sin(ga)*0.5f;
 
 	pLink->info.x += cosga;
 	pLink->info.y += singa;
