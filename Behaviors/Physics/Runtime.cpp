@@ -338,7 +338,7 @@ ExtObject::~ExtObject()
 			collisionFilter = NULL;
 		}
 	}
-	
+
 }
 
 // Called every frame for you to update your object if necessary
@@ -379,25 +379,57 @@ void ExtObject::CheckForBodyChange()
 		do_recreate = false;
 	}
 
-	if ((lastKnownX != pLink->info.x || lastKnownY != pLink->info.y)){
-	
+
+	if (abs(lastKnownX - pLink->info.x)>0.1 || abs(lastKnownY - pLink->info.y)>0.1||abs(lastKnownAngle - pLink->info.angle)>0.5) 
+	{
+
+
+
+		body->SetAngularVelocity(RADIANS(AngleDiff(pLink->info.angle,lastKnownAngle))*59);
+		//if(abs(lastKnownAngle - pLink->info.angle)>1)
+		//torque=AngleDiff(pLink->info.angle,lastKnownAngle)/1000;
 		position.x = pLink->info.x;
-		TransformFrameToWorld(position.x, unused);
-		velocity.x=(position.x-body->GetPosition().x)*55;
 		position.y = pLink->info.y;
-		TransformFrameToWorld(unused, position.y);
-		velocity.y=(position.y-body->GetPosition().y)*55;
+
+		TransformFrameToWorld(position.x, position.y);
+		//velocity.x=(position.x-body->GetPosition().x)*58;
+		//velocity.y=(position.y-body->GetPosition().y)*58;
+		//body->SetLinearVelocity(velocity);
+
+		if (abs(pLink->info.x - lastKnownX2)<0.5 && abs(pLink->info.y - lastKnownY2)<0.5) 
+		{
+			forceX=0;
+			forceY=0;
+			velocity.Set(0,0);
+			body->SetLinearVelocity(velocity);
+		}
+		else
+		{
+
+			forceX=(position.x-body->GetPosition().x)*390000*worldXscale*(body->GetMass()/10);
+			forceY=(position.y-body->GetPosition().y)*390000*worldYscale*(body->GetMass()/10);
+
+		}
+
+
+rotation = RADIANS(pLink->info.angle);
 		body->SetXForm(position, rotation);
-		body->SetLinearVelocity(velocity);
+
+		
+
+
+		
+
+
+
+
+	}
 	
-	}
 
 
-	if(lastKnownAngle != pLink->info.angle) {
-		rotation = RADIANS(pLink->info.angle);
-		body->SetXForm(position, rotation);
-		body->SetAngularVelocity(AngleDiff(pLink->info.angle,lastKnownAngle));
-	}
+
+
+
 }
 float ExtObject::AngleDiff(float ang1, float ang0)
 {
@@ -436,6 +468,7 @@ void ExtObject::UpdateOldValues()
 
 	pRuntime->UpdateBoundingBox(pLink);
 
+	
 	lastKnownX = pLink->info.x;
 	lastKnownY = pLink->info.y;
 	lastKnownAngle = pLink->info.angle;
@@ -444,14 +477,17 @@ void ExtObject::UpdateOldValues()
 
 BOOL ExtObject::OnFrame()
 {
-	if(!body) CreateBody();
+	
+	//if(!body) CreateBody();
 	CheckForBodyChange();
+
 
 	if (lastFrameCountUpdate != pLayout->frameCounter64) {
 		lastFrameCountUpdate = pLayout->frameCounter64;
 
 		world->Step(pRuntime->GetTimeDelta(), simulation_steps);
 	}
+	
 
 	if(oldUnits)
 	{
@@ -487,6 +523,8 @@ BOOL ExtObject::OnFrame()
 			body->PutToSleep();
 	}
 
+	lastKnownX2 = pLink->info.x;
+	lastKnownY2 = pLink->info.y;
 	UpdateOldValues();
 
 	oldforceX = forceX;
@@ -503,6 +541,7 @@ BOOL ExtObject::OnFrame()
 
 BOOL ExtObject::OnFrame2()
 {
+	
 	return 0;
 
 }

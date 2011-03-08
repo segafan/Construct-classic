@@ -207,6 +207,9 @@ public:
 
 	float lastKnownX;
 	float lastKnownY;
+	float lastKnownX2;
+	float lastKnownY2;
+
 	float lastKnownAngle;
 	float lastKnownW;
 	float lastKnownH;
