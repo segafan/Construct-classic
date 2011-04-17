@@ -29,7 +29,7 @@ void CEditorEvent::Init()
 
 void EventSheet::SetChanged(bool changed_)
 {
-	changed = changed;
+	changed = changed_;
 
 	g_MainFrame->tabs.Invalidate();
 }
