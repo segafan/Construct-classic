@@ -1732,7 +1732,7 @@ LRESULT ProjectBar::OnEndDrag(WPARAM wParam, LPARAM lParam)
 					if (application->event_sheets.back() == drop_sheet)
 						application->event_sheets.push_back(sheet);
 					else
-						application->event_sheets.insert(find(application->event_sheets.begin(), application->event_sheets.end(), drop_sheet)++, sheet);
+						application->event_sheets.insert(++find(application->event_sheets.begin(), application->event_sheets.end(), drop_sheet), sheet);
 				}
 
 				// modify changed status
