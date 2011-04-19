@@ -1444,7 +1444,7 @@ void SO_SetLayerZoomRate(ACESEntry2& Out)
 {
 	Out.aceDisplayText = "Set Layer %0 zoom rate to (%1, %2)";
 	Out.scriptName = "SetLayerZoomRatio";
-	Out.aceListName = "Set zoom";
+	Out.aceListName = "Set zoom rate";
 	Out.aceCategory = "Layers";
 	Out.retrn = 0;
 
@@ -1472,7 +1472,7 @@ void SO_SetLayerZoomOffset(ACESEntry2& Out)
 {
 	Out.aceDisplayText = "Set Layer %0 zoom offset to (%1, %2)";
 	Out.scriptName = "SetLayerZoomOffset";
-	Out.aceListName = "Set zoom offset";
+	Out.aceListName = "Set Zoom";
 	Out.aceCategory = "Layers";
 	Out.retrn = 0;
 
@@ -1484,13 +1484,13 @@ void SO_SetLayerZoomOffset(ACESEntry2& Out)
 	Out.params.push_back(param);
 
 	param.desc = "The offset is added onto the current X zoom amount for this layer";
-	param.name = "X Ratio";
+	param.name = "X Zoom";
 	param.initStr = "0.0";
 	param.type = 1;
 	Out.params.push_back(param);
 
 	param.desc = "The offset is added onto the current Y zoom amount for this layer";
-	param.name = "Y Ratio";
+	param.name = "Y Zoom";
 	param.initStr = "0.0";
 	param.type = 1;
 	Out.params.push_back(param);
