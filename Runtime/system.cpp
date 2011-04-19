@@ -3256,10 +3256,14 @@ long SystemObject::eGlobalValue(LPVAL theParams, ExpReturn& ret)
 long SystemObject::eFormatDecimal(LPVAL theParams, ExpReturn& ret)
 {
 	// gcvt to n decimal places
-	char strbuf[32];
-	_gcvt(theParams[0].GetDouble(), theParams[1].GetInt(), strbuf);
+//	char strbuf[32];
+//	_gcvt(theParams[0].GetDouble(), theParams[1].GetInt(), strbuf);
 
-	return ret.ReturnString(pCRuntime, strbuf);
+	//changed to digits after decimal instead of significant digits.
+	CString tmpstr;
+	tmpstr.Format("%." + theParams[1].GetString() + "f", theParams[0].GetDouble());
+
+	return ret.ReturnString(pCRuntime, tmpstr);
 }
 
 long SystemObject::ePadZero(LPVAL theParams, ExpReturn& ret)
@@ -3452,8 +3456,8 @@ long SystemObject::eDistance(LPVAL theParams, ExpReturn& ret)
 		}
 		if (theParams[1].GetArraySize() == 2) {
 			const ExpStore* arr = theParams[1].GetArray();
-			x1 = arr[0].GetDouble();
-			y1 = arr[1].GetDouble();
+			x2 = arr[0].GetDouble();
+			y2 = arr[1].GetDouble();
 		}
 	}
 	else if (numParams == 4) {
