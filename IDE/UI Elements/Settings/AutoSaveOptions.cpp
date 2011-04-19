@@ -35,6 +35,7 @@ void CAutoSave::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_AUTOSAVE, m_AutoSave);
 	DDX_Control(pDX, IDC_AUTOBACKUP, m_AutoBackup);
 	DDX_Control(pDX, IDC_AUTOBACKUPAUTOSAVE, m_AutoBackupAutoSaves);
+	DDX_Control(pDX, IDC_AUTOSAVE3, m_UsePersists);
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(CAutoSave)
 	//}}AFX_DATA_MAP
@@ -70,6 +71,7 @@ BOOL CAutoSave::OnSetActive()
 	if (pINI->GetInt("AutoSave", "On", 0) == 1) m_AutoSave.SetCheck(BST_CHECKED);
 	if (pINI->GetInt("AutoBackup", "On", 0) == 1) m_AutoBackup.SetCheck(BST_CHECKED);
 	if (pINI->GetInt("AutoBackup", "AutoSaves", 0) == 1) m_AutoBackupAutoSaves.SetCheck(BST_CHECKED);
+	if (pINI->GetInt("General", "UsePersists", 1) == 1) m_UsePersists.SetCheck(BST_CHECKED);
 
 	m_ThemeCombo.ResetContent();
 	m_ThemeCombo.AddString("XP");
@@ -101,6 +103,11 @@ BOOL CAutoSave::OnKillActive()
 		pINI->WriteInt("AutoBackup", "AutoSaves", 1);
 	else
 		pINI->WriteInt("AutoBackup", "AutoSaves", 0);
+
+	if(IsDlgButtonChecked(IDC_AUTOSAVE3)) //persist setting
+		pINI->WriteInt("General", "UsePersists", 1);
+	else
+		pINI->WriteInt("General", "UsePersists", 0);
 
 	pINI->WriteInt("AutoSave", "Time", GetDlgItemInt(IDC_TIME, false, true));
 	pINI->WriteInt("AutoBackup", "NumBackups", GetDlgItemInt(IDC_NUMBACKUPS, false, true));

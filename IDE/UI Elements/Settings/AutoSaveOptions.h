@@ -60,6 +60,7 @@ public:
 	CComboBox m_ThemeCombo;
 public:
 	afx_msg void OnCbnSelchangeTheme();
+	CButton m_UsePersists;
 };
 
 //{{AFX_INSERT_LOCATION}}

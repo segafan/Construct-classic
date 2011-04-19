@@ -498,6 +498,7 @@
 #define IDC_AUTOBACKUP                  1194
 #define IDC_HOTSPOT6                    1195
 #define IDC_ANIMATIONS                  1195
+#define IDC_AUTOSAVE3                   1195
 #define IDC_HOTSPOT7                    1196
 #define IDC_FRAMES                      1196
 #define IDC_HOTSPOT8                    1197

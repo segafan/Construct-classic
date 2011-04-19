@@ -121,16 +121,18 @@ bool CApplication::CloseSafely()
 		file_information.modified = false;
 	}
 
-	CPath out;
-	out.SetPath(file_information.file_path);
-	
-	std::string directory = (LPCSTR)out.GetFullPath();
-	directory += (LPCSTR)out.GetFileTitle();
-	directory += ".persist";
-	 
-	GUIPersistence persist(g_MainFrame, this);
-	persist.SavePersistence(directory);
-
+	if(g_MainFrame->m_INI.GetInt("General", "UsePersists", 1))//wip persists as a setting
+	{
+		CPath out;
+		out.SetPath(file_information.file_path);
+		
+		std::string directory = (LPCSTR)out.GetFullPath();
+		directory += (LPCSTR)out.GetFileTitle();
+		directory += ".persist";
+		 
+		GUIPersistence persist(g_MainFrame, this);
+		persist.SavePersistence(directory);
+	}
 	return true;
 }
 
