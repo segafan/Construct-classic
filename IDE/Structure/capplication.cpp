@@ -96,6 +96,13 @@ bool CApplication::CloseSafely()
 			bChanged = true;
 	}
 
+	list<EventSheet*>::iterator it = event_sheets.begin();
+	for(; it != event_sheets.end(); it++)
+	{
+		if((*it)->GetChanged())
+			bChanged = true;
+	}
+
 	if (bChanged)
 	{
 		CString Text;
