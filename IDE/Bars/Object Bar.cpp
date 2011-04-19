@@ -99,6 +99,8 @@ BOOL ObjectBarDialog::OnInitDialog()
 
 	toolbar.DestroyWindow();
 
+	folderfilter=g_MainFrame->m_INI.GetInt("General", "ObjectFolder", -1);
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
@@ -670,6 +672,7 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 				folderfilter=-1;
 			else
 				folderfilter=-2;
+			g_MainFrame->m_INI.WriteInt("General", "ObjectFolder", folderfilter);
 			Refresh();
 		}
 		else if (item >= 100)
@@ -677,6 +680,7 @@ void ObjectBarDialog::OnRClickObject(NMHDR *pNMHDR, LRESULT *pResult)
 			folderfilter=item-100;
 			if(application->object_folders[folderfilter].name=="Default")
 				folderfilter=-1;
+			g_MainFrame->m_INI.WriteInt("General", "ObjectFolder", -1);
 			Refresh();
 		}
 	}
