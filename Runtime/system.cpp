@@ -2909,8 +2909,8 @@ long SystemObject::aSetOrthoProjectionMode(LPVAL theParams)
 #ifndef APPRUNTIME
 	pCRuntime->renderer.set_ortho_projection_mode(theParams->GetBool());
 	pCRuntime->renderer.Prepare2D();
-	return 0;
 #endif
+	return 0;
 }
 
 
