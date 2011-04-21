@@ -272,7 +272,8 @@ public:
 	long	aAddToAttribute(LPVAL theParams);
 	long    aEnableLayerEffect(LPVAL theParams);
 	long    aSetLayerEffectParam(LPVAL theParams);
-
+	
+	long	aSetOrthoProjectionMode(LPVAL theParams);
 	//long	aSetMultisampling(LPVAL theParams);
 
 	// Expressions

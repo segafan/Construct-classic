@@ -470,6 +470,7 @@ namespace cr {
 		world.eye_vector = D3DXVECTOR3(0, 0, 500);		// Eye 100 units above layout
 		world.lookat_vector = world.origin;
 		world.up_vector = D3DXVECTOR3(0, -1.0, 0);
+		ortho_projection_mode=false;
 	}
 
 	CDX9Renderer::~CDX9Renderer()
@@ -926,12 +927,23 @@ namespace cr {
 		d3d9_device->SetTransform(D3DTS_VIEW, &world.view_matrix);
 
 		// Set the projection matrix
-		D3DXMatrixPerspectiveFovLH(&world.projection_matrix,					//Result Matrix
-								  D3DX_PI/4,									//Field of View, in radians.
-								  rendertarget_width / rendertarget_height,		//Aspect ratio
-								  10.0f,										//Near view plane
-								  10000.0f);									//Far view plane
-
+		if (ortho_projection_mode)
+		{
+			D3DXMatrixOrthoLH(&world.projection_matrix,					//Result Matrix
+									  rendertarget_width,
+									  rendertarget_height,
+									  10.0f,							//Near view plane
+									  10000.0f);						//Far view plane
+		}
+		else
+		{
+			D3DXMatrixPerspectiveFovLH(&world.projection_matrix,					//Result Matrix
+									  D3DX_PI/4,									//Field of View, in radians.
+									  rendertarget_width / rendertarget_height,		//Aspect ratio
+									  10.0f,										//Near view plane
+									  10000.0f);									//Far view plane
+		}
+		
 		d3d9_device->SetTransform(D3DTS_PROJECTION, &world.projection_matrix);
 
 		// Set the viewport
@@ -1985,6 +1997,10 @@ namespace cr {
 			D3DXMatrixIdentity(&batchCommand->matrix);
 	}
 
+	void CDX9Renderer::set_ortho_projection_mode(bool yes)
+	{
+		ortho_projection_mode=yes;
+	}
 
 }
 

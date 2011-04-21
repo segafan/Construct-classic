@@ -203,7 +203,7 @@ int SysActScriptParamCount[] = {
 	3,  // "AddToAttribute"
 	3,  // "EnableLayerEffect"
 	4,  // "SetLayerEffectParam"
-
+	1,  // "SetOrthoProjectionMode"
 };
 
 CString SysActScript[] = {
@@ -261,7 +261,8 @@ CString SysActScript[] = {
 	"LoadTextures",
 	"AddToAttribute",
 	"EnableLayerEffect",
-	"SetLayerEffectParam"
+	"SetLayerEffectParam",
+	"SetOrthoProjectionMode"
 };
 
 
@@ -321,6 +322,7 @@ SYSTEMROUTINE SysActRoutines[] = {
 	&SystemObject::aAddToAttribute,
 	&SystemObject::aEnableLayerEffect,
 	&SystemObject::aSetLayerEffectParam,
+	&SystemObject::aSetOrthoProjectionMode,
 };
 
 #define SYSTEM_SETLAYERSCROLLXRATIO		29
@@ -2902,6 +2904,14 @@ long SystemObject::aSetLayerEffectParam(LPVAL theParams)
 	return 0;
 }
 
+long SystemObject::aSetOrthoProjectionMode(LPVAL theParams)
+{
+#ifndef APPRUNTIME
+	pCRuntime->renderer.set_ortho_projection_mode(theParams->GetBool());
+	pCRuntime->renderer.Prepare2D();
+	return 0;
+#endif
+}
 
 
 

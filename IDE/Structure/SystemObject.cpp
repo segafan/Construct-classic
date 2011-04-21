@@ -232,6 +232,20 @@ void GetSystemAction(int ID, ACESEntry2*& Out)
 					Out->params.push_back(param4);
 
 				} break;
+	case 55:	{
+					Out->aceDisplayText = "Set projection to %0";
+					Out->scriptName = "Change projection";
+					Out->aceListName = "Set projection method";
+					Out->aceCategory = "Display";
+					Out->retrn = 0;
+
+					PARAM2 param;
+					param.desc = "Perspective or Orthogonal";
+					param.name = "Projection method";
+					param.initStr = "Perspective|Orthogonal";
+					param.type = EDITORPARAM_COMBOBOX;
+					Out->params.push_back(param);
+				} break;
 
 		/*
 		// Couldn't make this work at runtime -AG
@@ -253,7 +267,7 @@ void GetSystemAction(int ID, ACESEntry2*& Out)
 				} break;
 				*/
 
-#define LASTACTION 55
+#define LASTACTION 56
 	}
 }
 

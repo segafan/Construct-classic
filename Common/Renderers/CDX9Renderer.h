@@ -526,6 +526,10 @@ namespace cr {
 		// HRESULT for any function to use
 		HRESULT					hr;
 
+		bool ortho_projection_mode;
+	public:
+		void set_ortho_projection_mode(bool yes);
+	protected:
 		// Debugging features
 #ifdef CR_DEBUG
 	public:
