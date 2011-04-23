@@ -615,7 +615,7 @@ long ExtObject::eGrowRandomiser(LPVAL params, ExpReturn& ret)
 
 long ExtObject::eDisplayAngleTurnRandomiser(LPVAL params, ExpReturn& ret)
 {
-	return ret = pp.growRandom;
+	return ret = pp.daTurnRandom;
 }
 
 long ExtObject::eGravityAngle(LPVAL params, ExpReturn& ret)
@@ -854,7 +854,7 @@ void DefineACES(MicroAceTime* at)
 	ADDEXP("Get X randomiser", "Particle Creation Randomization", "XRandomiser", &ExtObject::eXRandom, RETURN_VALUE);
 	ADDEXP("Get Y randomiser", "Particle Creation Randomization", "YRandomiser", &ExtObject::eYRandom, RETURN_VALUE);
 	ADDEXP("Get speed simulation randomiser", "Particle Simulation Randomization", "SpeedSimulationRandomiser", &ExtObject::eSpeedSimulationRandom, RETURN_VALUE);
-	ADDEXP("Get gravity", "Simulation Settings", "Gravity", &ExtObject::eGravity, RETURN_VALUE);
+	ADDEXP("Get gravity", "Particle Simulation Settings", "Gravity", &ExtObject::eGravity, RETURN_VALUE);
 	ADDEXP("Get opacity randomiser", "Particle Simulation Randomization", "OpacityRandomiser", &ExtObject::eOpacityRandom, RETURN_VALUE);
 	ADDEXP("Get fadeout time", "Particle Life Settings", "FadeoutTime", &ExtObject::eFadeoutTime, RETURN_VALUE);
 	ADDEXP("Get color fade time", "Particle Life Settings", "FadeColorTime", &ExtObject::eFadeColorTime, RETURN_VALUE);
