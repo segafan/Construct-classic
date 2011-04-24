@@ -360,6 +360,10 @@ void CLayoutEditor::OnLButtonDown(UINT nFlags, CPoint point)
 
 					pMainWnd->animator.UpdateAnimations(application, layout, pType, iRoot);
 				}
+				else //object has no animations
+				{
+					pMainWnd->animator.UpdateAnimations(NULL, NULL, NULL, -1);
+				}
 			}
 		}
 	}

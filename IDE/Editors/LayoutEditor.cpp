@@ -1464,6 +1464,41 @@ void CLayoutEditor::SwitchEditor(void)
 	// either by selecting a different window or by clicking the tab and switching
 	// editor types
 
+	// update selection
+	CMainFrame* pMainFrame = ((CMainFrame*)(CLayoutEditor::GetParentOwner()));
+	if (m_sel.IsEmpty())
+	{
+		pMainFrame->animator.UpdateAnimations(NULL, NULL, NULL, -1);
+	}
+	else
+	{
+		if (m_sel.GetCount() == 1)
+		{
+			int iRoot = -1;
+
+			POSITION Pos = m_sel.GetHeadPosition();
+			CObj* pObj = GetObject(m_sel.GetNext(Pos));
+
+			CObjType* pType = pObj->GetObjectType(application);
+
+			if(pType)
+			{
+				OINFO* oInfo = GetOINFO(pType->DLLIndex);
+	        
+				if (oInfo->ETGetAnimationHandle)
+				{
+					oInfo->ETGetAnimationHandle(pObj->editObject, iRoot);
+	           
+					pMainFrame->animator.UpdateAnimations(application, layout, pType, iRoot);
+				}
+				else //object has no animations
+				{
+					pMainFrame->animator.UpdateAnimations(NULL, NULL, NULL, -1);
+				}
+			}
+		}
+	}
+
 	////////////////////////////////////
 	//   Add layers to the layer bar 
 	///////////////////////////////////
