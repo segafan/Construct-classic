@@ -366,6 +366,10 @@ void CLayoutEditor::OnLButtonDown(UINT nFlags, CPoint point)
 				}
 			}
 		}
+		else //multiple objects
+		{
+			pMainWnd->animator.UpdateAnimations(NULL, NULL, NULL, -1);
+		}
 	}
 
 	m_bMouseDown = TRUE;

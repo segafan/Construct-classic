@@ -1497,6 +1497,10 @@ void CLayoutEditor::SwitchEditor(void)
 				}
 			}
 		}
+		else //multiple objects
+		{
+			pMainFrame->animator.UpdateAnimations(NULL, NULL, NULL, -1);
+		}
 	}
 
 	////////////////////////////////////
