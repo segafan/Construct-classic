@@ -64,7 +64,15 @@ public:
 	long aSetHeight				(LPVAL theParams);
 	long aSetWidth				(LPVAL theParams);
 	long aSetSize				(LPVAL theParams);
+
+	long aSetClientHeight		(LPVAL theParams);
+	long aSetClientWidth		(LPVAL theParams);
+	long aSetClientSize			(LPVAL theParams);
+
 	long aAttachToCurrent		(LPVAL theParams);
+	long aRestoreWindow			(LPVAL theParams);
+	// long aUnmaximizeWindow(LPVAL theParams); // not implemented. It isn't needed anyway, because aRestoreWindow
+												// also "unmaximizes" a maximized window.
 
 	// Expressions
 	long eFindWindow			(LPVAL theParams, ExpReturn& ret);
@@ -79,8 +87,7 @@ public:
 	long eGetClientY			(LPVAL theParams, ExpReturn& ret);
 	long eGetClientWidth		(LPVAL theParams, ExpReturn& ret);
 	long eGetClientHeight		(LPVAL theParams, ExpReturn& ret);
-	long aRestoreWindow(LPVAL theParams);
-	long aUnmaximizeWindow(LPVAL theParams);
+	
 	vector<ExpStore> Array;
 	ExpStore xyRet[2];	// Position & size
 

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="9,00"
 	Name="Window"
 	ProjectGUID="{D58678F9-1AA0-4C1E-B236-7B1CB08A647F}"
 	RootNamespace="Window"
 	Keyword="MFCProj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -21,7 +22,7 @@
 			IntermediateDirectory=".\..\..\..\Construct Compile\Window\Release"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -50,9 +51,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\atl71&quot;;&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL"
 				StringPooling="true"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -71,6 +73,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
 				Culture="2057"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -80,9 +83,12 @@
 				OutputFile="..\..\IDE\Plugins\Window.csx"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\lib\atl\i386&quot;"
 				ModuleDefinitionFile=".\ConstructSDK.def"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Window\Release/Window.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\..\..\..\Construct Compile\Window\Release/Window.lib"
 			/>
 			<Tool
@@ -106,9 +112,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -118,7 +121,7 @@
 			IntermediateDirectory=".\..\..\..\Construct Compile\Window\Runtime"
 			ConfigurationType="2"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
-			UseOfMFC="1"
+			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="2"
 			>
@@ -147,9 +150,10 @@
 				Name="VCCLCompilerTool"
 				Optimization="1"
 				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\atl71&quot;;&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;RUN_ONLY"
 				StringPooling="true"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
@@ -168,6 +172,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
 				Culture="2057"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -177,9 +182,12 @@
 				OutputFile="..\..\IDE\Plugins\Runtime\Window.csx"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\lib\atl\i386&quot;"
 				ModuleDefinitionFile=".\ConstructSDKRun.def"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Window\Runtime/Window.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\..\..\..\Construct Compile\Window\Runtime/Window.lib"
 			/>
 			<Tool
@@ -201,9 +209,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -243,6 +248,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\atl71&quot;;&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -266,6 +272,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
 				Culture="2057"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -275,10 +282,13 @@
 				OutputFile="..\..\IDE\Plugins\Window.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\lib\atl\i386&quot;"
 				ModuleDefinitionFile=".\ConstructSDK.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Window\Debug/Window.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\..\..\..\Construct Compile\Window\Debug/Window.lib"
 				TargetMachine="1"
 			/>
@@ -301,9 +311,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -343,6 +350,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\atl71&quot;;&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;RUN_ONLY"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -366,6 +374,7 @@
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
 				Culture="2057"
+				AdditionalIncludeDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\inc\mfc42&quot;"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
@@ -375,10 +384,13 @@
 				OutputFile="..\..\IDE\Plugins\Runtime\Window.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;D:\Dokumente und Einstellungen\tulamide\Eigene Dateien\MFC-ATL\inclib\lib\atl\i386&quot;"
 				ModuleDefinitionFile=".\ConstructSDKRun.def"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\..\..\..\Construct Compile\Window\Debug_Runtime/Window.pdb"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				ImportLibrary=".\..\..\..\Construct Compile\Window\Debug_Runtime/Window.lib"
 				TargetMachine="1"
 			/>
@@ -401,9 +413,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

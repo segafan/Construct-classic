@@ -95,14 +95,18 @@ long ExtObject::aMaximizeWindow(LPVAL theParams)
 	return 0;
 }
 
-
-
 long ExtObject::aAlwaysOnTop(LPVAL theParams)
 {
 	if (GetIntParam(theParams, 0) == 0)
+	{
+		SetWindowPos(m_Window, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
 		return 0;
+	}
 	else
+	{
+		SetWindowPos(m_Window, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE);
 		return 0;
+	}
 
 	return 0;
 }
@@ -168,6 +172,59 @@ long ExtObject::aSetWidth(LPVAL theParams)
 long ExtObject::aSetSize(LPVAL theParams)
 {
 	SetWindowPos(m_Window, NULL, 0, 0, GetIntParam(theParams, 0), GetIntParam(theParams, 1), SWP_NOMOVE);
+
+	return 0;
+}
+
+long ExtObject::aSetClientHeight(LPVAL theParams)
+{
+	RECT Rect;
+	GetClientRect(m_Window, &Rect);
+	CRect ClientRect = Rect;
+
+	RECT WRect;
+	GetWindowRect(m_Window, &WRect);
+	CRect WindowRect = WRect;
+
+	int delta = WindowRect.Height() - ClientRect.Height();
+
+	SetWindowPos(m_Window, NULL, 0, 0, WindowRect.Width(), GetIntParam(theParams, 0) + delta, SWP_NOMOVE);
+
+	return 0;
+}
+
+long ExtObject::aSetClientWidth(LPVAL theParams)
+{
+	RECT Rect;
+	GetClientRect(m_Window, &Rect);
+	CRect ClientRect = Rect;
+
+	RECT WRect;
+	GetWindowRect(m_Window, &WRect);
+	CRect WindowRect = WRect;
+
+	int delta = WindowRect.Width() - ClientRect.Width();
+
+	SetWindowPos(m_Window, NULL, 0, 0, GetIntParam(theParams, 0) + delta, WindowRect.Height(), SWP_NOMOVE);
+
+	return 0;
+}
+
+// Avoiding AdjustWindowRect here, because I couldn't validate if the window has a menu bar or not
+long ExtObject::aSetClientSize(LPVAL theParams)
+{
+	RECT Rect;
+	GetClientRect(m_Window, &Rect);
+	CRect ClientRect = Rect;
+
+	RECT WRect;
+	GetWindowRect(m_Window, &WRect);
+	CRect WindowRect = WRect;
+
+	int deltaH = WindowRect.Width() - ClientRect.Width();
+	int deltaV = WindowRect.Height() - ClientRect.Height();
+
+	SetWindowPos(m_Window, NULL, 0, 0, GetIntParam(theParams, 0) + deltaH, GetIntParam(theParams, 1) + deltaV, SWP_NOMOVE);
 
 	return 0;
 }
@@ -327,6 +384,16 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAM(PARAM_VALUE, "Width", "Width in pixels");
 	ADDPARAM(PARAM_VALUE, "Height", "Height in pixels");
 	ADDACT("Set size", "Size & Position", "Set size to (%0, %1)", &ExtObject::aSetSize, "SetSize", 0);
+
+	ADDPARAM(PARAM_VALUE, "Client height", "Height of the client's area, the window is supposed to enclose, in pixels");
+	ADDACT("Set client height", "Size & Position", "Set client height to %0", &ExtObject::aSetClientHeight, "SetClientHeight", 0);
+
+	ADDPARAM(PARAM_VALUE, "Client width", "Width of the client's area, the window is supposed to enclose, in pixels");
+	ADDACT("Set client width", "Size & Position", "Set client width to %0", &ExtObject::aSetClientWidth, "SetClientWidth", 0);
+
+	ADDPARAM(PARAM_VALUE, "Client width", "Width of the client's area, the window is supposed to enclose, in pixels");
+	ADDPARAM(PARAM_VALUE, "Client height", "Height of the client's area, the window is supposed to enclose, in pixels");
+	ADDACT("Set client size", "Size & Position", "Set client size to (%0, %1)", &ExtObject::aSetClientSize, "SetClientSize", 0);
 	
 	ADDACT("Attach to current window", "Window", "Attach to current application window", &ExtObject::aAttachToCurrent, "AttachCurrent", 0);
 
