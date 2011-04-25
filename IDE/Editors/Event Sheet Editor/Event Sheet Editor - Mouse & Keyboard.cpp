@@ -682,7 +682,7 @@ void EventSheetEditor::OnLButtonDown(UINT nFlags, CPoint pt)
 				/////////////////////
 				// Select Event
 
-				else //if(!pMyEvent->m_gridRec(this).PtInRect(pt))  -edit: we arn't going to worry about left clicking in the grid, it may as well select the event 
+				else if(pMyEvent->m_handle(this).PtInRect(pt)) 
 				{
 					//Deselect selected actions or conditions
 					DeselectActions();
@@ -776,7 +776,7 @@ void EventSheetEditor::OnLButtonDown(UINT nFlags, CPoint pt)
 					}
 					
 				}
-				/*else
+				else
 				{
 					if(!m_CtrlDown)
 					{
@@ -786,7 +786,7 @@ void EventSheetEditor::OnLButtonDown(UINT nFlags, CPoint pt)
 					}
 
 
-				}*/
+				}
 			}
 		}
 	}
