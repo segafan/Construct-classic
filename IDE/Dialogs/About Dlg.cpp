@@ -1,10 +1,3 @@
-/////////////////////////////////////////////////////////////////////////////
-// About Dialog
-//
-// Last revision: 1.0
-// 9th January 2006
-//
-/////////////////////////////////////////////////////////////////////////////
 
 // File includes
 #include "StdAfx.h"
@@ -62,7 +55,7 @@ BOOL CAboutDlg::OnInitDialog()
 
 	// Name of dialog
 	CString dialogTitle;
-	dialogTitle.Format("Construct : %s", A_TITLE);
+	dialogTitle.Format("Construct Classic : %s", A_TITLE);
 	SetWindowText(dialogTitle);
 
 	// Product version

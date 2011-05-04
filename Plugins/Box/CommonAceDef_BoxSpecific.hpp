@@ -48,6 +48,24 @@ long ExtObject::cmn_aSetY(LPVAL params)
 	pRuntime->UpdateBoundingBox(this);
 	return 0;
 }
+
+long ExtObject::cmn_aSetXY(LPVAL params)
+{
+	if( params[0].Type() != EXPTYPE_ARRAY)
+		return true;
+
+	ExpStore* arr = params[0].GetArray();
+
+	if(params[0].GetArraySize() != 2)
+		return 0;
+
+	info.x = arr->GetFloat();
+	info.y = (arr+1)->GetFloat();
+
+	pRuntime->UpdateBoundingBox(this);
+	return 0;
+}
+
 long ExtObject::cmn_aSetPosition(LPVAL params)
 {
 	info.x = params[0].GetFloat();

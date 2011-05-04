@@ -3092,11 +3092,11 @@
 				>
 			</File>
 			<File
-				RelativePath="Resource.h"
+				RelativePath=".\LIBs\Include\Resources\resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\LIBs\Include\Resources\resource.h"
+				RelativePath="Resource.h"
 				>
 			</File>
 			<File

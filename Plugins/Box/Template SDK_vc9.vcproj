@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="Template SDK"
+	Name="Box"
 	ProjectGUID="{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}"
 	RootNamespace="Sprite"
 	Keyword="MFCProj"
@@ -837,7 +837,7 @@
 				>
 			</File>
 			<File
-				RelativePath="ICON.BMP"
+				RelativePath="res\ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"
@@ -849,7 +849,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="res\ICON.BMP"
+				RelativePath="ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"

@@ -239,11 +239,11 @@ CAPTION "About"
 FONT 8, "Segoe UI", 400, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,186,148,50,14
-    CTEXT           "David Clark\nAshley Gullen\nRich Whilding",IDC_PEOPLE,7,46,228,38
+    CTEXT           "David Clark\nAshley Gullen\nRich Whilding\nAdditional development by the community",IDC_PEOPLE,7,46,228,38
     LTEXT           "",IDC_PRODUCTVERSION,7,119,229,11,SS_SUNKEN
     LTEXT           "",IDC_BUILD,7,133,229,11,SS_SUNKEN
     CONTROL         256,IDC_STATIC,"Static",SS_BITMAP | SS_SUNKEN,110,21,21,18
-    CTEXT           "Scirra Construct",IDC_STATIC,63,9,116,8
+    CTEXT           "Scirra Construct Classic",IDC_STATIC,63,9,116,8
     CTEXT           "Construct is developed free of charge by volunteers.  Please visit www.scirra.com for more information!",IDC_STATIC,8,91,227,24
 END
 
@@ -310,9 +310,9 @@ BEGIN
             VALUE "FileDescription", "Construct"
             VALUE "FileVersion", "1, 0, 0, 1"
             VALUE "InternalName", "Construct"
-            VALUE "LegalCopyright", "Copyright (C) 2008"
+            VALUE "LegalCopyright", "Copyright (C) 2011"
             VALUE "OriginalFilename", "Construct.exe"
-            VALUE "ProductName", "Construct"
+            VALUE "ProductName", "Construct Classic"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
@@ -351,7 +351,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDR_MAINFRAME           "Construct"
+    IDR_MAINFRAME           "Construct Classic"
     ID_WEB_SCIRRACOM        "Go to Scirra.com - Home of Construct"
     IDS_UPDATE              "No updates available."
     IDS_TIME                "11:08"
@@ -370,8 +370,8 @@ END
 
 STRINGTABLE 
 BEGIN
-    AFX_IDS_APP_TITLE       "Construct"
-    AFX_IDS_IDLEMESSAGE     "Construct, idle"
+    AFX_IDS_APP_TITLE       "Construct Classic"
+	AFX_IDS_IDLEMESSAGE     "Idle"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
 END
 
@@ -1301,7 +1301,7 @@ END
 IDD_PROGRESSDLG DIALOGEX 0, 0, 186, 38
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION
 EXSTYLE WS_EX_TOOLWINDOW
-CAPTION "Construct"
+CAPTION "Construct Classic"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     LTEXT           "Loading... 50%",IDC_STATUS,7,6,172,8
