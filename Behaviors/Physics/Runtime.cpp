@@ -174,8 +174,10 @@ void ExtObject::OnCreate()
 	physicsCount++;
 
 	CreateBody();
-
-	do_recreate = false;	
+lastKnownAngle=pLink->info.angle;
+lastKnownX=pLink->info.x;
+lastKnownY=pLink->info.y;
+	do_recreate = true;	
 }
 
 void ExtObject::CreateBody()
