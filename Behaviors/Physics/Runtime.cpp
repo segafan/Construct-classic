@@ -358,8 +358,6 @@ void ExtObject::CheckForBodyChange()
 	b2Vec2 velocity = body->GetLinearVelocity();
 	float32 omega = body->GetAngularVelocity();
 
-	float unused;
-
 	// Check for dimension changes
 	if (lastKnownW != pLink->info.w) {
 		lastKnownW = pLink->info.w;
@@ -381,12 +379,8 @@ void ExtObject::CheckForBodyChange()
 		do_recreate = false;
 	}
 
-
 	if (abs(lastKnownX - pLink->info.x)>0.1 || abs(lastKnownY - pLink->info.y)>0.1||abs(lastKnownAngle - pLink->info.angle)>0.5) 
 	{
-
-
-
 		body->SetAngularVelocity(RADIANS(AngleDiff(pLink->info.angle,lastKnownAngle))*59);
 		//if(abs(lastKnownAngle - pLink->info.angle)>1)
 		//torque=AngleDiff(pLink->info.angle,lastKnownAngle)/1000;
@@ -413,26 +407,11 @@ void ExtObject::CheckForBodyChange()
 
 		}
 
-
-rotation = RADIANS(pLink->info.angle);
+		rotation = RADIANS(pLink->info.angle);
 		body->SetXForm(position, rotation);
-
-		
-
-
-		
-
-
-
-
 	}
-	
-
-
-
-
-
 }
+
 float ExtObject::AngleDiff(float ang1, float ang0)
 {
 	if ((ang1-ang0)>180)
