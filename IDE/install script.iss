@@ -1,18 +1,18 @@
 [Setup]
-AppName=Construct
-AppVerName=Construct 0.99.96
+AppName=Construct Classic
+AppVerName=Construct Classic r1
 AppPublisher=Scirra
 AppPublisherURL=http://www.scirra.com
 AppSupportURL=http://www.scirra.com
 AppUpdatesURL=http://www.scirra.com
-DefaultDirName={pf}\Scirra\Construct
+DefaultDirName={pf}\Scirra\Construct Classic
 DefaultGroupName=Construct
 AllowNoIcons=yes
 OutputBaseFilename=setup
 Compression=lzma
 SolidCompression=yes
 WindowShowCaption = no
-WindowVisible = yes
+WindowVisible = no
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: "gpl-2.0.txt"
@@ -77,8 +77,8 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Construct"; Filena
 
 [Run]
 Filename: "{app}\Construct.exe"; Description: "{cm:LaunchProgram,Construct}"; Flags: nowait postinstall skipifsilent
-Filename: "{app}\vcredist_x86.exe"; StatusMsg: "Installing Visual Studio 2005 redistributable files..."; Flags: hidewizard skipifsilent
-Filename: "{app}\dxwebsetup.exe"; StatusMsg: "Installing DirectX additional components..."; Flags: hidewizard skipifsilent
+Filename: "{app}\vcredist_x86.exe"; Parameters: "/q"; StatusMsg: "Installing Visual Studio 2005 redistributable files..."; Flags: skipifsilent
+Filename: "{app}\dxwebsetup.exe"; Parameters: "/q"; StatusMsg: "Installing DirectX additional components..."; Flags: hidewizard skipifsilent
 
 
 
