@@ -204,7 +204,11 @@ bool ExtObject::IsOnFloor( bool use_p_stand_on_moving_too )
 	float ga = RADIANS(grav_dir * 90);
 	int cosga = cos(ga)*0.5f;
 	int singa = sin(ga)*0.5f;
-
+	if(IsJumpingDown())
+	{
+		cosga = cos(ga)*1.5f;
+		singa = sin(ga)*1.5f;
+	}
 	pLink->info.x += cosga;
 	pLink->info.y += singa;
 	pRuntime->UpdateBoundingBox(pLink);
@@ -452,7 +456,7 @@ bool ExtObject::IsOverlapping( bool solids_only )
 						if (!IsIgnoring(platform->pType))
 						{
 							if(pRuntime->QueryCollision(pLink, platform))
-							{;
+							{
 							pLink->info.x = fx;
 							pLink->info.y = fy;
 							pRuntime->UpdateBoundingBox(pLink);
