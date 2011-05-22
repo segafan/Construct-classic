@@ -1983,7 +1983,7 @@ void ExpCeil::Evaluate(ExpReturn* er)
 	case EXPTYPE_INTEGER:
 		return; // no effect on integer
 	case EXPTYPE_FLOAT:
-		er->eData.iVal = er->eData.fVal + 1.0;
+		er->eData.iVal = ceil(er->eData.fVal);
 		er->eType = EXPTYPE_INTEGER;
 		return;
 	}
