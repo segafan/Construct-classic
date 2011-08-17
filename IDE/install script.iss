@@ -1,6 +1,6 @@
 [Setup]
 AppName=Construct Classic
-AppVerName=Construct Classic r1
+AppVerName=Construct Classic r1.2
 AppPublisher=Scirra
 AppPublisherURL=http://www.scirra.com
 AppSupportURL=http://www.scirra.com
@@ -9,7 +9,7 @@ DefaultDirName={pf}\Scirra\Construct Classic
 DefaultGroupName=Construct
 AllowNoIcons=yes
 OutputBaseFilename=setup
-Compression=lzma
+Compression=lzma2/ultra
 SolidCompression=yes
 WindowShowCaption = no
 WindowVisible = no
@@ -23,6 +23,7 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 
 [Files]
 Source: "D:\Construct 0.x SVN\IDE\Construct.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Construct 0.x SVN\IDE\bsd runtime.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Construct 0.x SVN\IDE\SciLexer.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Construct 0.x SVN\IDE\Scintilla.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Construct 0.x SVN\IDE\LiteZip.dll"; DestDir: "{app}"; Flags: ignoreversion
@@ -78,7 +79,7 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Construct"; Filena
 [Run]
 Filename: "{app}\Construct.exe"; Description: "{cm:LaunchProgram,Construct}"; Flags: nowait postinstall skipifsilent
 Filename: "{app}\vcredist_x86.exe"; Parameters: "/q"; StatusMsg: "Installing Visual Studio 2005 redistributable files..."; Flags: skipifsilent
-Filename: "{app}\dxwebsetup.exe"; Parameters: "/q"; StatusMsg: "Installing DirectX additional components..."; Flags: hidewizard skipifsilent
+Filename: "{app}\dxwebsetup.exe"; Parameters: "/q"; StatusMsg: "Installing DirectX additional components..."; Flags: skipifsilent
 
 
 
