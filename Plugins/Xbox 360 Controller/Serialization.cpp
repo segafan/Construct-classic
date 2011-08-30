@@ -7,16 +7,20 @@
 // RUNTIME serialization
 void ExtObject::Serialize(bin& ar)
 {
-	int Version = 1;
+	int Version = 3;
 	SerializeVersion(ar, Version);
 	if (ar.loading) {
 
+		if(Version==3)
+		ar >> deadzone;
 		//
 
 	}
 	else {
 
 		//
+		if(Version==2)
+		ar << deadzone;
 
 	}
 }
@@ -31,7 +35,7 @@ void ExtObject::Serialize(bin& ar)
 // You never need to check 'Version' while saving.
 void EditExt::Serialize(bin& ar)
 {
-	int Version = 2;
+	int Version = 3;
 	SerializeVersion(ar, Version);
 
 	if (ar.loading) {
@@ -59,6 +63,10 @@ void EditExt::Serialize(bin& ar)
 				}
 		}
 		ar >> controllerCombo ;
+		if(Version==3)
+		ar >> deadzone;
+		else
+			deadzone=0.2;
 	}
 	else {
 		for(int i = 0; i < CONTROLLERS; i++)
@@ -66,6 +74,8 @@ void EditExt::Serialize(bin& ar)
 				ar << controls[i][j];
 
 		ar << controllerCombo ;
+		if(Version==3)
+		ar << deadzone;
 		
 	}
 			

@@ -34,3 +34,10 @@ long ExtObject::aVibrate(LPVAL params)
 	// Do nothing
 	return 0;
 }
+
+long ExtObject::aSetDeadZone(LPVAL params)
+{
+	deadzone=params[0].GetFloat();
+	// Do nothing
+	return 0;
+}

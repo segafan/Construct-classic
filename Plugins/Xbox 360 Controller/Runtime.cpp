@@ -62,6 +62,7 @@ void ExtObject::OnCreate()
 	// Finished reading data
 	ar.detach();
 	//Player1->Vibrate(65535, 0);
+	deadzone=0.2;
 }
 
 // Destructor: called when an instance of your object is destroyed.
@@ -102,7 +103,16 @@ BOOL ExtObject::OnFrame2()
 	{
 		float state = pRuntime->GetControlState(i->control.c_str(), i->player);
 		state = max(state, Player[i->controller]->ButtonState((XBoxControl::Control)i->xboxControl));
+		float Sign=0;
+		if(state>0)
+			Sign=1.0;
+		else
+			Sign=-1.0;
+		if (abs(state>=deadzone))
+		state = (state*(1.0-deadzone))+(deadzone*Sign);
+		else state=0;
 		pRuntime->SetControlState(i->control.c_str(), i->player, state);
+		
 	}
 
 	return 0;	

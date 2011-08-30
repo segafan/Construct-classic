@@ -63,6 +63,13 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAM(PARAM_VALUE, "Button", "0");
 	ADDEXP("Button State", "Buttons", "ButtonState", &ExtObject::eButtonState, RETURN_INTEGER);
 
+
+	ADDPARAMDEF(PARAM_VALUE, "deadzone", "0 (no deadzone) - 1 (no livezone), default : 0.2", "0.2");
+	ADDACT("Set DeadZone", "Analogue", "(%o): Set DeadZone to %0",  &ExtObject::aSetDeadZone, "SetDeadZone", 0);
+
+
+	ADDEXP("DeadZone", "Analogue", "ButtonState", &ExtObject::eGetDeadZone, RETURN_FLOAT);
+
 	// This line includes your common ACEs as specified in Main.h
 #include "..\..\Common\CommonAceTable.hpp"
 }

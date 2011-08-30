@@ -61,10 +61,12 @@ public:
 		controller = 0; 
 		xboxControl = XBoxControl::DPadUp;
 	}
-	RunControl(Control& ed, int initController, XBoxControl::Control initXboxControl)
+	RunControl(Control& ed, int initController, XBoxControl::Control initXboxControl,int Player=-1)
 	{
 		control = ed.control; 
-		player = ed.player; 
+		if(Player==-1)
+		player = ed.player;
+		else player=Player;
 		controller = initController; 
 		xboxControl = initXboxControl;
 	}
@@ -127,6 +129,8 @@ public:
 	long cButtonDown(LPVAL params);
 
 	long aVibrate(LPVAL params);
+	long aSetDeadZone(LPVAL params);
+	
 
 	long eLeftThumbX(LPVAL params, ExpReturn& ret);
 	long eLeftThumbY(LPVAL params, ExpReturn& ret);
@@ -135,6 +139,7 @@ public:
 	long eLeftTrigger(LPVAL params, ExpReturn& ret);
 	long eRightTrigger(LPVAL params, ExpReturn& ret);
 	long eButtonState(LPVAL params, ExpReturn& ret);
+	long eGetDeadZone(LPVAL params, ExpReturn& ret);
 
 	CXBOXController* GetPlayer(LPVAL params);
 	CXBOXController* Player[4];
@@ -144,6 +149,7 @@ public:
 	////////////////////////////////////////////////////
 	// Data members
 
+	float deadzone;
 	// Use when private variables (OF_PRIVATEVARIABLES) are enabled.
 	//vector<ExpStore> privateVars;
 };
@@ -180,6 +186,7 @@ public:
 	// Your edittime extension data goes here
 	Control controls[CONTROLLERS][BUTTONS]; 
 	int controllerCombo;
+	float deadzone;
 };
 
 bin& operator<<(bin& b, const Control& c);

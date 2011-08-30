@@ -82,3 +82,9 @@ long ExtObject::eButtonState(LPVAL params, ExpReturn& ret)
 
 	return ret = player->ButtonState((XBoxControl::Control)params[1].GetInt());
 }
+
+long ExtObject::eGetDeadZone(LPVAL params, ExpReturn& ret)
+{
+	
+	return ret = deadzone;
+}

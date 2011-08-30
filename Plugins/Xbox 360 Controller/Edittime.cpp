@@ -25,6 +25,8 @@
 
 BEGIN_PROPERTY_TABLE();
 //PROPERTY_NEW_CATEGORY("Xbox Controller 1", "Controller 1");
+PROPERTY_FLOAT (deadzone, "deadzone", "the deadzone of analogue controls (0.0 - 1.0,  default : 0.2)");	// A double/float property
+
 if(editObject){
 	int count = editObject->pEditTime->GetControlCount();
 	string Controls = "-";
@@ -182,6 +184,7 @@ void EditExt::OnPut()
 	// Default object size
 	pInfo->objectWidth = 64;
 	pInfo->objectHeight = 64;
+	deadzone=0.2;
 
 	controls[0][XBoxControl::LeftThumbLeft] = Control(0, "Move Left",1);
 	controls[0][XBoxControl::LeftThumbRight] = Control(0, "Move Right",2);
