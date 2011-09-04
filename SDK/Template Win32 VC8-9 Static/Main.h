@@ -23,6 +23,7 @@
 
 #include "..\..\Common\ExpReturn.hpp"
 
+
 #define OBJECTRECT CRect(editObject->objectX, editObject->objectY, editObject->objectX + editObject->objectWidth, editObject->objectY + editObject->objectHeight)
 
 //////////// RUNTIME OBJECT ////////////
@@ -64,6 +65,11 @@ public:
 	// Debugging
 	void		DebuggerUpdateDisplay(ExpStore*& pPrivateVars);
 	void		OnDebuggerValueChanged(const char* name, const char* value);
+	// Miscellaneous Helper Functions
+	void		StartSOLLoopCondition();
+	void		StartSOLLoopIteration();
+	bool		EndSOLLoopIteration();
+	EventParametersInfo2 epi;
 
 	////////////////////////////////////////////////////
 	// ACTIONS, CONDITIONS AND EXPRESSIONS DEFINITIONS
@@ -77,6 +83,7 @@ public:
 
 	////////////////////////////////////////////////////
 	// Data members
+
 
 	// Use when private variables (OF_PRIVATEVARIABLES) are enabled.
 	//vector<ExpStore> privateVars;
