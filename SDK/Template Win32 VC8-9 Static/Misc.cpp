@@ -22,6 +22,9 @@
 //		if(IfEndSOLLoopIteration())
 //			break;
 //	}
+//	// always on looping SOL conditions:
+//	return false;
+//		
 //} 
 void ExtObject::StartSOLLoopCondition()
 {
