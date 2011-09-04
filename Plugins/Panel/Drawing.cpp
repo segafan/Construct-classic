@@ -87,82 +87,6 @@ private:
 
 };
 
-
-
-#ifdef RUN_ONLY
-
-class RunDrawing : public Drawing
-{
-public:
-	RunDrawing(IRenderer* ir, cr::point uvscale) : renderer(ir), uv_scale(uvscale){}
-
-private:
-	IRenderer* renderer;
-	cr::point uv_scale;
-
-	virtual void RenderChunk(float x, float y, float w, float h, float a, cr::color tl, cr::color tr, cr::color bl, cr::color br, RECTF* _uv)
-	{
-		cr::color colors[4] = {tl, tr, bl, br};
-		cr::rect uv(_uv->left, _uv->top, _uv->right, _uv->bottom);
-		uv *= uv_scale;
-
-		renderer->Quad_xywh(x, y, w, h, a, cr::point(0,0), opaque_white, &uv, 0,0, colors, 0); 
-	}
-};
-
-
-/////////////////////////////
-// RUNTIME drawing
-// Draw: Construct calls this when it wants you to draw your object.  You can
-// leave it blank if your plugin doesn't draw anything.  This is not called when OF_NODRAW is set.
-void ExtObject::Draw()
-{
-	double hsx = info.HotSpotX;
-	double hsy = info.HotSpotY;
-	
-
-	float& x = info.x;
-	float& y = info.y;
-	float& w = info.w;
-	float& h = info.h;
-	float& a = info.angle;
-
-	// Get original image size
-	float iw = iTexture->image_widthf;
-	float ih = iTexture->image_heightf;
-	renderer->SetTexture(iTexture);
-
-
-
-	cr::point uv_scale( iw / iTexture->surface_width, ih / iTexture->surface_height);
-	RunDrawing draw(renderer, uv_scale);
-	draw.Draw(x, y, w, h, iw, ih, a, ceil(hsx), ceil(hsy), 
-		image_left_margin, image_top_margin, image_right_margin, image_bottom_margin,
-		vertex_filter[0] * info.pInfo->filter, vertex_filter[1] * info.pInfo->filter, vertex_filter[2] * info.pInfo->filter, vertex_filter[3] * info.pInfo->filter);
-
-}
-
-#else // RUN_ONLY
-
-/////////////////////////////
-// EDITTIME drawing
-// Draw your object in the layout editor.
-
-cr::color MixColorAndAlphaWithFilter(COLORREF c, float o, D3DCOLOR f)
-{
-	D3DCOLOR d = D3D_CONVERTCOLORREF(c);
-	cr::color filter = cr::color(D3D_A(f) / 255.0, D3D_R(f) / 255.0, D3D_G(f) / 255.0, D3D_B(f) / 255.0);
-	cr::color other = cr::color(c);
-	other.a = o;
-
-	return filter * other;
-}
-
-D3DCOLOR D3dColor(cr::color c)
-{
-	return D3D_ARGB((int)(c.a*255), (int)(c.r*255), (int)(c.g*255), (int)(c.b*255));
-}
-
 void GetHotspotPos(hotspot_position pos, double& hsx, double& hsy)
 {
 	switch (pos) 
@@ -205,6 +129,95 @@ void GetHotspotPos(hotspot_position pos, double& hsx, double& hsy)
 			break;
 	}
 }
+
+
+
+
+#ifdef RUN_ONLY
+
+class RunDrawing : public Drawing
+{
+public:
+	RunDrawing(IRenderer* ir, cr::point uvscale) : renderer(ir), uv_scale(uvscale){}
+
+private:
+	IRenderer* renderer;
+	cr::point uv_scale;
+
+	virtual void RenderChunk(float x, float y, float w, float h, float a, cr::color tl, cr::color tr, cr::color bl, cr::color br, RECTF* _uv)
+	{
+		cr::color colors[4] = {tl, tr, bl, br};
+		cr::rect uv(_uv->left, _uv->top, _uv->right, _uv->bottom);
+		uv *= uv_scale;
+
+		renderer->Quad_xywh(x, y, w, h, a, cr::point(0,0), opaque_white, &uv, 0,0, colors, 0); 
+	}
+};
+
+
+/////////////////////////////
+// RUNTIME drawing
+// Draw: Construct calls this when it wants you to draw your object.  You can
+// leave it blank if your plugin doesn't draw anything.  This is not called when OF_NODRAW is set.
+void ExtObject::Draw()
+{
+	// Calculate hotspot
+	double hsx, hsy;
+	GetHotspotPos((hotspot_position)hotspot_pos, hsx, hsy);
+
+	//double hsx = info.HotSpotX;
+	//double hsy = info.HotSpotY;
+	
+
+	
+	
+
+	float& x = info.x;
+	float& y = info.y;
+	float& w = info.w;
+	float& h = info.h;
+	float& a = info.angle;
+
+	
+
+	// Get original image size
+	float iw = iTexture->image_widthf;
+	float ih = iTexture->image_heightf;
+	renderer->SetTexture(iTexture);
+
+
+
+
+
+	cr::point uv_scale( iw / iTexture->surface_width, ih / iTexture->surface_height);
+	RunDrawing draw(renderer, uv_scale);
+	draw.Draw(x, y, w, h, iw, ih, a, ceil(hsx*w), ceil(hsy*h), 
+		image_left_margin, image_top_margin, image_right_margin, image_bottom_margin,
+		vertex_filter[0] * info.pInfo->filter, vertex_filter[1] * info.pInfo->filter, vertex_filter[2] * info.pInfo->filter, vertex_filter[3] * info.pInfo->filter);
+
+}
+
+#else // RUN_ONLY
+
+/////////////////////////////
+// EDITTIME drawing
+// Draw your object in the layout editor.
+
+cr::color MixColorAndAlphaWithFilter(COLORREF c, float o, D3DCOLOR f)
+{
+	D3DCOLOR d = D3D_CONVERTCOLORREF(c);
+	cr::color filter = cr::color(D3D_A(f) / 255.0, D3D_R(f) / 255.0, D3D_G(f) / 255.0, D3D_B(f) / 255.0);
+	cr::color other = cr::color(c);
+	other.a = o;
+
+	return filter * other;
+}
+
+D3DCOLOR D3dColor(cr::color c)
+{
+	return D3D_ARGB((int)(c.a*255), (int)(c.r*255), (int)(c.g*255), (int)(c.b*255));
+}
+
 
 class EditDrawing : public Drawing
 {
@@ -257,6 +270,49 @@ void EditExt::Draw()
 		image_left_margin, image_top_margin, image_right_margin, image_bottom_margin,
 		vertex_filter[0], vertex_filter[1], vertex_filter[2], vertex_filter[3]);
 
+}
+
+void ExtObject::GetHotspotPos(hotspot_position pos, double& hsx, double& hsy)
+{
+	switch (pos) 
+	{
+		case hs_topleft:
+			hsx = 0.0;
+			hsy = 0.0;
+			break;
+		case hs_top:
+			hsx = 0.5;
+			hsy = 0.0;
+			break;
+		case hs_topright:
+			hsx = 1.0;
+			hsy = 0.0;
+			break;
+		case hs_left:
+			hsx = 0.0;
+			hsy = 0.5;
+			break;
+		case hs_center:
+			hsx = 0.5;
+			hsy = 0.5;
+			break;
+		case hs_right:
+			hsx = 1.0;
+			hsy = 0.5;
+			break;
+		case hs_bottomleft:
+			hsx = 0.0;
+			hsy = 1.0;
+			break;
+		case hs_bottom:
+			hsx = 0.5;
+			hsy = 1.0;
+			break;
+		case hs_bottomright:
+			hsx = 1.0;
+			hsy = 1.0;
+			break;
+	}
 }
 
 #endif // RUN_ONLY
