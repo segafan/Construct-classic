@@ -168,8 +168,8 @@ void DefineACES(MicroAceTime* at)
 	ADDEXP("Get gravity angle", "Movement", "GravityAngle", &ExtObject::eGravAngle, RETURN_VALUE);
 	ADDEXP("Get jump strength", "Movement", "JumpStrength", &ExtObject::eJumpStrength, RETURN_VALUE);
 	ADDEXP("Get jump strength", "Movement", "JumpSustain", &ExtObject::eJumpSustain, RETURN_VALUE);
-	ADDEXP("Get jump gravity", "Movement", "Gravity", &ExtObject::eJumpGrav, RETURN_VALUE);
-	ADDEXP("Get jump sustain gravity", "Movement", "Gravity", &ExtObject::eJumpSustainGrav, RETURN_VALUE);
+	ADDEXP("Get jump gravity", "Movement", "JumpGravity", &ExtObject::eJumpGrav, RETURN_VALUE);
+	ADDEXP("Get jump sustain gravity", "Movement", "JumpSustainGravity", &ExtObject::eJumpSustainGrav, RETURN_VALUE);
 	ADDEXP("Get additional speed x", "Additional", "AdditionalSpeedX", &ExtObject::eAdditionalXSpeed, RETURN_VALUE);
 	ADDEXP("Get additional speed y", "Additional", "AdditionalSpeedY", &ExtObject::eAdditionalYSpeed, RETURN_VALUE);
 	ADDEXP("Get local X component of motion", "Movement", "LocalVectorX", &ExtObject::eLocalVectorX, RETURN_VALUE);
