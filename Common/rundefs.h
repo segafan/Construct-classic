@@ -423,6 +423,11 @@ public:
 	// Helper function
 	void UpdateBoundingBox();
 	void TriggerEvent(int cndIndex);
+	void		StartSOLLoopCondition();
+	void		StartSOLLoopIteration();
+	bool		EndSOLLoopIteration();
+	void		EndSOLLoopCondition();
+	
 };
 
 typedef long (CRunObject::*ACROUTINE)(const class ExpReturn* params);
@@ -1000,6 +1005,8 @@ struct EventParametersInfo2 {
 	SUBEVENTS_PTR pSubEvents;
 };
 
+// For Looping Conditions:
+vector<EventParametersInfo2> epis;
 
 // For self triggering conditions
 struct EventSolInfo {
