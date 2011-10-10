@@ -1482,12 +1482,16 @@ void CRuntime::GenerateCollisionMaskFromTexture(CRunObject* obj, TextureHandle t
 	}
 
 	if (pSystemSurface)
+	{
 		pSystemSurface->UnlockRect();
-
-	pSourceSurface->Release();
-
-	if (pSystemSurface)
 		pSystemSurface->Release();
+	}
+
+	if (pSourceSurface)
+	{
+		pSourceSurface->UnlockRect();
+		pSourceSurface->Release();
+	}		
 
 	GenerateShiftedMasks(*generatedMask);
 
