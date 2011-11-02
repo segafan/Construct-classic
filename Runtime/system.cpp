@@ -4060,7 +4060,7 @@ long SystemObject::eAngleDiff(LPVAL theParams, ExpReturn& ret)
 	if ( dot < -1.0)
 		dot = -1.0;
 	if (dot > 1.0)
-		dot = 1.0
+		dot = 1.0;
 	return ret = DEGREES(acos(dot));
 }
 
