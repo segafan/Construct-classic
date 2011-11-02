@@ -4048,13 +4048,19 @@ long SystemObject::eAngleDiff(LPVAL theParams, ExpReturn& ret)
 	float b = theParams[1].GetFloat();
 
 	// Prevent -1.#IND error
-	if (a == b) return ret = 0.0;
+	//if (a == b) return ret = 0.0;
 
 	float ca, cb, sa, sb;
 	cr::sincosf(RADIANS(a), &sa, &ca);
 	cr::sincosf(RADIANS(b), &sb, &cb);
 
 	float dot = ca*cb + sa*sb;
+
+	// Prevent -1.#IND error
+	if ( dot < -1.0)
+		dot = -1.0;
+	if (dot > 1.0)
+		dot = 1.0
 	return ret = DEGREES(acos(dot));
 }
 
