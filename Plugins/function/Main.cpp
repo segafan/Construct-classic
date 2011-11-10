@@ -82,11 +82,11 @@ long ExtObject::aClearParams(LPVAL params)
 
 long ExtObject::aCall(LPVAL params)
 {
-	funcStack.push_back(FunctionStack());
-	FunctionStack& f = funcStack.back();
-
 	CString* pName = params[0].GetStringPtr();
 	if (pName == NULL) return 0;
+
+	funcStack.push_back(FunctionStack());
+	FunctionStack& f = funcStack.back();
 
 	bool copySOL = params[1].GetBool();
 

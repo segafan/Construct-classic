@@ -213,12 +213,6 @@ long ExtObject::ReturnUndefinedExpression(CString& expName, LPVAL theParams, Exp
 	else
 	{
 		ret.ReturnCustom(pRuntime, retVal);
-		if(retVal.Type()==EXPTYPE_STRING)
-			ret.ReturnString(pRuntime,retVal.GetString());
-		else if(retVal.Type()==EXPTYPE_FLOAT)
-			ret=retVal.GetFloat();
-		ret=retVal.GetInt();
-
 	}
 	// Pop the func stack
 	funcStack.pop_back();
