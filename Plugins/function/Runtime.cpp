@@ -213,6 +213,8 @@ long ExtObject::ReturnUndefinedExpression(CString& expName, LPVAL theParams, Exp
 	else
 	{
 		ret.ReturnCustom(pRuntime, retVal);
+
+
 	}
 	// Pop the func stack
 	funcStack.pop_back();

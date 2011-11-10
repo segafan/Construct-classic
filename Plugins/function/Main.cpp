@@ -82,6 +82,8 @@ long ExtObject::aClearParams(LPVAL params)
 
 long ExtObject::aCall(LPVAL params)
 {
+	
+
 	CString* pName = params[0].GetStringPtr();
 	if (pName == NULL) return 0;
 
