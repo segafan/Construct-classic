@@ -255,8 +255,11 @@ inline bool IsObjectUnscaled(CRunObject* o, CollisionMask& coll)
 }
 int CRuntime::IsOverlapAngledBoxInMask64MMX(CRunObject* a, CRunObject* b) // a is box, b is obj
 {
-	OBJHEADER ainfo=a->info;
-	OBJHEADER binfo=b->info;
+	//copying info structure is a memory leak
+	float aa=a->info.angle;
+	float bx=b->info.x;
+	float by=b->info.y;
+	float ba=b->info.angle;
 	float offsetangle=GetOffsetAngle(a->info.x,a->info.y,b->info.x,b->info.y,RADIANS(a->info.angle));
 	float offsetradius=GetOffsetRadius(a->info.x,a->info.y,b->info.x,b->info.y);
 	b->info.x=GetRotatedX(a->info.x,offsetradius,offsetangle);
@@ -266,13 +269,13 @@ int CRuntime::IsOverlapAngledBoxInMask64MMX(CRunObject* a, CRunObject* b) // a i
 	CollisionMask& collB = GetActiveMask(b);
 	a->info.angle=0;
 	UpdateBoundingBox(a);
-	
 	int overlap=IsOverlapBoxInMask64MMX(b, collB, a->info.box);
-	a->info=ainfo;
-	b->info=binfo;
+	a->info.angle=aa;
+	b->info.x=bx;
+	b->info.y=by;
+	b->info.angle=ba;
 	UpdateBoundingBox(a);
-	UpdateBoundingBox(b);
-	
+	UpdateBoundingBox(b);	
 	return overlap;
 }
 bool CRuntime::QueryCollision(CRunObject *a, CRunObject *b)
