@@ -51,9 +51,9 @@ void ExtObject::OnCreate()
 	UpdateInfoBox();
 
 	// Box collisions
-	info.collMode = COLLISIONMODE_BOX;
+	info.collMode = COLLISIONMODE_ANGLED_BOX;
 
-	info.angle = 0.0f;
+	info.angle = info.editObject->eAngle;
 	info.pInfo->filter = info.editObject->eColor;
 
 	SetupPrivateVariableVector(pRuntime, this, privateVars);
@@ -64,15 +64,11 @@ void ExtObject::OnCreate()
 
 void ExtObject::UpdateInfoBox()
 {
-	info.x = min(start.x, end.x);
-	info.y = min(start.y, end.y);
-	info.w = max(start.x, end.x) - info.x;
-	info.h = max(start.y, end.y) - info.y;
-
-	info.x -= line_width;
-	info.y -= line_width;
-	info.w += line_width;
-	info.h += line_width;
+	info.x = start.x;
+	info.y = start.y;
+	info.w = sqrt(pow(end.x-start.x,2)+pow(end.y-start.y,2));
+	info.h = line_width;
+	info.angle=DEGREES(atan2(end.y-start.y,end.x-start.x));
 	UpdateBoundingBox();
 }
 
