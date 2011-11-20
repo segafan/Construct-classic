@@ -206,6 +206,7 @@ enum CollisionMode {
 	COLLISIONMODE_POINT,		// Only overlaps on hotspot detected
 	COLLISIONMODE_BOX,			// Bounding box overlaps
 	COLLISIONMODE_FINE,			// Using bitmasks
+	COLLISIONMODE_ANGLED_BOX,	// Angled bounding box)
 	COLLISIONMODE_FORCE_DWORD = 0x7fffffff
 };
 
