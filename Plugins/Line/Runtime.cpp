@@ -64,11 +64,13 @@ void ExtObject::OnCreate()
 
 void ExtObject::UpdateInfoBox()
 {
-	info.x = start.x;
-	info.y = start.y;
+
+	info.angle=DEGREES(atan2(end.y-start.y,end.x-start.x));
+	info.x = start.x+((line_width/2)*cos(RADIANS(info.angle-90)));
+	info.y = start.y+((line_width/2)*sin(RADIANS(info.angle-90)));
 	info.w = sqrt(pow(end.x-start.x,2)+pow(end.y-start.y,2));
 	info.h = line_width;
-	info.angle=DEGREES(atan2(end.y-start.y,end.x-start.x));
+	
 	UpdateBoundingBox();
 }
 
