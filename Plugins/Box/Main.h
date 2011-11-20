@@ -245,6 +245,7 @@ public:
 	Quad q;
 
 	bool smoothLines;
+	bool angledbox;
 	int hotspot_pos;
 };
 

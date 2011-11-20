@@ -35,7 +35,7 @@ void ExtObject::Serialize(bin& ar)
 // You never need to check 'Version' while saving.
 void EditExt::Serialize(bin& ar)
 {
-	int Version = 4;
+	int Version = 5;
 	SerializeVersion(ar, Version);
 
 	if (ar.loading) {
@@ -54,11 +54,13 @@ void EditExt::Serialize(bin& ar)
 			ar >> smoothLines;
 		if (Version >= 4)
 			ar >> hotspot_pos;
+		if (Version >= 5)
+			ar >> angledbox;
 	}
 	else {
 		ar << c1 << c2 << fill << sysc1 << sysc2 << sysfill << transparent;
 		ar << c1_opacityf << c2_opacityf << fill_opacityf  << pInfo->objectAngle;
-		ar << smoothLines << hotspot_pos;
+		ar << smoothLines << hotspot_pos << angledbox;
 	}
 }
 

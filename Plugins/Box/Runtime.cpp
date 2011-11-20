@@ -45,6 +45,7 @@ void ExtObject::OnCreate()
 	else
 		smoothLines = false;
 
+	info.collMode = COLLISIONMODE_BOX;
 	if (Version >= 4) {
 		int hs;
 		ar >> hs;
@@ -52,6 +53,12 @@ void ExtObject::OnCreate()
 	}
 	else
 		hotspot_pos = hs_center;
+		if (Version >= 5) {
+			bool angledbox;
+		ar >> angledbox;
+		if(angledbox)
+			info.collMode=COLLISIONMODE_ANGLED_BOX;
+	}
 
 	ar.detach();
 
@@ -63,7 +70,7 @@ void ExtObject::OnCreate()
 		fill = GetSysColor(sysfill - 1);
 
 
-	info.collMode = COLLISIONMODE_BOX;
+	
 
 	info.w = info.editObject->eWidth;
 	info.h = info.editObject->eHeight;

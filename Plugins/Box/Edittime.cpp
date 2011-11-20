@@ -35,6 +35,7 @@ BEGIN_PROPERTY_TABLE();
 	PROPERTY_PERCENT(fill_opacityf, "Fill Opacity", "Semitransparency of the fill colour.");
 	PROPERTY_BOOL	(smoothLines, "Antialiased", "Draw box with smooth lines");
 	PROPERTY_COMBO	(hotspot_pos, "Hotspot", "Choose where the hotspot lies relative to the box", "Top-left|Top|Top-right|Left|Center|Right|Bottom-left|Bottom|Bottom-right");
+	PROPERTY_COMBO	(angledbox, "Collisions", "Angled Box","Bounding box|Angled Box");
 	
 END_PROPERTY_TABLE  ();
 
@@ -93,6 +94,7 @@ void EditExt::OnPut()
 	c2 = RGB(0,255,0);
 	fill = RGB(0,0,0);
 	transparent = true;
+	angledbox=true;
 	
 	sysc1 = 0;
 	sysc2 = 0;
