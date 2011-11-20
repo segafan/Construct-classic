@@ -42,6 +42,8 @@ BEGIN_PROPERTY_TABLE();
 
 	PROPERTY_COMBO	(hotspot_pos, "Hotspot", "Choose where the hotspot lies relative to the box", "Top-left|Top|Top-right|Left|Center|Right|Bottom-left|Bottom|Bottom-right");
 	
+	PROPERTY_COMBO	(angledbox, "Collisions", "Angled box","Bounding box|Angled box");
+	
 END_PROPERTY_TABLE  ();
 
 
@@ -111,6 +113,7 @@ void EditExt::OnPut()
 	image_right_margin = 6;
 	image_top_margin = 6;
 	image_bottom_margin = 6;
+	angledbox=false;
 }
 
 void EditExt::BtnEditImage()

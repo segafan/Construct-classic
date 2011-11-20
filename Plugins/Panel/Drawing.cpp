@@ -272,47 +272,47 @@ void EditExt::Draw()
 
 }
 
-void ExtObject::GetHotspotPos(hotspot_position pos, double& hsx, double& hsy)
-{
-	switch (pos) 
-	{
-		case hs_topleft:
-			hsx = 0.0;
-			hsy = 0.0;
-			break;
-		case hs_top:
-			hsx = 0.5;
-			hsy = 0.0;
-			break;
-		case hs_topright:
-			hsx = 1.0;
-			hsy = 0.0;
-			break;
-		case hs_left:
-			hsx = 0.0;
-			hsy = 0.5;
-			break;
-		case hs_center:
-			hsx = 0.5;
-			hsy = 0.5;
-			break;
-		case hs_right:
-			hsx = 1.0;
-			hsy = 0.5;
-			break;
-		case hs_bottomleft:
-			hsx = 0.0;
-			hsy = 1.0;
-			break;
-		case hs_bottom:
-			hsx = 0.5;
-			hsy = 1.0;
-			break;
-		case hs_bottomright:
-			hsx = 1.0;
-			hsy = 1.0;
-			break;
-	}
-}
+//void ExtObject::GetHotspotPos(hotspot_position pos, double& hsx, double& hsy)
+//{
+//	switch (pos) 
+//	{
+//		case hs_topleft:
+//			hsx = 0.0;
+//			hsy = 0.0;
+//			break;
+//		case hs_top:
+//			hsx = 0.5;
+//			hsy = 0.0;
+//			break;
+//		case hs_topright:
+//			hsx = 1.0;
+//			hsy = 0.0;
+//			break;
+//		case hs_left:
+//			hsx = 0.0;
+//			hsy = 0.5;
+//			break;
+//		case hs_center:
+//			hsx = 0.5;
+//			hsy = 0.5;
+//			break;
+//		case hs_right:
+//			hsx = 1.0;
+//			hsy = 0.5;
+//			break;
+//		case hs_bottomleft:
+//			hsx = 0.0;
+//			hsy = 1.0;
+//			break;
+//		case hs_bottom:
+//			hsx = 0.5;
+//			hsy = 1.0;
+//			break;
+//		case hs_bottomright:
+//			hsx = 1.0;
+//			hsy = 1.0;
+//			break;
+//	}
+//}
 
 #endif // RUN_ONLY

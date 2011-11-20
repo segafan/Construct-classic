@@ -7,7 +7,7 @@
 // RUNTIME serialization
 void ExtObject::Serialize(bin& ar)
 {
-	int Version = 0;
+	int Version = 2;
 	SerializeVersion(ar, Version);
 
 	if (ar.loading) {
@@ -52,7 +52,7 @@ void ExtObject::Serialize(bin& ar)
 // You never need to check 'Version' while saving.
 void EditExt::Serialize(bin& ar)
 {
-	int Version = 1;
+	int Version = 2;
 	SerializeVersion(ar, Version);
 
 	if (ar.loading) 
@@ -64,6 +64,8 @@ void EditExt::Serialize(bin& ar)
 		ar >> image_left_margin	>> image_right_margin >> image_top_margin >> image_bottom_margin;
 
 		ar >> hotspot_pos;
+		if(Version>=2)
+		ar >> angledbox;
 	}
 	else 
 	{
@@ -74,6 +76,8 @@ void EditExt::Serialize(bin& ar)
 		ar << image_left_margin	<< image_right_margin << image_top_margin << image_bottom_margin;
 
 		ar << hotspot_pos;
+		if(Version>=2)
+		ar << angledbox;
 	}
 }
 

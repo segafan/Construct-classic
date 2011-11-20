@@ -53,9 +53,17 @@ void ExtObject::OnCreate()
 	ar >> hs;
 	hotspot_pos = (hotspot_position)hs;
 
+	info.collMode = COLLISIONMODE_BOX;
+	if(Version>=2)
+	{
+		bool angledbox;
+		ar >> angledbox;
+		if(angledbox)
+			info.collMode=COLLISIONMODE_ANGLED_BOX;
+	}
 	ar.detach();
 
-	info.collMode = COLLISIONMODE_BOX;
+	
 
 	info.w = info.editObject->eWidth;
 	info.h = info.editObject->eHeight;

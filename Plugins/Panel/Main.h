@@ -229,6 +229,7 @@ public:
 	int image_bottom_margin;
 
 	int hotspot_pos;
+	bool angledbox;
 };
 
 // Internal stuff include
