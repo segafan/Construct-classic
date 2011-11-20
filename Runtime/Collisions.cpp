@@ -8,7 +8,7 @@
 void DbgCollisionMaskToFile(CollisionMask& cm, int index, int id)
 {
 	/*
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	CxImage im;
 	im.Create(cm.pitch * 8, cm.height, 24, CXIMAGE_FORMAT_BMP);
 	im.Clear(0);
@@ -17,21 +17,21 @@ void DbgCollisionMaskToFile(CollisionMask& cm, int index, int id)
 
 	// Loop every bit
 	for (int x = 0; x < cm.pitch * 8; x++) {
-		for (int y = 0; y < cm.height; y++) {
-			DWORD cur = ptr[((int)cm.height - y - 1) * ipitch + (x / 8)];
-			DWORD mask = 1 << (7 - (x % 8));
-			if (cur & mask)
-				im.SetPixelColor(x, y, RGB(255,255,255));
-		}
+	for (int y = 0; y < cm.height; y++) {
+	DWORD cur = ptr[((int)cm.height - y - 1) * ipitch + (x / 8)];
+	DWORD mask = 1 << (7 - (x % 8));
+	if (cur & mask)
+	im.SetPixelColor(x, y, RGB(255,255,255));
+	}
 	} 
 
 	CString filename;
 	filename.Format("C:\\images\\debug\\_bitmask%d.bmp", id);
 	// nah
 	im.Save(filename, CXIMAGE_FORMAT_BMP);
-#endif
+	#endif
 	*/
-		
+
 }
 
 //////////////////////////////
@@ -79,30 +79,30 @@ void CRuntime::GenerateShiftedMasks(CollisionMask& cm)
 		// Take the previous map and shift left by one
 		DWORD* sourcePtr = (DWORD*)(cm.bits[shift - 1]);
 		DWORD* sourceEnd = sourcePtr + (ipitch * (int)cm.height);
-		
+
 		DWORD* const destPtr = (DWORD*)(cm.bits[shift]);
 
 		DWORD* destVertEnd = destPtr + (ipitch * (DWORD)cm.height);
 		DWORD* srcVert = sourcePtr;
 
 		for (DWORD* destVert = destPtr; destVert != destVertEnd; destVert += ipitch, srcVert += ipitch) {
-			
-			DWORD* destHoriz = destVert;
-			DWORD* destHorizEnd = destVert + ipitch;
-			DWORD* destHorizLast = destHorizEnd - 1;
 
-			DWORD* srcHoriz = srcVert;
+		DWORD* destHoriz = destVert;
+		DWORD* destHorizEnd = destVert + ipitch;
+		DWORD* destHorizLast = destHorizEnd - 1;
 
-			for ( ; destHoriz != destHorizEnd; destHoriz++) {
-				*destHoriz = *srcHoriz << 1;
+		DWORD* srcHoriz = srcVert;
 
-				// If not last in row, shift in the upper bit from the next DWORD
-				if (destHoriz != destHorizLast) {
+		for ( ; destHoriz != destHorizEnd; destHoriz++) {
+		*destHoriz = *srcHoriz << 1;
 
-					*destHoriz |= (*(++srcHoriz) >> 31);
-				}
+		// If not last in row, shift in the upper bit from the next DWORD
+		if (destHoriz != destHorizLast) {
 
-			}
+		*destHoriz |= (*(++srcHoriz) >> 31);
+		}
+
+		}
 		}
 		*/
 
@@ -111,14 +111,14 @@ void CRuntime::GenerateShiftedMasks(CollisionMask& cm)
 		// Take the previous map and shift left by one
 		BYTE* sourcePtr = (BYTE*)(cm.bits[shift - 1]);
 		BYTE* sourceEnd = sourcePtr + (ipitch * (int)cm.height);
-		
+
 		BYTE* const destPtr = (BYTE*)(cm.bits[shift]);
 
 		BYTE* destVertEnd = destPtr + (ipitch * (int)cm.height);
 		BYTE* srcVert = sourcePtr;
 
 		for (BYTE* destVert = destPtr; destVert != destVertEnd; destVert += ipitch, srcVert += ipitch) {
-			
+
 			BYTE* destHoriz = destVert;
 			BYTE* destHorizEnd = destVert + ipitch;
 			BYTE* destHorizLast = destHorizEnd - 1;
@@ -151,7 +151,97 @@ inline bool NoBoxOverlap(const RECTF& a, const RECTF& b)
 {
 	return (a.right <= b.left || a.left >= b.right || a.bottom <= b.top || a.top >= b.bottom);
 }
+inline float GetOffsetAngle(float xorigin, float yorigin,float xoff, float yoff, float originangle)
+{
+	return  atan2(yoff-yorigin, xoff-xorigin)-originangle;
+}
+inline float GetOffsetRadius(float xorigin, float yorigin,float xoff,float yoff)
+{
+	return sqrt(pow(xoff-xorigin,2)+pow(yoff-yorigin,2));
+}
+inline float GetRotatedX(float xorigin,float offsetradius, float offsetangle)
+{	
+	return xorigin+(offsetradius*cos(offsetangle));	
+}
+inline float GetRotatedY(float yorigin, float offsetradius, float offsetangle)
+{	
+	return yorigin+(offsetradius*sin(offsetangle));		
+}
 
+typedef pair<vector<float>,vector<float> > POLY;
+POLY PolyFromObj(CRunObject* obj)
+{
+	//clockwise poly assembly
+	//top left
+	
+	float offsetangle=GetOffsetAngle(0,0,-obj->info.HotSpotX,-obj->info.HotSpotY,-RADIANS(obj->info.angle));
+	float offsetradius=GetOffsetRadius(0,0,-obj->info.HotSpotX,-obj->info.HotSpotY);
+	POLY poly;
+	poly.first.push_back(GetRotatedX(obj->info.x,offsetradius,offsetangle));
+	poly.second.push_back(GetRotatedY(obj->info.y,offsetradius,offsetangle));
+	//top right
+	offsetangle=GetOffsetAngle(0,0,obj->info.w-obj->info.HotSpotX,-obj->info.HotSpotY,-RADIANS(obj->info.angle));
+	offsetradius=GetOffsetRadius(0,0,obj->info.w-obj->info.HotSpotX,-obj->info.HotSpotY);
+	poly.first.push_back(GetRotatedX(obj->info.x,offsetradius,offsetangle));
+	poly.second.push_back(GetRotatedY(obj->info.y,offsetradius,offsetangle));
+	//bottom right
+	offsetangle=GetOffsetAngle(0,0,obj->info.w-obj->info.HotSpotX,obj->info.h-obj->info.HotSpotY,-RADIANS(obj->info.angle));
+	offsetradius=GetOffsetRadius(0,0,obj->info.w-obj->info.HotSpotX,obj->info.h-obj->info.HotSpotY);
+	poly.first.push_back(GetRotatedX(obj->info.x,offsetradius,offsetangle));
+	poly.second.push_back(GetRotatedY(obj->info.y,offsetradius,offsetangle));
+	//bottom left
+	offsetangle=GetOffsetAngle(0,0,-obj->info.HotSpotX,obj->info.h-obj->info.HotSpotY,-RADIANS(obj->info.angle));
+	offsetradius=GetOffsetRadius(0,0,-obj->info.HotSpotX,obj->info.h-obj->info.HotSpotY);
+	poly.first.push_back(GetRotatedX(obj->info.x,offsetradius,offsetangle));
+	poly.second.push_back(GetRotatedY(obj->info.y,offsetradius,offsetangle));
+	return poly;	
+}
+RECTF BoxFromPoly(POLY poly)
+{
+	RECTF rect;
+	rect.left=0;
+	rect.top=0;
+	rect.right=0;
+	rect.bottom=0;
+	if(poly.first.size()&&poly.second.size()&&poly.first.size()==poly.second.size())
+	{
+
+		rect.left=poly.first[0];
+		rect.top=poly.second[0];
+		rect.right=poly.first[0];
+		rect.bottom=poly.second[0];
+		for(int i=1;i<poly.first.size();i++)
+		{
+			if(poly.first[i]<rect.left)
+				rect.left=poly.first[i];
+			if(poly.first[i]>rect.right)
+				rect.right=poly.first[i];
+			if(poly.second[i]<rect.top)
+				rect.top=poly.second[i];
+			if(poly.second[i]>rect.bottom)
+				rect.bottom=poly.second[i];
+		}
+
+	}
+	return rect;
+}
+
+inline int PointInsidePoly(float x, float y, POLY& poly)
+{
+	
+	int npol=poly.first.size();
+	vector<float>& xp=poly.first;
+	vector<float>& yp=poly.second;
+	int i, j, c = 0;
+	i = 0;
+	j = npol-1;
+  for (i = 0, j = npol-1; i < npol; j = i++) {
+    if ( ((yp[i]>y) != (yp[j]>y)) &&
+	 (x < (xp[j]-xp[i]) * (y-yp[i]) / (yp[j]-yp[i]) + xp[i]) )
+       c = !c;
+  }
+	return c;
+}
 // Point/box overlaps.
 inline bool PointInsideBox(float x, float y, const RECTF& box)
 {
@@ -163,96 +253,148 @@ inline bool IsObjectUnscaled(CRunObject* o, CollisionMask& coll)
 {
 	return (o->info.w == coll.width && o->info.h == coll.height && o->info.displayangle == 0.0f);
 }
-
+int CRuntime::IsOverlapAngledBoxInMask64MMX(CRunObject* a, CRunObject* b) // a is box, b is obj
+{
+	OBJHEADER ainfo=a->info;
+	OBJHEADER binfo=b->info;
+	float offsetangle=GetOffsetAngle(a->info.x,a->info.y,b->info.x,b->info.y,RADIANS(a->info.angle));
+	float offsetradius=GetOffsetRadius(a->info.x,a->info.y,b->info.x,b->info.y);
+	b->info.x=GetRotatedX(a->info.x,offsetradius,offsetangle);
+	b->info.y=GetRotatedY(a->info.y,offsetradius,offsetangle);
+	b->info.angle-=a->info.angle;	
+	UpdateBoundingBox(b);
+	CollisionMask& collB = GetActiveMask(b);
+	a->info.angle=0;
+	UpdateBoundingBox(a);
+	
+	int overlap=IsOverlapBoxInMask64MMX(b, collB, a->info.box);
+	a->info=ainfo;
+	b->info=binfo;
+	UpdateBoundingBox(a);
+	UpdateBoundingBox(b);
+	
+	return overlap;
+}
 bool CRuntime::QueryCollision(CRunObject *a, CRunObject *b)
 {
 	if (a == NULL || b == NULL) return false;
 	if (a == b) return false;
 
 	// Check the collision algorithms A and B want
-	switch (a->info.collMode) {
+	switch (a->info.collMode) 
+	{
 
-	// 'A' using no collisions: fail
+		// 'A' using no collisions: fail
 	case COLLISIONMODE_NONE:
 		return false;
 
-	// 'A' using point (hotspot) only collisions
+		// 'A' using point (hotspot) only collisions
 	case COLLISIONMODE_POINT:
-		
-		switch (b->info.collMode) {
 
-		// B using no collisions: fail
+		switch (b->info.collMode) 
+		{
+
+			// B using no collisions: fail
 		case COLLISIONMODE_NONE:
 			return false;
 
-		// A and B using point collisions: match X/Y (unlikely but these are the settings)
+			// A and B using point collisions: match X/Y (unlikely but these are the settings)
 		case COLLISIONMODE_POINT:
 			return ((a->info.x == b->info.x) && (a->info.y == b->info.y));
 
-		// A is using points and B is using boxes: point-in-box check
+			// A is using points and B is using boxes: point-in-box check
 		case COLLISIONMODE_BOX:
 			return PointInsideBox(a->info.x, a->info.y, b->info.box);
 
-		// A is a point and B is using bitmasks:  check one pixel from the mask
+			// A is a point and B is using bitmasks:  check one pixel from the mask
 		case COLLISIONMODE_FINE:
-			
+
 			// First check if the pixel is inside the region
 			//if (!PointInsideBox(a->info.x, a->info.y, b->info.box)) - IsOverlapPointInMask performs this now
 			//	return false;
-			
+
 			// Else use the bitmask of B to find the overlap.
 			return IsOverlapPointInMask(a->info.x, a->info.y, b);
+
+		case COLLISIONMODE_ANGLED_BOX:
+			return PointInsidePoly(a->info.x, a->info.y, PolyFromObj(b));
+
 		}
 
-	// 'A' using bounding boxes
+		// 'A' using bounding boxes
 	case COLLISIONMODE_BOX:
 
-		switch (b->info.collMode) {
+		switch (b->info.collMode) 
+		{
 
-		// B using no collisions: fail
+
+			// B using no collisions: fail
 		case COLLISIONMODE_NONE:
 			return false;
 
-		// A using a box and B using a point:  point-in-box check
+			// A using a box and B using a point:  point-in-box check
 		case COLLISIONMODE_POINT:
 			return PointInsideBox(b->info.x, b->info.y, a->info.box);
 
-		// A and B using boxes:  do a box check
+			// A and B using boxes:  do a box check
 		case COLLISIONMODE_BOX:
 			return !NoBoxOverlap(a->info.box, b->info.box);
 
-		// A is using box checks and B is using fine collision: box-on-mask check
+			// A is using box checks and B is using fine collision: box-on-mask check
 		case COLLISIONMODE_FINE:
-			// TODO
-			//DAVODAVODAVO {
-		
-			// First test bounding boxes
-			if (NoBoxOverlap(a->info.box, b->info.box))
+			{
+				// TODO
+				//DAVODAVODAVO {
+
+				// First test bounding boxes
+				if (NoBoxOverlap(a->info.box, b->info.box))
+					return false;
+
+				// If first has invalid textures, assume box collision (we know box overlap from above)
+				if (b->info.pInfo->collisionMaskHandle == NULL)
+					return true;
+
+				// Okay use MMX
+				CollisionMask& collB = GetActiveMask(b);
+
+				return IsOverlapBoxInMask64MMX(b, collB, a->info.box)!=0;
+			}
+
+			// A is using angled box checks and B is using fine collision: angledbox-on-mask check
+		case COLLISIONMODE_ANGLED_BOX:
+			{
+				POLY poly=PolyFromObj(b);
+				bool overlap=false;
+				for(int i=0;i<4;i++)
+				{
+					if(PointInsideBox(poly.first[i], poly.second[i], a->info.box))
+						return true;
+				}
+				if(PointInsidePoly(a->info.box.left,a->info.box.top,poly))
+					return true;
+				if(PointInsidePoly(a->info.box.right,a->info.box.top,poly))
+					return true;
+				if(PointInsidePoly(a->info.box.left,a->info.box.bottom,poly))
+					return true;
+				if(PointInsidePoly(a->info.box.right,a->info.box.bottom,poly))
+					return true;
 				return false;
-
-			// If first has invalid textures, assume box collision (we know box overlap from above)
-			if (b->info.pInfo->collisionMaskHandle == NULL)
-				return true;
-
-			// Okay use MMX
-			CollisionMask& collB = GetActiveMask(b);
-			return IsOverlapBoxInMask64MMX(b, collB, a->info.box)!=0;
-
-			//}DAVODAVODAVO
+			}
 		}
 
-	// 'A' using bitmasks for fine collision
+		// 'A' using bitmasks for fine collision
 	case COLLISIONMODE_FINE:
 
-		switch (b->info.collMode) {
+		switch (b->info.collMode)
+		{
 
-		// B using no collisions: fail
+			// B using no collisions: fail
 		case COLLISIONMODE_NONE:
 			return false;
 
-		// A using mask and B using point: check one pixel from the mask
+			// A using mask and B using point: check one pixel from the mask
 		case COLLISIONMODE_POINT:
-			
+
 			// First check the point is inside the object
 			//if (!PointInsideBox(b->info.x, b->info.y, a->info.box)) - IsOverlapPointInMask performs this now
 			//	return false;
@@ -260,72 +402,151 @@ bool CRuntime::QueryCollision(CRunObject *a, CRunObject *b)
 			// Perform a fine test
 			return IsOverlapPointInMask(b->info.x, b->info.y, a);
 
-		// A using bitmasks and B using boxes:  box-in-mask check
+			// A using bitmasks and B using boxes:  box-in-mask check
 		case COLLISIONMODE_BOX:
-			
+
 			// TODO
 			//DAVODAVODAVO
 			{
-		
-			// First test bounding boxes
-			if (NoBoxOverlap(a->info.box, b->info.box))
-				return false;
 
-			// If first has invalid textures, assume box collision (we know box overlap from above)
-			if (a->info.pInfo->collisionMaskHandle == NULL)
-				return true;
+				// First test bounding boxes
+				if (NoBoxOverlap(a->info.box, b->info.box))
+					return false;
 
-			// Okay use MMX
-			CollisionMask& collA = GetActiveMask(a);
-			return IsOverlapBoxInMask64MMX(a, collA, b->info.box)!=0;
+				// If first has invalid textures, assume box collision (we know box overlap from above)
+				if (a->info.pInfo->collisionMaskHandle == NULL)
+					return true;
+
+				// Okay use MMX
+				CollisionMask& collA = GetActiveMask(a);
+				return IsOverlapBoxInMask64MMX(a, collA, b->info.box)!=0;
 
 
 			}
 			//}DAVODAVODAVO
-			
 
-		// A and B using masks:  mask-on-mask check
+
+			// A and B using masks:  mask-on-mask check
 		case COLLISIONMODE_FINE:
-			
-			// First test bounding boxes
-			if (NoBoxOverlap(a->info.box, b->info.box))
-				return false;
+			{
+				// First test bounding boxes
+				if (NoBoxOverlap(a->info.box, b->info.box))
+					return false;
 
-			// If either have invalid textures, assume box collision (we know box overlap from above)
-			if (a->info.pInfo->collisionMaskHandle == NULL || b->info.pInfo->collisionMaskHandle == NULL)
-				return true;
+				// If either have invalid textures, assume box collision (we know box overlap from above)
+				if (a->info.pInfo->collisionMaskHandle == NULL || b->info.pInfo->collisionMaskHandle == NULL)
+					return true;
 
-			CollisionMask& collA = GetActiveMask(a);
-			CollisionMask& collB = GetActiveMask(b);
+				CollisionMask& collA = GetActiveMask(a);
+				CollisionMask& collB = GetActiveMask(b);
 
-			// Either object is using an invalid mask - no collision can happen.
-			if (&collA == NULL || &collB == NULL)
-				return false;
+				// Either object is using an invalid mask - no collision can happen.
+				if (&collA == NULL || &collB == NULL)
+					return false;
 
-			// Check for any bounding box bitmasks (solid bitmasks)
-			/*if (collA.boundingbox) {
+				// Check for any bounding box bitmasks (solid bitmasks)
+				/*if (collA.boundingbox) {
 				if (collB.boundingbox)
-					return true;	// Bounding box overlap, known to be true from above
+				return true;	// Bounding box overlap, known to be true from above
 				else
-					// TODO: box-on-mask check
-					throw runtime_error("Unsupported collision query (box(mask)-on-mask): Not yet implemented");
-			}
-			else if (collB.boundingbox)
+				// TODO: box-on-mask check
+				throw runtime_error("Unsupported collision query (box(mask)-on-mask): Not yet implemented");
+				}
+				else if (collB.boundingbox)
 				// TODO: mask-on-box check
 				throw runtime_error("Unsupported collision query (box(mask)-on-mask): Not yet implemented");*/
 
-			// If possible, use the SSE algorithm.
-			// TODO: Not maintained.
-			/*
-			if (supportSSE) {
+				// If possible, use the SSE algorithm.
+				// TODO: Not maintained.
+				/*
+				if (supportSSE) {
 				int offset = (int)abs(a->info.box.left - b->info.box.left) % 128;
 				if (offset < 8 && offset >= 0)
-					return IsOverlapMaskInMask128SSE(a, b, collA, collB)!=0;
-			}
-			*/
-			// X offset is 8 pixels after 128 bit alignments: SSE algorithm
-			return IsOverlapMaskInMask64MMX(a, b, collA, collB)!=0;
+				return IsOverlapMaskInMask128SSE(a, b, collA, collB)!=0;
+				}
+				*/
+				// X offset is 8 pixels after 128 bit alignments: SSE algorithm
+				return IsOverlapMaskInMask64MMX(a, b, collA, collB)!=0;
 
+			}
+		case COLLISIONMODE_ANGLED_BOX: //last nonworking
+			// TODO
+			//DAVODAVODAVO {
+			//return true;
+			POLY poly=PolyFromObj(b);
+			RECTF box=BoxFromPoly(poly);
+			// First test bounding boxes
+			if (NoBoxOverlap(box, a->info.box))
+				return false;
+
+			// If first has invalid textures, assume box collision (we know box overlap from above)
+			if (b->info.pInfo->collisionMaskHandle == NULL)
+				return true;
+
+			// Okay use MMX
+
+			
+			return IsOverlapAngledBoxInMask64MMX(b,a)!=0;
+		}
+
+
+	case COLLISIONMODE_ANGLED_BOX:
+
+
+		switch (b->info.collMode)
+		{
+
+			// B using no collisions: fail
+		case COLLISIONMODE_NONE:
+			return false;
+
+			// A and B using point collisions: match X/Y (unlikely but these are the settings)
+		case COLLISIONMODE_POINT:
+			return PointInsidePoly(b->info.x, b->info.y, PolyFromObj(a));
+
+			// A is using points and B is using boxes: point-in-box check
+		case COLLISIONMODE_BOX:
+			{
+				POLY poly=PolyFromObj(a);
+				bool overlap=false;
+				for(int i=0;i<4;i++)
+				{
+					if(PointInsideBox(poly.first[i], poly.second[i], b->info.box))
+						return true;
+				}
+				return false;
+			}
+			// A is a point and B is using bitmasks:  check one pixel from the mask
+		case COLLISIONMODE_FINE://works fine
+			{
+				// TODO
+				//DAVODAVODAVO {
+
+				POLY poly=PolyFromObj(a);
+				RECTF box=BoxFromPoly(poly);
+				// First test bounding boxes
+				if (NoBoxOverlap(box, b->info.box))
+					return false;
+
+				// If first has invalid textures, assume box collision (we know box overlap from above)
+				if (a->info.pInfo->collisionMaskHandle == NULL)
+					return true;
+
+				// Okay use MMX
+				return IsOverlapAngledBoxInMask64MMX(a,b)!=0;
+			}
+		case COLLISIONMODE_ANGLED_BOX:
+			POLY polya=PolyFromObj(a);
+			POLY polyb=PolyFromObj(b);
+			bool overlap=false;
+			for(int i=0;i<4;i++)
+			{
+				if(PointInsidePoly(polya.first[i], polya.second[i], polyb))
+					return true;
+				if(PointInsidePoly(polyb.first[i], polyb.second[i], polya))
+					return true;
+			}
+			return false;
 		}
 	}
 
@@ -398,27 +619,36 @@ bool CRuntime::QueryPointCollision(int x, int y, CRunObject *obj)
 
 	switch (obj->info.collMode) {
 
-	// using no collisions: fail
+		// using no collisions: fail
 	case COLLISIONMODE_NONE:
 		return false;
 
-	// using point collisions: match X/Y (unlikely but these are the settings)
+		// using point collisions: match X/Y (unlikely but these are the settings)
 	case COLLISIONMODE_POINT:
 		return (fx == obj->info.x) && (fy == obj->info.y);
 
-	// using boxes: point-in-box check
+		// using boxes: point-in-box check
 	case COLLISIONMODE_BOX:
 		return PointInsideBox(fx, fy, obj->info.box);
 
-	// using bitmasks:  check one pixel from the mask
+		// using bitmasks:  check one pixel from the mask
 	case COLLISIONMODE_FINE:
-		
+
 		// First check if the pixel is inside the region - IsOverlapPointInMask performs this now
 		//if (!PointInsideBox(fx, fy, obj->info.box))
 		//	return false;
-		
+
 		// Else use the bitmask of B to find the overlap.
 		return IsOverlapPointInMask(fx, fy, obj);
+	
+		case COLLISIONMODE_ANGLED_BOX:
+
+		// First check if the pixel is inside the region - IsOverlapPointInMask performs this now
+		//if (!PointInsideBox(fx, fy, obj->info.box))
+		//	return false;
+
+		// Else use the bitmask of B to find the overlap.
+		return PointInsidePoly(fx, fy, PolyFromObj(obj));
 	}
 
 	// Shouldn't end up here, bad settings?
@@ -487,7 +717,7 @@ bool CRuntime::QueryScreenPointCollision(int x, int y, CRunObjType* type)
 	ObjConstIterator instances_end = type->instances.end();
 
 	for ( ; i != instances_end; i++) {
-		
+
 		float layerX = x;
 		float layerY = y;
 		ScreenToLayer((*i)->pLayout, (*i)->info.layer, layerX, layerY);
@@ -508,7 +738,7 @@ bool CRuntime::QuerySelectScreenPointCollision(int x, int y, CRunObjType* type)
 	bool ret = false;
 
 	for ( ; i != instances_end; i++) {
-		
+
 		float layerX = x;
 		float layerY = y;
 		ScreenToLayer((*i)->pLayout, (*i)->info.layer, layerX, layerY);
@@ -584,11 +814,11 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 	// Require at least 64 pixels of gutter space
 	if ((dest.pitch * 8) - (int)dest.width < align_pitch_bits)
 		dest.pitch += align_pitch_bytes;
-	
+
 	// Allocate unshifted mask
 	dest.mem_size = dest.pitch * dest.height + 16;
 	dest.bits[0] = (BYTE*)_aligned_malloc(dest.mem_size, 16);
-	
+
 	BYTE* bits = dest.bits[0];	// Shortcut to let us write directly to unshifted mask
 	BYTE* srcbits = src->bits[0];
 
@@ -611,13 +841,13 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 
 	// Loop every pixel (bit) of the dest mask to determine its bit
 
-// Tigs i dont know how to test for performance so define TUSER to compare urs to mine
+	// Tigs i dont know how to test for performance so define TUSER to compare urs to mine
 	// urs now works btw :) It'll be slower than before however coz ur bugged version
 	// didnt completely convert the pixels. I highly recommend we create a mask where each 
 	// byte represents 1 pixel so we can easily read from it coz the method used atm is
 	// probably rather slow. My orignal collision class had one :P
 
-//#define TUSER
+	//#define TUSER
 #ifdef TUSER
 
 	float srcXf = 0;
@@ -643,7 +873,7 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 	}//for
 
 #else	// davos method
-	
+
 	int count = 0;
 	BYTE bEight;//[8];
 	float angle = obj->info.displayangle;
@@ -669,7 +899,7 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 				b &= 1 << (7 - (srcX % 8));
 				b >>= (7 - (srcX % 8));
 				//b = (b >> (7-srcX % 8))%2;	// Optimization of the 2 above
-								
+
 				bEight = (bEight << 1) | b;
 				count++;
 				if(count == 8)
@@ -734,7 +964,7 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 			float fxsy = (-hsX) * sinA * scaleY;
 
 			bits[y * destPitch] = 0;
-			
+
 			for (int x = 0; x < pxWidth; x++, fxcx += cosAscaleX, fxsy += sinAscaleY) 
 			{
 				// Transform this pixel (x,y) to a source pixel
@@ -795,7 +1025,7 @@ void CRuntime::GenerateScaledMask(CRunObject* obj, CollisionMask* src)
 					count = 0;
 					bEight = 0;
 				}
-				
+
 
 				//further optimisations : we have bEight as an array of 8 and we create
 				// the other masks at the same time. Prevents reading and writing 8 times
@@ -898,7 +1128,6 @@ CollisionMask& CRuntime::GetActiveMask(CRunObject *obj)
 
 			// Allocates a new curMask, generates scaled mask and shifted masks
 			GenerateScaledMask(obj, srcMask);
-
 			// Return freshly allocated
 			return *(dynMask.curMask);
 		}
@@ -1028,7 +1257,7 @@ int CRuntime::IsOverlapBoxInMask64MMX(CRunObject* a, CollisionMask& collA, RECTF
 	}
 
 	__m64* mask = (__m64*)&edge[0];
-	
+
 	__m64 result;
 
 	ya = xStart;
@@ -1065,10 +1294,9 @@ int CRuntime::IsOverlapMaskInMask64MMX(CRunObject *a, CRunObject *b, CollisionMa
 
 	CollisionMask& collA = (ALeftOfB ? coll1 : coll2);
 	CollisionMask& collB = (ALeftOfB ? coll2 : coll1);
-
 	assert(collA.mem_size > 0);
 	assert(collB.mem_size > 0);
-	
+
 	RECTF& boxA = infoA.box;
 	RECTF& boxB = infoB.box;
 
@@ -1076,14 +1304,14 @@ int CRuntime::IsOverlapMaskInMask64MMX(CRunObject *a, CRunObject *b, CollisionMa
 
 	__m64 *xa, *xb, *ya, *yb, *xEnd, *yEnd;
 	BYTE *bitsA, *bitsB;
-	
+
 	// Overlapping rects relative to A and B
 	RECT overlapA, overlapB;
 
 	// Determine the relative overlap rectanges for A and B, knowing A is to the left of B
 	overlapA.left = Roundl(boxB.left - boxA.left);
 	overlapB.left = 0;
-	
+
 	if (AaboveB) {
 		overlapA.top = Roundl(boxB.top - boxA.top); 
 		overlapB.top = 0;
@@ -1137,14 +1365,14 @@ int CRuntime::IsOverlapMaskInMask64MMX(CRunObject *a, CRunObject *b, CollisionMa
 
 	int yastep = collA.pitch / (algorithm_integral_bits / 8);
 	int ybstep = collB.pitch / (algorithm_integral_bits / 8);
-	
+
 	//int yaEndDiff = yastep * floor(overlapA_bottomf - overlapA_topf);
 	int yaEndDiff = yastep * (overlapA.bottom - overlapA.top); // This used to not work because bottom and top weren't rounded right, but now it does
 	__m64 result;
 
 	// For each horizontal step in the bitmask
 	for ( ; xa != xEnd; xa++, xb++) {
-		
+
 		// Start Y pointers from X
 		ya = xa;
 		yb = xb;
@@ -1194,7 +1422,7 @@ int CRuntime::IsOverlapMaskInMask128SSE(CRunObject *a, CRunObject *b, CollisionM
 
 	CollisionMask& collA = (ALeftOfB ? coll1 : coll2);
 	CollisionMask& collB = (ALeftOfB ? coll2 : coll1);
-	
+
 	RECTF& boxA = infoA.box;
 	RECTF& boxB = infoB.box;
 
@@ -1202,40 +1430,40 @@ int CRuntime::IsOverlapMaskInMask128SSE(CRunObject *a, CRunObject *b, CollisionM
 
 	__m128 *xa, *xb, *ya, *yb, *xEnd, *yEnd;
 	BYTE *bitsA, *bitsB;
-	
+
 	// Overlapping rects relative to A and B
 	RECT overlapA, overlapB;
 
 	// Determine the relative overlap rectanges for A and B, knowing A is to the left of B
 	overlapA.left = boxB.left - boxA.left;
 	overlapB.left = 0;
-	
+
 	if (AaboveB) {
-		overlapA.top = boxB.top - boxA.top;
-		overlapB.top = 0;
+	overlapA.top = boxB.top - boxA.top;
+	overlapB.top = 0;
 	}
 	// B above A
 	else {
-		overlapA.top = 0;
-		overlapB.top = boxA.top - boxB.top;
+	overlapA.top = 0;
+	overlapB.top = boxA.top - boxB.top;
 	}
 
 	if (boxB.right > boxA.right) {
-		overlapA.right = boxA.right - boxA.left;
-		overlapB.right = boxA.right - boxB.left;
+	overlapA.right = boxA.right - boxA.left;
+	overlapB.right = boxA.right - boxB.left;
 	}
 	else {
-		overlapA.right = boxB.right - boxA.left;
-		overlapB.right = boxB.right - boxB.left;
+	overlapA.right = boxB.right - boxA.left;
+	overlapB.right = boxB.right - boxB.left;
 	}
 
 	if (boxB.bottom > boxA.bottom) {
-		overlapA.bottom = boxA.bottom - boxA.top;
-		overlapB.bottom = boxA.bottom - boxB.top;
+	overlapA.bottom = boxA.bottom - boxA.top;
+	overlapB.bottom = boxA.bottom - boxB.top;
 	}
 	else {
-		overlapA.bottom = boxB.bottom - boxA.top;
-		overlapB.bottom = boxB.bottom - boxB.top;
+	overlapA.bottom = boxB.bottom - boxA.top;
+	overlapB.bottom = boxB.bottom - boxB.top;
 	}
 
 	// A is leftmost: use preshifted mask to shunt A's bits in line to B's.
@@ -1254,7 +1482,7 @@ int CRuntime::IsOverlapMaskInMask128SSE(CRunObject *a, CRunObject *b, CollisionM
 
 	// Make sure we hit additional pixels (eg. width 70 / 64 = 1, whereas we need 2 iters)
 	if ((overlapA.right - overlapA.left) % algorithm_integral_bits != 0)
-		xEnd++;
+	xEnd++;
 
 	int yastep = collA.pitch / (algorithm_integral_bits / 8);
 	int ybstep = collB.pitch / (algorithm_integral_bits / 8);
@@ -1264,25 +1492,25 @@ int CRuntime::IsOverlapMaskInMask128SSE(CRunObject *a, CRunObject *b, CollisionM
 
 	// For each horizontal step in the bitmask
 	for ( ; xa != xEnd; xa++, xb++) {
-		
-		// Start Y pointers from X
-		ya = xa;
-		yb = xb;
 
-		// Find end
-		yEnd = ya + yaEndDiff;
+	// Start Y pointers from X
+	ya = xa;
+	yb = xb;
 
-		for ( ; ya != yEnd; ya += yastep, yb += ybstep) {
+	// Find end
+	yEnd = ya + yaEndDiff;
 
-			// SSE 128-bit logical AND
-			result = _mm_and_ps(*ya,*yb);
+	for ( ; ya != yEnd; ya += yastep, yb += ybstep) {
 
-			// Native 32-bit check for collision
-			if (result.m128_u32[0] || result.m128_u32[1] || result.m128_u32[2] || result.m128_u32[3]) {
-				//_mm_empty();
-				return true;
-			}
-		}
+	// SSE 128-bit logical AND
+	result = _mm_and_ps(*ya,*yb);
+
+	// Native 32-bit check for collision
+	if (result.m128_u32[0] || result.m128_u32[1] || result.m128_u32[2] || result.m128_u32[3]) {
+	//_mm_empty();
+	return true;
+	}
+	}
 	}
 
 	// Never found anything.  After all that!
@@ -1355,10 +1583,10 @@ void CRuntime::AddMaskToMask(CollisionMask* src, CollisionMask* dest, int _x, in
 
 
 
-		
+
 		// For each horizontal step in the bitmask
 		for ( ; xa != xEnd; xa++, xb++) {
-			
+
 			// Start Y pointers from X
 			ya = xa;
 			yb = xb;
@@ -1406,7 +1634,7 @@ void CRuntime::GenerateCollisionMaskFromTexture(CRunObject* obj, TextureHandle t
 	generatedMask->boundingbox = 0;
 	generatedMask->width = obj->info.w;
 	generatedMask->height = obj->info.h;
-	
+
 	// Determine pitch
 	const int align_pitch_bits = 64;
 	const int align_pitch_bytes = align_pitch_bits / 8;
@@ -1430,7 +1658,7 @@ void CRuntime::GenerateCollisionMaskFromTexture(CRunObject* obj, TextureHandle t
 	// Allocate bits and start with an empty mask
 	generatedMask->mem_size = height * pitch + 16;
 	generatedMask->bits[0] = (BYTE*)_aligned_malloc(generatedMask->mem_size, 16);
-	
+
 	memset(generatedMask->bits[0], 0, generatedMask->mem_size);
 
 	HRESULT hr;
@@ -1512,7 +1740,7 @@ float CRuntime::CalculateBounceAngle(CRunObject* obj, float input_angle, CRunObj
 	const float col_radius = 16.0;
 	const float col_count = PI * col_radius * 2;
 	const float col_half_count = col_count / 2.0;
-	
+
 	float col_vector_x = 0;
 	float col_vector_y = 0;
 

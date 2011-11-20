@@ -373,6 +373,7 @@ public:
 
 	// COLLISION ALGORITHMS
 	CollisionMask&	GetActiveMask(CRunObject* obj);
+
 	void		FreeMask(CollisionMask& m);
 	void		FreeMask(CollisionMask* m);
 	void		GenerateScaledMask(CRunObject* obj, CollisionMask* src);
@@ -387,6 +388,8 @@ public:
 	//DAVODAVODAVO{
 	int			IsOverlapBoxInMask64MMX(CRunObject *a, CollisionMask& coll1, RECTF rect);
 	//}s
+	int			IsOverlapAngledBoxInMask64MMX(CRunObject* a, CRunObject* b);
+	
 	// MMX enabled 64 bit unscaled bitmask algorithm
 	int			IsOverlapMaskInMask64MMX(CRunObject *a, CRunObject *b, CollisionMask& collA, CollisionMask& collB);
 
