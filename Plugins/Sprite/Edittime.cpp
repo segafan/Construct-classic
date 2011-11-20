@@ -26,7 +26,7 @@ BEGIN_PROPERTY_TABLE();
 	PROPERTY_BUTTON("Make 1:1", "Size", "Click to make the object the original size.", BtnMakeOriginalSize());
 	PROPERTY_EDIT (startAnim, "Start Animation", "Name of the animation that is playing on startup");
 	PROPERTY_VALUE (startFrame, "Start Frame", "Number of the first frame to play (starting at 1)");
-	PROPERTY_COMBO(collMode, "Collisions", "Per Pixel", "None|Point|Bounding box|Per Pixel");
+	PROPERTY_COMBO(collMode, "Collisions", "Per Pixel", "None|Point|Bounding box|Per Pixel|Angled box");
 PROPERTY_NEW_CATEGORY("Appearance", "Options for appearance");
 	PROPERTY_BOOL	(hideAtStart, "Invisible on start", "Make the object invisible when the layout starts.");
 	PROPERTY_FLOAT  (skewX, "Skew X", "Horizontal skew of the object, in pixels.");
