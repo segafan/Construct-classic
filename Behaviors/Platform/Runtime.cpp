@@ -137,6 +137,14 @@ void ExtObject::OnCreate()
 		jumping = pRuntime->GetPresetAnimation(root, 3);
 		falling = pRuntime->GetPresetAnimation(root, 4);
 	}
+	else
+	{
+			
+		stopped = NULL;
+		walking = NULL;
+		jumping = NULL;
+		falling = NULL;
+	}
 
 	// Setting this to false will disable the moving of an object with a platofrm
 	bMove_with_platform = true;
