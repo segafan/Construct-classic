@@ -22,6 +22,26 @@
 #define COMMONACE_IDS
 #define COMMONACE_COUNT_DESTROY
 
+	class DistortInfo {
+public:
+	float x;
+	float y;
+	float u;
+	float v;
+	cr::color filter;
+	float z;
+	
+	DistortInfo(){
+		x = 0;
+		y = 0;
+		u = 0;
+		v = 0;
+		z = 0;
+		filter = cr::color(1.0, 1.0, 1.0, 1.0);
+	}
+
+	void Serialize(bin& ar);
+};
 // Draw command queue
 class DrawCommand {
 public:
@@ -94,6 +114,21 @@ public:
 
 	long eGetValue(LPVAL theParams, ExpReturn& ret);
 
+
+	//distortmap stuff
+		long aSetDistortMapSize(LPVAL theParams);
+	long aSetDisplacementAt(LPVAL theParams);
+	long aSetDisplacementRealAt(LPVAL theParams);
+		long eGetMeshCols(LPVAL params, ExpReturn& ret);
+	long eGetMeshRows(LPVAL params, ExpReturn& ret);
+
+	long eGetMeshX(LPVAL params, ExpReturn& ret);
+	long eGetMeshY(LPVAL params, ExpReturn& ret);
+	long eGetMeshZ(LPVAL params, ExpReturn& ret);
+	long eGetMeshU(LPVAL params, ExpReturn& ret);
+	long eGetMeshV(LPVAL params, ExpReturn& ret);
+	long eGetMeshFilter(LPVAL params, ExpReturn& ret);
+	long eGetMeshOpacity(LPVAL params, ExpReturn& ret);
 	////////////////////////////////////////////////////
 	// Private values
 	vector<ExpStore> privateVars;
@@ -119,6 +154,11 @@ public:
 	int pfcellW;
 	int pfcellH;
 	unsigned short* pfMap;
+
+//distortmaps
+
+	vector< vector< DistortInfo > > distort;
+	void RenderDistorted();
 
 };
 

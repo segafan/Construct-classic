@@ -181,7 +181,78 @@ long ExtObject::aResize(LPVAL params)
 	}
 	return 0;
 }
+long ExtObject::aSetDistortMapSize(LPVAL theParams)
+{
+	long x = theParams[0].GetInt() + 1;
+	long y = theParams[1].GetInt() + 1;
 
+	// DX9 renderer only supports up to 20,000 vertices per batch; fail if too many vertices created
+	if (x * y >= 20000 || (x-1) * (y-1) * 6 >= 30000) {
+		pRuntime->AddDebugLogMessage("Sprite: cannot support a distort map that large (W x H x 6 must be < 30000)");
+		return 0;
+	}
+
+	distort.resize(x);
+
+	for(int i = 0; i < x; i++)
+		distort[i].resize(y);
+
+	return 0;
+}
+
+long ExtObject::aSetDisplacementAt(LPVAL theParams)
+{
+	long x = theParams[0].GetInt();
+	long y = theParams[1].GetInt();	
+
+	if(x < distort.size()){
+		if(y < distort[x].size()){
+			distort[x][y].x = theParams[2].GetFloat() / info.w;
+			distort[x][y].y = theParams[3].GetFloat() / info.h;
+			distort[x][y].u = theParams[4].GetFloat() / info.w;
+			distort[x][y].v = theParams[5].GetFloat() / info.h;
+
+			cr::color c(theParams[6].GetColorRef());	// vertex rgb color
+			c.a = theParams[7].GetFloat() / 100.0f;		// vertex opacity
+			Clamp(c.a, 0.0f, 1.0f);
+			distort[x][y].filter = c;
+
+			distort[x][y].z = theParams[8].GetFloat();
+
+		}
+	}
+	return 0;
+}
+
+long ExtObject::aSetDisplacementRealAt(LPVAL theParams)
+{
+	long x = theParams[0].GetInt();
+	long y = theParams[1].GetInt();	
+
+	if(x < distort.size()){
+		if(y < distort[x].size()){
+			cr::point pos( theParams[2].GetFloat(), theParams[3].GetFloat() );
+			pos -= cr::point( info.x, info.y );
+			pos.rotate(-cr::to_radians(info.angle));
+			pos += cr::point(info.HotSpotX, info.HotSpotY);
+			pos /= cr::point( info.w, info.h);
+			pos -= cr::point( x / float(distort.size()-1), y / float(distort[0].size()-1));
+
+			distort[x][y].x = pos.x; 
+			distort[x][y].y = pos.y;
+			distort[x][y].u = theParams[4].GetFloat() / info.w;
+			distort[x][y].v = theParams[5].GetFloat() / info.h;
+			distort[x][y].z = theParams[8].GetFloat();
+
+			cr::color c(theParams[6].GetColorRef());	// vertex rgb color
+			c.a = theParams[7].GetFloat() / 100.0f;		// vertex opacity
+			Clamp(c.a, 0.0f, 1.0f);
+			distort[x][y].filter = c;
+
+		}
+	}
+	return 0;
+}
 //////////////////////////////////////////////////////////////////////////////////
 // Expressions
 //////////////////////////////////////////////////////////////////////////////////
@@ -236,6 +307,96 @@ void ExtObject::GenerateCollision()
 		pRuntime->GenerateCollisionMaskFromTexture(this, info.curTexture);
 	}
 }
+long ExtObject::eGetMeshCols(LPVAL params, ExpReturn& ret)
+{
+	return ret = distort.size() - 1;
+}
+
+long ExtObject::eGetMeshRows(LPVAL params, ExpReturn& ret)
+{
+	if (distort.empty())
+		return ret = 0;
+
+	return ret = distort.front().size() - 1;
+}
+
+long ExtObject::eGetMeshX(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = distort[col][row].x;
+}
+
+long ExtObject::eGetMeshY(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = distort[col][row].y;
+}
+
+long ExtObject::eGetMeshZ(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = distort[col][row].z;
+}
+
+long ExtObject::eGetMeshU(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = distort[col][row].u * info.w;
+}
+
+long ExtObject::eGetMeshV(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = distort[col][row].v * info.h;
+}
+
+long ExtObject::eGetMeshFilter(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = (UINT)distort[col][row].filter.getCOLORREF();
+}
+
+long ExtObject::eGetMeshOpacity(LPVAL params, ExpReturn& ret)
+{
+	UINT col = params[0].GetInt();
+	UINT row = params[1].GetInt();
+
+	if (distort.empty() || col < 0 || row < 0 || col >= distort.size() || row >= distort.front().size())
+		return ret = 0;
+
+	return ret = distort[col][row].filter.a * 100.0;
+}
+
 #endif // #ifdef RUN_ONLY
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -344,6 +505,69 @@ void DefineACES(MicroAceTime* at)
 
 	ADDPARAM(PARAM_PRIVATEVARIABLE, "'Variable name'", "Name of value.");
 	ADDEXP("Get private variable", "Private variables", "Value", &ExtObject::eGetValue, 0);
+
+
+
+
+
+	// additional distortmap stuff
+	ADDPARAMDEF(PARAM_VALUE, "Columns", "The number of columns in the distort map.", "1");
+	ADDPARAMDEF(PARAM_VALUE, "Rows", "The number of rows in the distort map", "1");
+	ADDACT("Set distort map size", "Distort Map", "Set distort map size to %0, %1", &ExtObject::aSetDistortMapSize, "SetDistortMapSize", 0);
+
+	ADDPARAMDEF(PARAM_VALUE, "Column", "Column number", 0);
+	ADDPARAMDEF(PARAM_VALUE, "Row", "Row number", 0);
+	ADDPARAMDEF(PARAM_VALUE, "X displace", "X displacement", 0);
+	ADDPARAMDEF(PARAM_VALUE, "Y displace", "Y displacement", 0);
+	ADDPARAMDEF(PARAM_VALUE, "U displace", "U displacement", 0);
+	ADDPARAMDEF(PARAM_VALUE, "V displace", "V displacement", 0);
+	ADDPARAMDEF(PARAM_COLOR, "Filter", "The colour", "16777215");
+	ADDPARAMDEF(PARAM_VALUE, "Opacity", "The opacity", "100");
+	ADDPARAMDEF(PARAM_VALUE, "Z position", "Z position", 0);
+	ADDACT("Set relative displacement at", "Distort Map", "Set relative displacement at (%0, %1) to XYZ(%2, %3, %8) UV(%4, %5) %7 % %6", &ExtObject::aSetDisplacementAt, "SetDisplacementAt", 0);
+
+
+	ADDPARAMDEF(PARAM_VALUE, "Column", "Column number", 0);
+	ADDPARAMDEF(PARAM_VALUE, "Row", "Row number", 0);
+	ADDPARAMDEF(PARAM_VALUE, "X position", "X position", 0);
+	ADDPARAMDEF(PARAM_VALUE, "Y positon", "Y position", 0);
+	ADDPARAMDEF(PARAM_VALUE, "U displace", "U position", 0);
+	ADDPARAMDEF(PARAM_VALUE, "V displace", "V position", 0);
+	ADDPARAMDEF(PARAM_COLOR, "Filter", "The colour", "16777215");
+	ADDPARAMDEF(PARAM_VALUE, "Opacity", "The opacity", "100");
+	ADDPARAMDEF(PARAM_VALUE, "Z position", "Z position", 0);
+	ADDACT("Set absolute displacement at", "Distort Map", "Set absolute displacement at (%0, %1) to XYZ(%2, %3, %8) UV(%4, %5) %7 % %6", &ExtObject::aSetDisplacementRealAt, "SetDisplacementRealAt", 0);
+
+	ADDEXP("Get mesh columns", "Distort Map", "MeshCols", &ExtObject::eGetMeshCols, RETURN_VALUE);
+	ADDEXP("Get mesh rows", "Distort Map", "MeshRows", &ExtObject::eGetMeshRows, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex X", "Distort Map", "VertexX", &ExtObject::eGetMeshX, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex Y", "Distort Map", "VertexY", &ExtObject::eGetMeshY, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex Z", "Distort Map", "VertexZ", &ExtObject::eGetMeshZ, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex U", "Distort Map", "VertexU", &ExtObject::eGetMeshU, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex V", "Distort Map", "VertexV", &ExtObject::eGetMeshV, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex filter", "Distort Map", "VertexFilter", &ExtObject::eGetMeshFilter, RETURN_VALUE);
+
+	ADDPARAM(PARAM_VALUE, "Column", "Column to retrieve from");
+	ADDPARAM(PARAM_VALUE, "Row", "Row to retrieve from");
+	ADDEXP("Vertex opacity", "Distort Map", "VertexOpacity", &ExtObject::eGetMeshOpacity, RETURN_VALUE);
 
 #include "..\..\Common\CommonAceTable.hpp"
 }

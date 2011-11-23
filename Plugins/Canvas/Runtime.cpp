@@ -223,8 +223,93 @@ void ExtObject::Draw()
 	renderer->SetTexture(info.curTexture);
 
 	point hotspot(info.HotSpotX, info.HotSpotY);
-
+if (distort.empty()) 
 	renderer->Quad_xywh(info.x, info.y, info.w, info.h, info.angle, hotspot, info.pInfo->filter);
+else 
+		RenderDistorted();
+}
+float lerp(float a, float b, float x)
+{
+	return a + x * (b - a);
+}
+
+point lerp2D(point a, point b, point i)
+{
+	return point(lerp(a.x, b.x, i.x), lerp(a.y, b.y, i.y));
+}
+void ExtObject::RenderDistorted()
+{
+	// Enable tiling for distort maps.
+	cr::samplerstate_value old_addressu = renderer->GetSamplerState(cr::ss_addressu);
+	cr::samplerstate_value old_addressv = renderer->GetSamplerState(cr::ss_addressv);
+
+	renderer->SetSamplerState(cr::ss_addressu, cr::ssv_wrap);
+	renderer->SetSamplerState(cr::ss_addressv, cr::ssv_wrap);
+
+	const point hotspot(info.HotSpotX, info.HotSpotY);
+
+	rect rc(cr::rect_xywh(info.x, info.y, info.w, info.h));
+	quad q;
+
+	if (info.angle == 0.0)
+		q = quad(rc - hotspot);
+	else
+		q = (rc - hotspot).rotate_to_quad(cr::to_radians(info.angle), hotspot);
+
+	rect unrotated_box(rc - hotspot);
+
+	int cx = distort.size();
+	int cy = distort.front().size();
+
+	UINT vertex_count = cx * cy;
+	UINT index_count = (cx - 1) * (cy - 1) * 6;
+	renderer->BeginBatchQuads(vertex_count, index_count);
+
+	for (int y = 0; y < cy - 1; y++) {
+		for (int x = 0; x < cx - 1; x++) {
+			// Add six indices for this quad
+			renderer->AddIndex(x + y * cx);
+			renderer->AddIndex((x+1) + y * cx);
+			renderer->AddIndex(x + (y+1) * cx);
+			renderer->AddIndex(x + (y+1) * cx);
+			renderer->AddIndex((x+1) + y * cx);
+			renderer->AddIndex((x+1) + (y+1) * cx);
+		}
+	}
+
+	float xsize = cx;
+	float ysize = cy;
+
+	point tex_scale(info.curTexture->xf, info.curTexture->yf);
+	//point object_scale_factor(info.w / info.curTexture->image_widthf, info.h / info.curTexture->image_heightf);
+	point object_scale_factor(1,1);
+
+	float average_scale_factor = (object_scale_factor.x + object_scale_factor.y) / 2.0f;
+
+	for (int y = 0; y < cy; y++) {
+		for (int x = 0; x < cx; x++) {
+
+			const DistortInfo& di = distort[x][y];
+
+			point current_ratio((float)x / (xsize - 1.0f), (float)y / (ysize - 1.0f));
+			point p(lerp2D(unrotated_box.topleft(), unrotated_box.bottomright(), current_ratio));
+			p += point(di.x * info.w, di.y * info.h) * object_scale_factor;		// xy offset
+
+			if (info.angle != 0.0)
+				p.rotate(cr::to_radians(info.angle), info.x, info.y);
+
+			cr::point3d final_pt(p.x, p.y, (di.z + info.pInfo->z_elevation) * average_scale_factor);
+			
+			point uv_offset(di.u, di.v);
+			point uv(current_ratio + uv_offset);
+
+			renderer->AddVertex(final_pt, uv * tex_scale, di.filter * info.pInfo->filter);
+		}
+	}
+
+	// Restore previous wrap mode
+	renderer->SetSamplerState(cr::ss_addressu, old_addressu);
+	renderer->SetSamplerState(cr::ss_addressv, old_addressv);
 }
 
 // WindowProc:  called when a window message, or WM_COMMAND specifying your window,
