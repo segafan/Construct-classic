@@ -38,10 +38,19 @@ long ExtObject::aSetActivated(LPVAL theParams)
 long ExtObject::aForceDragDrop(LPVAL theParams)
 {
 	CRunLayer* pLayer = pRuntime->GetObjectLayer(pLink);
-	dx = pLink->info.x - pLayer->mouseX;
-	dy = pLink->info.y - pLayer->mouseY;
-	dragging=theParams[0].GetBool();
-
+	switch(theParams[0].GetInt())
+	{
+	case 0://drop
+		dragging=false;
+		return 0;
+	case 1://drag		
+		dx = pLink->info.x - pLayer->mouseX;
+		dy = pLink->info.y - pLayer->mouseY;
+		dragging=true;
+		return 0;
+	case 2://ignore
+		ignore=true;
+	}
 	return 0;
 }
 
@@ -95,7 +104,7 @@ void DefineACES(MicroAceTime* at)
 	ADDPARAMCOMBO("Activation", "Choose whether the movement is activated or deactivated", "Deactivate|Activate");
 	ADDACT("Set activated", "Settings", "%0 Drag & Drop movement", &ExtObject::aSetActivated, "SetActivated", 0);	
 	
-	ADDPARAMCOMBO("Drag", "Choose whether to force a drag or a drop", "drop|drag");
+	ADDPARAMCOMBO("Drag", "Choose whether to force a drag or a drop", "drop|drag|ignore");
 	ADDACT("Force Drag|Drop", "Movement", "Force %0", &ExtObject::aForceDragDrop, "ForceDragDrop", 0);	
 
 }

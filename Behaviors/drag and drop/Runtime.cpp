@@ -25,6 +25,7 @@ ExtObject::ExtObject(initialObject* editObject, VRuntime* pVRuntime)
 // valid to read here.
 void ExtObject::OnCreate()
 {
+	ignore=false;
 	allowoff=true;
 	bin ar;
 	ar.attach(info.editObject->eData, info.editObject->eSize);
@@ -66,6 +67,7 @@ ExtObject::~ExtObject()
 // overridable in the following events
 BOOL ExtObject::OnFrame()
 {
+	
 	if (want_to_start) 
 	{
 		// Check if others want to start and pick topmost
@@ -111,7 +113,7 @@ BOOL ExtObject::OnFrame()
 	POINT mouse;
 			GetCursorPos(&mouse);
 			pRuntime->ScreenToScreen(mouse);
-	if (dragging&&(allowoff||IsMouseOverWindow(parentWnd.m_hWnd, mouse.x, mouse.y,true))) 
+	if (dragging&&!ignore&&(allowoff||IsMouseOverWindow(parentWnd.m_hWnd, mouse.x, mouse.y,true))) 
 	{
 		CRunLayer* pLayer = pRuntime->GetObjectLayer(pLink);
 
@@ -134,6 +136,7 @@ BOOL ExtObject::OnFrame()
 
 		pRuntime->UpdateBoundingBox(pLink);
 	}
+	ignore=false;
 parentWnd.Detach();
 	return !activated;
 }

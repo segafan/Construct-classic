@@ -68,6 +68,7 @@ bool allowoff;
 
 	bool dragging;
 	int dx, dy;
+	bool ignore;
 
 	int axis;
 
