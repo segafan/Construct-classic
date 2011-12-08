@@ -31,6 +31,7 @@
 BEGIN_PROPERTY_TABLE();
 	PROPERTY_COMBO(axis, "Axis", "The axis this object can be dragged on", "Both|Horizontal|Vertical");
 	PROPERTY_COMBO(mouse_button, "Mouse button", "Mouse button that can drag the object", "Left|Middle|Right");
+	PROPERTY_COMBO(allowoff, "Allow out of window", "Continue dragging while mouse is out of window", "False|True");
 //	PROPERTY_VALUE(x_limit, "X limit", "The maximum horizontal drag that can occur, 0 for unlimited");
 //	PROPERTY_VALUE(y_limit, "Y limit", "The maximum vertical drag that can occur, 0 for unlimited");
 END_PROPERTY_TABLE  ();
@@ -49,6 +50,7 @@ EditExt::EditExt(VEditTime* pVEditTime, editInfo* pEInfo)
 
 	axis = 0;
 	mouse_button = 0;
+	allowoff=false;
 
 	x_limit = 0;
 	y_limit = 0;
@@ -101,7 +103,7 @@ BOOL EditExt::OnSizeObject()
 
 void EditExt::Serialize(bin& ar)
 {
-	int Version = 2;
+	int Version = 3;
 	SerializeVersion(ar, Version);
 
 	if (ar.loading)
@@ -110,6 +112,12 @@ void EditExt::Serialize(bin& ar)
 
 		if (Version >= 2)
 			ar >> axis >> x_limit >> y_limit;
+
+		if (Version >= 3)
+		{
+			bool serialallow=allowoff==0?false:true;
+			ar >> serialallow;
+		}
 		
 	}
 	else
@@ -118,6 +126,7 @@ void EditExt::Serialize(bin& ar)
 		ar << axis;	
 		ar << x_limit;
 		ar << y_limit;
+		ar << allowoff;
 	}
 }
 

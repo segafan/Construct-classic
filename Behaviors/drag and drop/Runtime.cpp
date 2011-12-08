@@ -25,13 +25,16 @@ ExtObject::ExtObject(initialObject* editObject, VRuntime* pVRuntime)
 // valid to read here.
 void ExtObject::OnCreate()
 {
+	allowoff=true;
 	bin ar;
 	ar.attach(info.editObject->eData, info.editObject->eSize);
-
+	
 	int Version = 0;
 	ar >> Version;
 
 	ar >> mouseButton >> axis >> x_limit >> y_limit;
+	if(Version>=3)
+		ar >> allowoff;
 	ar.detach();
 
 	mouse[0] = false;
@@ -101,7 +104,14 @@ BOOL ExtObject::OnFrame()
 	want_to_start = false;
 
 	// do dragging
-	if (dragging) 
+		CWnd parentWnd;
+	parentWnd.Attach(pRuntime->GetFrameHwnd(pLayout));
+
+
+	POINT mouse;
+			GetCursorPos(&mouse);
+			pRuntime->ScreenToScreen(mouse);
+	if (dragging&&(allowoff||IsMouseOverWindow(parentWnd.m_hWnd, mouse.x, mouse.y,true))) 
 	{
 		CRunLayer* pLayer = pRuntime->GetObjectLayer(pLink);
 
@@ -124,7 +134,7 @@ BOOL ExtObject::OnFrame()
 
 		pRuntime->UpdateBoundingBox(pLink);
 	}
-
+parentWnd.Detach();
 	return !activated;
 }
 
@@ -238,17 +248,18 @@ void ExtObject::OnDebuggerValueChanged(const char* name, const char* value)
 
 void ExtObject::Serialize(bin& ar)
 {
+	
 	if (ar.loading) {
 		// Reset drag state
 		dragging = false;
 
-		ar >> mouseButton >> activated;
+		ar >> mouseButton >> activated >> allowoff;
 
 		if (activated)
 			pRuntime->CallOnFrame(this);
 	}
 	else {
-		ar << mouseButton << activated;
+		ar << mouseButton << activated << allowoff;
 	}
 
 }
@@ -285,6 +296,33 @@ long ExtObject::ReturnDefaultValue(LPVAL theParams, ExpReturn& ret)
 long ExtObject::ReturnUndefinedExpression(CString& expName, LPVAL theParams, ExpReturn& ret)
 {
 	return ret = 0;
+}
+
+const bool ExtObject::IsMouseOverWindow(HWND hWnd, const int mx, const int my,
+                          const bool inClientSpace /*= false */)
+{
+    RECT windowRect;
+ 
+    // Get the window in screen space
+	::GetWindowRect( hWnd, &windowRect );
+ 
+    if ( inClientSpace )
+    {
+        POINT offset;
+        offset.x = offset.y = 0;
+        ClientToScreen( hWnd, &offset );
+ 
+        // Offset the window to client space
+        windowRect.left -= offset.x;
+        windowRect.top -= offset.y;
+        // NOTE: left and top should now be 0, 0
+        windowRect.right -= offset.x;
+        windowRect.bottom -= offset.y;
+    }
+ 
+    // Test if mouse over window
+    POINT cursorPos = { mx, my };
+    return PtInRect( &windowRect, cursorPos );
 }
 
 #else //ifdef RUN_ONLY

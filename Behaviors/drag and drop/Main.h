@@ -54,6 +54,11 @@ public:
 	long cTrigger(LPVAL params);
 	long cIsDragging(LPVAL params);
 	long aSetActivated(LPVAL theParams);
+	long aForceDragDrop(LPVAL theParams);
+const bool IsMouseOverWindow(HWND hWnd, const int mx, const int my,
+                          const bool inClientSpace /*= false */);
+
+bool allowoff;
 
 
 	bool mouse[3];	// L, M, R
@@ -105,6 +110,7 @@ public:
 
 	int mouse_button;
 	int axis;
+	int allowoff;
 
 	int x_limit;
 	int y_limit;

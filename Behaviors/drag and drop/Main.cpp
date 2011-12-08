@@ -35,6 +35,12 @@ long ExtObject::aSetActivated(LPVAL theParams)
 
 	return 0;
 }
+long ExtObject::aForceDragDrop(LPVAL theParams)
+{
+	dragging=theParams[0].GetBool();
+
+	return 0;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 // Expressions
@@ -85,4 +91,9 @@ void DefineACES(MicroAceTime* at)
 
 	ADDPARAMCOMBO("Activation", "Choose whether the movement is activated or deactivated", "Deactivate|Activate");
 	ADDACT("Set activated", "Settings", "%0 Drag & Drop movement", &ExtObject::aSetActivated, "SetActivated", 0);	
+	
+	ADDPARAMCOMBO("Drag", "Choose whether to force a drag or a drop", "drop|drag");
+	ADDACT("Force Drag|Drop", "Movement", "Force %0", &ExtObject::aForceDragDrop, "ForceDragDrop", 0);	
+
 }
+
