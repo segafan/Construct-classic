@@ -37,6 +37,9 @@ long ExtObject::aSetActivated(LPVAL theParams)
 }
 long ExtObject::aForceDragDrop(LPVAL theParams)
 {
+	CRunLayer* pLayer = pRuntime->GetObjectLayer(pLink);
+	dx = pLink->info.x - pLayer->mouseX;
+	dy = pLink->info.y - pLayer->mouseY;
 	dragging=theParams[0].GetBool();
 
 	return 0;
