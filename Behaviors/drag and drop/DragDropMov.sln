@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DragDropMov", "DragDropMov.vcproj", "{9799145E-25D5-4315-87F9-348E50D5751A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Template SDK", "DragDropMov.vcproj", "{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,14 +11,14 @@ Global
 		Runtime|Win32 = Runtime|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Debug Runtime|Win32.ActiveCfg = Debug Runtime|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Debug Runtime|Win32.Build.0 = Debug Runtime|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Debug|Win32.Build.0 = Debug|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Release|Win32.ActiveCfg = Release|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Release|Win32.Build.0 = Release|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Runtime|Win32.ActiveCfg = Runtime|Win32
-		{9799145E-25D5-4315-87F9-348E50D5751A}.Runtime|Win32.Build.0 = Runtime|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Debug Runtime|Win32.ActiveCfg = Debug Runtime|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Debug Runtime|Win32.Build.0 = Debug Runtime|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Debug|Win32.Build.0 = Debug|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Release|Win32.ActiveCfg = Release|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Release|Win32.Build.0 = Release|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Runtime|Win32.ActiveCfg = Runtime|Win32
+		{E4FC0DEC-403B-44D0-8B45-6AC365B15CE2}.Runtime|Win32.Build.0 = Runtime|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
