@@ -1109,50 +1109,105 @@ namespace cr {
 
 	void CDX9Renderer::ResizeRenderTargetTexture(TextureHandle th, uint new_width, uint new_height)
 	{
-		if (!th->rendertarget)
-			throw error(_T("Can't resize a non-rendertarget texture"), E_FAIL);
-
-		if (th->surface_ptr != NULL)
-			throw error(_T("Resizing multisample render targets is not supported"), E_FAIL);
-
-		// Not a batched command
+		// Can't call during lost device
+		//if (device_is_lost)
+		//	return NULL;
+		
 		EndBatch();
 
-		// Save state
-		TextureHandle old_rendertarget = GetRenderTarget();
-		TextureHandle old_texture = GetTexture();
+		d3d9texture* tex = th;
+		tex->texture_ptr->Release();
+		texture_format format=th->format;
+		uint width=new_width;
+		uint height=new_height;
 
-		// Create new rendertarget of new size
-		TextureHandle new_tex = CreateRenderTargetTexture(new_width, new_height, th->format);
+		D3DSURFACE_DESC surface_desc;
 
-		// Copy the image content
-		SetRenderTarget(new_tex);
-		ClearRenderTarget();
-		SetTexture(th);
-		Quad(0.0, 0.0);
+ {
+			// Create render-target texture
+			hr = D3DXCreateTexture(d3d9_device, width, height, 1, D3DUSAGE_RENDERTARGET,
+								get_d3d9_equiv(format), D3DPOOL_DEFAULT, &(tex->texture_ptr));
 
-		// Replace the old texture with the new one
-		th->texture_ptr->Release();				// Free texture
-		th->texture_ptr = new_tex->texture_ptr;	// Adopt new texture
+			if (tex->texture_ptr == NULL || FAILED(hr))
+				throw error(_T("Failed to create render target texture"), hr);
 
-		th->image_height = new_tex->image_height;
-		th->image_heightf = new_tex->image_heightf;
-		th->image_width = new_tex->image_width;
-		th->image_widthf = new_tex->image_widthf;
+			// Initialise the texture
+			tex->texture_ptr->GetLevelDesc(0, &surface_desc);
+		}
 
-		th->size_bytes = new_tex->size_bytes;
-		th->surface_height = new_tex->surface_height;
-		th->surface_width = new_tex->surface_width;
-		th->xf = new_tex->xf;
-		th->yf = new_tex->yf;
+		tex->rendertarget = true;		// Render target
+		tex->format = format;
 
-		// Get rid of the new texture's handle, its texture is used by th now
-		textures.erase(textures.find(new_tex));
+		// Get the surface & image sizes
+		tex->surface_width = surface_desc.Width;
+		tex->surface_height = surface_desc.Height;
 
-		// Restore state
-		SetRenderTarget(old_rendertarget);
-		SetTexture(old_texture);
+		tex->image_width = width;
+		tex->image_height = height;
+
+		tex->image_widthf = tex->image_width;
+		tex->image_heightf = tex->image_height;
+
+		// Precompute the x and y image-to-surface ratios
+		tex->xf = (cr_float)width / (cr_float)surface_desc.Width;
+		tex->yf = (cr_float)height / (cr_float)surface_desc.Height;
+
+		// Calculate size, in bytes
+		tex->size_bytes = tex->surface_width * tex->surface_height * get_format_bytes_per_pixel(format);
+
+		// Add to the texture list
+		//textures.insert(tex);
+
+		// Return the pointer as the handle
+		//return tex;
 	}
+
+	//void CDX9Renderer::ResizeRenderTargetTexture(TextureHandle th, uint new_width, uint new_height)
+	//{
+	//	if (!th->rendertarget)
+	//		throw error(_T("Can't resize a non-rendertarget texture"), E_FAIL);
+
+	//	if (th->surface_ptr != NULL)
+	//		throw error(_T("Resizing multisample render targets is not supported"), E_FAIL);
+
+	//	// Not a batched command
+	//	EndBatch();
+
+	//	// Save state
+	//	TextureHandle old_rendertarget = GetRenderTarget();
+	//	TextureHandle old_texture = GetTexture();
+
+	//	// Create new rendertarget of new size
+	//	TextureHandle new_tex = CreateRenderTargetTexture(new_width, new_height, th->format);
+
+	//	// Copy the image content
+	//	SetRenderTarget(new_tex);
+	//	ClearRenderTarget();
+	//	SetTexture(th);
+	//	Quad(0.0, 0.0);
+
+	//	// Replace the old texture with the new one
+	//	th->texture_ptr->Release();				// Free texture
+	//	th->texture_ptr = new_tex->texture_ptr;	// Adopt new texture
+
+	//	th->image_height = new_tex->image_height;
+	//	th->image_heightf = new_tex->image_heightf;
+	//	th->image_width = new_tex->image_width;
+	//	th->image_widthf = new_tex->image_widthf;
+
+	//	th->size_bytes = new_tex->size_bytes;
+	//	th->surface_height = new_tex->surface_height;
+	//	th->surface_width = new_tex->surface_width;
+	//	th->xf = new_tex->xf;
+	//	th->yf = new_tex->yf;
+
+	//	// Get rid of the new texture's handle, its texture is used by th now
+	//	textures.erase(textures.find(new_tex));
+
+	//	// Restore state
+	//	SetRenderTarget(old_rendertarget);
+	//	SetTexture(old_texture);
+	//}
 
 	// Protected member function to premultiply a nonpremultiplied texture handle.
 	// Useful for loading stuff from files at runtime.  This is done by a texture lock though, and processed on the CPU,
