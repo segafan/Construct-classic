@@ -73,6 +73,7 @@ void ExtObject::OnCreate()
 		si.vertex = &vertices[0];
 
 	shadowList.push_back(si);
+	activated=true;
 }
 
 // Destructor: called when an instance of your object is destroyed.
@@ -148,6 +149,8 @@ long ExtObject::GetData(int id, void* param)
 	// If your extension uses a window, you can return it here
 	case GET_WINDOW:
 		break;
+	case 1:
+		return (long)activated;
 	}
 
 	return 0;
