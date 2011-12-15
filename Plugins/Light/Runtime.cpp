@@ -362,7 +362,10 @@ void ExtObject::Draw()
 		vector<ShadowInfo>::iterator end = pShadowList->end();
 
 		for ( ; i != end; i++)
-			DrawShadow(*i);
+		{
+			if((bool)i->shadow->GetData(1,0))
+				DrawShadow(*i);
+		}
 
 	}
 

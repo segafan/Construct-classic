@@ -13,6 +13,7 @@
 #define OBJECTRECT CRect(editObject->objectX, editObject->objectY, editObject->objectX + editObject->objectWidth, editObject->objectY + editObject->objectHeight)
 
 #define COMMONACE_POSITION
+#define COMMONACE_DIMENSION
 #define COMMONACE_ANGLE
 #define COMMONACE_ZORDER
 #define COMMONACE_VISIBILITY
