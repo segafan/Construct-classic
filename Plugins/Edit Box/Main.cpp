@@ -89,13 +89,15 @@ long ExtObject::aEnable(LPVAL theParams)
 long ExtObject::aFocusOn(LPVAL theParams)
 {
 	edit.SetFocus();
-
+	
 	return 0;
 }
 
 long ExtObject::aFocusOff(LPVAL theParams)
 {
-	SetFocus(pRuntime->GetAppHwnd());
+
+	edit.GetParent()->SetFocus();
+
 
 	return 0;
 }
