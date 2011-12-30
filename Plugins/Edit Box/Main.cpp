@@ -89,7 +89,7 @@ long ExtObject::aEnable(LPVAL theParams)
 long ExtObject::aFocusOn(LPVAL theParams)
 {
 	edit.SetFocus();
-	
+	edit.ShowWindow(SW_SHOW);
 	return 0;
 }
 
@@ -97,6 +97,7 @@ long ExtObject::aFocusOff(LPVAL theParams)
 {
 
 	edit.GetParent()->SetFocus();
+	edit.ShowWindow(SW_SHOW);
 
 
 	return 0;
