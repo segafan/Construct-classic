@@ -20,7 +20,7 @@
 
 #include "stdafx.h"
 #include "XHeaderCtrl.h"
-#include "memdc.h"
+#include <afxglobals.h>		// CMemDC
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -515,8 +515,8 @@ void CXHeaderCtrl::OnPaint()
 
     if (m_bDoubleBuffer)
     {
-        CMemDC MemDC(&dc);
-        DrawCtrl(&MemDC);
+        CMemDC MemDC(dc, this);
+        DrawCtrl(&MemDC.GetDC());
     }
     else
         DrawCtrl(&dc);

@@ -20,6 +20,8 @@
 //
 // This class implements a memory Device Context
 
+// Now part of MFC
+/*
 class CMemDC : public CDC
 {
 public:
@@ -81,7 +83,7 @@ private:
     CRect    m_rect;        // Rectangle of drawing area.
     BOOL     m_bMemDC;      // TRUE if CDC really is a Memory DC.
 };
-
+*/
 /////////////////////////////////////////////////////////////////////////////
 
 //{{AFX_INSERT_LOCATION}}
