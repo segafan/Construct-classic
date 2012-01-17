@@ -576,6 +576,14 @@ bool CRuntime::Initialise(CRuntimeSetup* crSetup)
 	CapReader.ReadFrameData(pData, dataSize);
 	FreeResource(hData);
 
+	// Map object type names to their pointers
+	for (vector<CRunObjType*>::iterator i = objects.begin(); i != objects.end(); i++)
+	{
+		CString lowername = (*i)->Name;
+		lowername.MakeLower();
+		name_to_object[lowername] = *i;
+	}
+
 #ifdef CONSTRUCT_DEBUGGER
 	// Create debugger once object types are known but before parsing event block (which may send logs)
 	// Create invisible initially

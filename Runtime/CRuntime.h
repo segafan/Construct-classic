@@ -373,7 +373,6 @@ public:
 
 	// COLLISION ALGORITHMS
 	CollisionMask&	GetActiveMask(CRunObject* obj);
-
 	void		FreeMask(CollisionMask& m);
 	void		FreeMask(CollisionMask* m);
 	void		GenerateScaledMask(CRunObject* obj, CollisionMask* src);
@@ -530,6 +529,7 @@ private:
 	/////////////////////////////
 	// The Object Types list (including qualifiers)
 	vector<CRunObjType*>	objects;
+	map<CString, CRunObjType*> name_to_object;
 	bool delayedObjectsExist;		// Any of the object types delayed object lists are not empty
 	bool isTopLevelTrigger;			// True if a top-level trigger not called by any other eventd
 									// (so we can tell if we should flush delayed objects after the trigger)

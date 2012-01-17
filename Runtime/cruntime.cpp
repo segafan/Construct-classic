@@ -1510,19 +1510,12 @@ CRunObjType* CRuntime::GetTypeFromName(const char* name) const
 	CString s = name;
 	s.MakeLower();
 
-	ObjTypeList::const_iterator i = objects.begin();
-	ObjTypeConstIterator objects_end = objects.end();
+	map<CString, CRunObjType*>::const_iterator i = name_to_object.find(s);
 
-	for ( ; i != objects_end; i++) {
-
-		CString objName = (*i)->Name;
-		objName.MakeLower();
-
-		if (objName == s)
-			return (*i);
-	}
-
-	return NULL;
+	if (i == name_to_object.end())
+		return NULL;
+	else
+		return i->second;
 }
 
 // A special replacement SOL
