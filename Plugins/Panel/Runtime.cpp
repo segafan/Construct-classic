@@ -141,8 +141,10 @@ ExtObject::~ExtObject()
 // Called every frame, before the events and after drawing, for you to update your object if necessary
 // Return 1 (do not call again) or 0 (continue calling)
 BOOL ExtObject::OnFrame()
-{
-	return 1;	// Do not call again
+{	
+	UpdateBoundingBox();
+
+	return 0;	// Do not call again
 }
 
 // Called every frame, after the events and before drawing, for you to update your object if necessary
