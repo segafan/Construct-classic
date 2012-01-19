@@ -84,7 +84,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\IDE\Plugins\DragDrop.csx"
+				OutputFile="..\..\IDE\Plugins\DragDropMov.csx"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="false"
@@ -197,7 +197,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				LinkLibraryDependencies="true"
-				OutputFile="..\..\IDE\Plugins\Runtime\DragDrop.csx"
+				OutputFile="..\..\IDE\Plugins\Runtime\DragDropMov.csx"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				IgnoreAllDefaultLibraries="false"
@@ -300,7 +300,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\construct13\Plugins\ui.csx"
+				OutputFile="..\..\IDE\Plugins\DragDropMov.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\ConstructSDK.def"
@@ -399,7 +399,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\IDE\Plugins\Runtime\DragDrop.csx"
+				OutputFile="..\..\IDE\Plugins\Runtime\DragDropMov.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\ConstructSDKRun.def"
@@ -763,7 +763,7 @@
 				>
 			</File>
 			<File
-				RelativePath="ICON.BMP"
+				RelativePath="res\ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"
@@ -775,7 +775,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="res\ICON.BMP"
+				RelativePath="ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"
