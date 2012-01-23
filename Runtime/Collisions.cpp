@@ -483,8 +483,20 @@ bool CRuntime::QueryCollision(CRunObject *a, CRunObject *b)
 				return false;
 
 			// If first has invalid textures, assume box collision (we know box overlap from above)
-			if (b->info.pInfo->collisionMaskHandle == NULL)
-				return true;
+				if (a->info.pInfo->collisionMaskHandle == NULL)
+				{
+				
+					POLY polya=PolyFromObj(a);
+					bool overlap=false;
+					for(int i=0;i<4;i++)
+					{
+						if(PointInsidePoly(polya.first[i], polya.second[i], poly))
+							return true;
+						if(PointInsidePoly(poly.first[i], poly.second[i], polya))
+							return true;
+					}
+					return false;
+				}
 
 			// Okay use MMX
 
@@ -532,8 +544,21 @@ bool CRuntime::QueryCollision(CRunObject *a, CRunObject *b)
 					return false;
 
 				// If first has invalid textures, assume box collision (we know box overlap from above)
-				if (a->info.pInfo->collisionMaskHandle == NULL)
-					return true;
+				if (b->info.pInfo->collisionMaskHandle == NULL)
+				{
+				
+					POLY polyb=PolyFromObj(b);
+					bool overlap=false;
+					for(int i=0;i<4;i++)
+					{
+						if(PointInsidePoly(poly.first[i], poly.second[i], polyb))
+							return true;
+						if(PointInsidePoly(polyb.first[i], polyb.second[i], poly))
+							return true;
+					}
+					return false;
+				}
+			
 
 				// Okay use MMX
 				return IsOverlapAngledBoxInMask64MMX(a,b)!=0;
