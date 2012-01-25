@@ -142,6 +142,14 @@ ExtObject::~ExtObject()
 // Return 1 (do not call again) or 0 (continue calling)
 BOOL ExtObject::OnFrame()
 {	
+	info.HotSpotX = info.w * hs_xf;
+	info.HotSpotY = info.h * hs_yf;
+	oldw = info.w;
+	oldh = info.h;
+
+	info.HotSpotAngle = atan(float(info.HotSpotY) / float(info.HotSpotX));
+	info.HotSpotDist = sqrt((double)info.HotSpotX * info.HotSpotX + info.HotSpotY * info.HotSpotY);
+	
 	UpdateBoundingBox();
 
 	return 0;	// Do not call again
