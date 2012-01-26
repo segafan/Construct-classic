@@ -200,6 +200,17 @@ long ExtObject::aSetFont(LPVAL params)
 	return 0;
 }
 
+long ExtObject::aSetWordWrap(LPVAL params)
+{
+//dwFlags ^= DT_WORDBREAK;
+	if(params[0].GetBool())
+		dwFlags |= DT_WORDBREAK;
+	else
+		dwFlags &= ~DT_WORDBREAK;
+
+	return 0;
+}
+
 //////////////////////////////////////////////////////////////////////////////////
 // Expressions
 //////////////////////////////////////////////////////////////////////////////////
@@ -339,6 +350,9 @@ void DefineACES(MicroAceTime* at)
 
 	ADDPARAM(PARAM_VALUE, "Speed", "Milliseconds per letter written");
 	ADDACT("Set write speed", "Text", "Set write speed to 1 letter per <i>%0</i> milliseconds", &ExtObject::aSetWriteSpeed, "SetWriteSpeed", 0);
+
+	ADDPARAMCOMBO("On/Off", "Turn wordwrap on or off", "Off|On");
+	ADDACT("Set Word Wrap", "Text", "Set Word Wrap", &ExtObject::aSetWordWrap, "SetWordWrap", 0);
 
 	/////////////////////////////
 	// Expressions

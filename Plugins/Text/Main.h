@@ -77,6 +77,7 @@ public:
 	long aSetHorizAlign (LPVAL theParams);
 	long aSetVertAlign  (LPVAL theParams);
 	long aSetFont(LPVAL theParams);
+	long aSetWordWrap(LPVAL theParams);
 
 	long aSetValue(LPVAL params);
 	long aAddValue(LPVAL params);
