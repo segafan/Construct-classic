@@ -37,8 +37,11 @@
 // Construct Version Information
 // Current version:
 
-#define CONSTRUCT_VERSION_ID		10000
-#define CONSTRUCT_VERSION_STRING	"Classic r1"
+// Version ID must be >=10000 for backwards compatibility with 0.x update checker.
+// Last 2 digits are reserved for minor revisions; digits before that are major.
+// ie.								1MMmm	MM = major; mm = minor (e.g. 5.2 would be 10502)
+#define CONSTRUCT_VERSION_ID		10200
+#define CONSTRUCT_VERSION_STRING	"Classic r2"
 
 #define VC_EXTRALEAN				// Exclude rarely-used stuff from Windows headers
 #ifndef _CRT_SECURE_NO_DEPRECATE
