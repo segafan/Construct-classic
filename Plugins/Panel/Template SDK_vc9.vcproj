@@ -298,7 +298,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				OutputFile="..\..\IDE\Plugins\Template.csx"
+				OutputFile="..\..\IDE\Plugins\Panel.csx"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				ModuleDefinitionFile=".\ConstructSDK.def"
@@ -833,7 +833,7 @@
 				>
 			</File>
 			<File
-				RelativePath="ICON.BMP"
+				RelativePath="res\ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"
@@ -845,7 +845,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="res\ICON.BMP"
+				RelativePath="ICON.BMP"
 				>
 				<FileConfiguration
 					Name="Runtime|Win32"
